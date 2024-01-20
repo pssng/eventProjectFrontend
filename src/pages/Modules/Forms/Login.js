@@ -5,6 +5,7 @@ import { TextField, Button, Checkbox, FormControlLabel } from "@mui/material";
 import im3 from "../../../Assets/background.jpg";
 
 export function LoginAdmin(props) {
+  const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -370,7 +371,7 @@ export function LoginPromoters(props) {
   );
 }
 
-export function LoginArtist() {
+export function LoginArtist(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
