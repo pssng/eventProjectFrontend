@@ -149,8 +149,6 @@ const events = [
   },
 ];
 
-
-
 export function AccountClient() {
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
@@ -1001,7 +999,6 @@ export function AccountArtist() {
     },
   ]);
 
-
   const handleReviewSubmit = (newReview) => {
     setRecensioniArtisti([...recensioniArtisti, newReview]);
   };
@@ -1267,6 +1264,8 @@ export function AccountArtist() {
 
       // Aggiorna lo stato delle opere con i nuovi dati
       setOpere(updatedOpere);
+
+      onInsert(id, updatedTitle, updatedDescription);
     };
 
     const handleDeleteOpere = (id) => {
@@ -1276,11 +1275,46 @@ export function AccountArtist() {
       // Aggiorna lo stato delle opere rimuovendo l'opera eliminata
       setOpere(updatedOpere);
     };
+
+    // Aggiungi questa funzione che aggiunge title e description a un'opera specifica
+    const onInsert = (id, newTitle, newDescription) => {
+      // Trova l'opera con l'id specifico
+      const updatedOpere = opere.map((op) =>
+        op.id === id
+          ? {
+              ...op,
+              title: op.title + newTitle,
+              description: op.description + newDescription,
+            }
+          : op
+      );
+
+      // Aggiorna lo stato delle opere con i nuovi dati
+      setOpere(updatedOpere);
+    };
+
+    const handleInsertOpere = (id, newTitle, newDescription) => {
+      // Aggiungi la nuova opera allo stato delle opere
+      const newOpere = [
+        ...opere,
+        { id, nome: newTitle, descrizione: newDescription },
+      ];
+      setOpere(newOpere);
+    };
+
     return (
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
           Artworks
-          <ModalUploadArtwork onUploadArtwork={handleUploadArtwork} />
+          <ModalUploadArtwork
+            onUploadArtwork={(newArtwork) =>
+              handleInsertOpere(
+                newArtwork.id,
+                newArtwork.title,
+                newArtwork.description
+              )
+            }
+          />
         </Typography>
         <hr style={{ width: "70%", color: "lightgray" }} />
 
@@ -1310,6 +1344,7 @@ export function AccountArtist() {
                   id={op.id}
                   onUpdate={handleUpdateOpere}
                   onDelete={handleDeleteOpere}
+                  onInsert={onInsert}
                 />
               </Grid>
             ))}

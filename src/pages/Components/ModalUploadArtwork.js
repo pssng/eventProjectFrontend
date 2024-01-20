@@ -35,14 +35,17 @@ const style = {
   pb: 3,
 };
 
-export default function ModalUploadArtwork({ onUploadArtwork }) {
+export default function ModalUploadArtwork({
+  title,
+  description,
+  onUploadArtwork,
+}) {
   const [open, setOpen] = React.useState(false);
   const [uploadImage, setUploadImage] = useState("");
   const [theme, setTheme] = useState("");
   const [artworkData, setArtworkData] = useState({
-    artworkName: "",
-    artworkDescription: "",
-    artworkImage: "",
+    title,
+    description,
   });
 
   const handleOpen = () => {
@@ -53,17 +56,32 @@ export default function ModalUploadArtwork({ onUploadArtwork }) {
   };
 
   const handleUploadArtwork = () => {
-    // Chiamare la funzione di aggiornamento passata come prop
-    onUploadArtwork(artworkData);
-    // Resetta i dati della recensione nel modulo
-    setArtworkData({
-      artworkName: "",
-      artworkDescription: "",
-      artworkImage: "",
-    });
-    // Chiudi il modulo
-    handleClose();
+    // Verifica che title e description siano definiti in artworkData
+    if (
+      artworkData.title !== undefined &&
+      artworkData.description !== undefined
+    ) {
+      // Chiamare la funzione di aggiornamento passata come prop
+      onUploadArtwork({
+        title: artworkData.title,
+        description: artworkData.description,
+      });
+
+      // Resetta i dati della recensione nel modulo
+      setArtworkData({
+        title: "",
+        description: "",
+        artworkImage: "",
+      });
+      console.log("Dati", artworkData);
+      // Chiudi il modulo
+      handleClose();
+    } else {
+      // Puoi gestire qui il caso in cui il titolo o la descrizione siano mancanti
+      console.error("Titolo o descrizione mancanti");
+    }
   };
+
   return (
     <div style={{ float: "right" }}>
       <IconButton
@@ -90,9 +108,9 @@ export default function ModalUploadArtwork({ onUploadArtwork }) {
             variant="standard"
             required
             label="Artwork's name"
-            value={artworkData.artworkName}
+            value={artworkData.title}
             onChange={(e) =>
-              setArtworkData({ ...artworkData, artworkName: e.target.value })
+              setArtworkData({ ...artworkData, title: e.target.value })
             }
             style={{ width: "100%" }}
           />{" "}
@@ -103,11 +121,11 @@ export default function ModalUploadArtwork({ onUploadArtwork }) {
             required
             label="Talk about your artwork"
             rows={5}
-            value={artworkData.artworkDescription}
+            value={artworkData.description}
             onChange={(e) =>
               setArtworkData({
                 ...artworkData,
-                artworkDescription: e.target.value,
+                description: e.target.value,
               })
             }
             style={{ width: "100%" }}
