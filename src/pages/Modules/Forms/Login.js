@@ -1,5 +1,6 @@
 import { Box, Stack, Link, Grid } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { TextField, Button, Checkbox, FormControlLabel } from "@mui/material";
 import im3 from "../../../Assets/background.jpg";
 
@@ -86,11 +87,66 @@ export function LoginAdmin() {
 export function LoginClients() {
   const [CF, setCF] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Email:", CF);
-    console.log("Password:", password);
+
+    const apiUrl = "http://127.0.0.1:8080/public/authenticate";
+
+    let jsonData = {
+      fiscalCode: CF,
+      password: password,
+    };
+
+    var jsonString = JSON.stringify(jsonData);
+
+    var httpRequest = new XMLHttpRequest();
+
+    httpRequest.open("POST", apiUrl, true);
+    httpRequest.setRequestHeader("Content-Type", "application/json");
+
+    httpRequest.onreadystatechange = function () {
+      if (httpRequest.readyState === 4) {
+        if (httpRequest.status === 200) {
+          localStorage.setItem("authKey", httpRequest.responseText);
+
+          if (localStorage.getItem("authKey") !== "") {
+            const whoAmIUrl = "http://127.0.0.1:8080/public/retrieve_role";
+            var roleHttpRequest = new XMLHttpRequest();
+            roleHttpRequest.open("POST", whoAmIUrl, true);
+
+            roleHttpRequest.setRequestHeader(
+              "Authorization",
+              "Bearer " + localStorage.getItem("authKey")
+            );
+
+            roleHttpRequest.onreadystatechange = function () {
+              if (roleHttpRequest.readyState === 4) {
+                if (roleHttpRequest.status === 200) {
+                  localStorage.setItem(
+                    "userRole",
+                    roleHttpRequest.responseText
+                  );
+
+                  // Dopo aver impostato tutti i dati nella localStorage, ricarica la pagina
+                  navigate('/Home')
+                  window.location.reload();
+                }
+              }
+            };
+
+            roleHttpRequest.send();
+          }
+        } else {
+          console.error("Error: ", httpRequest.status, httpRequest.statusText);
+        }
+      }
+    };
+
+    httpRequest.send(jsonString);
   };
+
   return (
     <>
       <style>
@@ -167,8 +223,33 @@ export function LoginPromoters() {
   const [password, setPassword] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Fiscal Code:", CF);
-    console.log("Password:", password);
+
+    const apiUrl = "http://127.0.0.1:8080/public/authenticate";
+
+    let jsonData = {
+      fiscalCode: CF,
+      password: password,
+    };
+
+    var jsonString = JSON.stringify(jsonData);
+
+    var httpRequest = new XMLHttpRequest();
+
+    httpRequest.open("POST", apiUrl, true);
+    httpRequest.setRequestHeader("Content-Type", "application/json");
+
+    httpRequest.onreadystatechange = function () {
+      if (httpRequest.readyState === 4) {
+        if (httpRequest.status === 200) {
+          localStorage.setItem("authKey", httpRequest.responseText);
+          // console.log(httpRequest.responseText);
+        } else {
+          console.error("Error: ", httpRequest.status, httpRequest.statusText);
+        }
+      }
+    };
+
+    httpRequest.send(jsonString);
   };
   return (
     <>
@@ -243,12 +324,36 @@ export function LoginPromoters() {
 
 export function LoginArtist() {
   const [CF, setCF] = useState("");
-
   const [password, setPassword] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Fiscal Code:", CF);
-    console.log("Password:", password);
+
+    const apiUrl = "http://127.0.0.1:8080/public/authenticate";
+
+    let jsonData = {
+      fiscalCode: CF,
+      password: password,
+    };
+
+    var jsonString = JSON.stringify(jsonData);
+
+    var httpRequest = new XMLHttpRequest();
+
+    httpRequest.open("POST", apiUrl, true);
+    httpRequest.setRequestHeader("Content-Type", "application/json");
+
+    httpRequest.onreadystatechange = function () {
+      if (httpRequest.readyState === 4) {
+        if (httpRequest.status === 200) {
+          localStorage.setItem("authKey", httpRequest.responseText);
+          // console.log(httpRequest.responseText);
+        } else {
+          console.error("Error: ", httpRequest.status, httpRequest.statusText);
+        }
+      }
+    };
+
+    httpRequest.send(jsonString);
   };
   return (
     <>
