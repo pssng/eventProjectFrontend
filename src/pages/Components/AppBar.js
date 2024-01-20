@@ -13,10 +13,14 @@ import MenuItem from "@mui/material/MenuItem";
 import LoginIcon from "@mui/icons-material/Login";
 import { Link } from "react-router-dom/";
 
-function ResponsiveAppBar() {
-  const [isAuth, setIsAuth] = React.useState(true);
+function ResponsiveAppBar(props) {
+  const [isAuth, setIsAuth] = React.useState(false);
+  React.useEffect(() => { 
+    if( props.userObj.user.username !== ''){
+      setIsAuth(true)
+    }
+   },[props.userObj]);
 
-  
   const pages = [{ name: "Home" }, { name: "Events" }, { name: "Contacts" }];
 
   const logins = [

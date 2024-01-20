@@ -3,11 +3,13 @@ import "../App.css";
 import { Box, Paper, Stack, Typography } from "@mui/material";
 import ResponsiveAppBar from "./Components/AppBar";
 
-export const Layout = () => {
+export const Layout = (props) => {
+
   return (
     <Stack className="App">
       <header className="App-header">
-        <ResponsiveAppBar />
+        <ResponsiveAppBar 
+         userObj={{user:props.userObj.user, setUser:props.userObj.setUser}}/>
         {/* <Typography component={"i"} variant="h3" textAlign={"center"}>
           ArtEvents
         </Typography> */}

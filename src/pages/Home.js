@@ -62,7 +62,7 @@ const images = [
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
-export const Home = () => {
+export const Home = (props) => {
   const stringDevs = [
     "Dawid Adrian Danila | 0124002590",
     "Carmela Pia Fiore | 0124002523",

@@ -4,14 +4,65 @@ import { useNavigate } from "react-router-dom";
 import { TextField, Button, Checkbox, FormControlLabel } from "@mui/material";
 import im3 from "../../../Assets/background.jpg";
 
-export function LoginAdmin() {
-  const [CF, setCF] = useState("");
-  const [password, setPassword] = useState("");
+export function LoginAdmin(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Email:", CF);
-    console.log("Password:", password);
+
+    const apiUrl = "http://127.0.0.1:8080/public/authenticate";
+
+    let jsonData = {
+      fiscalCode: props.userObj.user.username,
+      password: props.userObj.user.password,
+    };
+
+    var jsonString = JSON.stringify(jsonData);
+
+    var httpRequest = new XMLHttpRequest();
+
+    httpRequest.open("POST", apiUrl, true);
+    httpRequest.setRequestHeader("Content-Type", "application/json");
+
+    httpRequest.onreadystatechange = function () {
+      if (httpRequest.readyState === 4) {
+        if (httpRequest.status === 200) {
+          localStorage.setItem("authKey", httpRequest.responseText);
+       
+          if (localStorage.getItem("authKey") !== "") {
+            const whoAmIUrl = "http://127.0.0.1:8080/public/retrieve_role";
+            var roleHttpRequest = new XMLHttpRequest();
+            roleHttpRequest.open("POST", whoAmIUrl, true);
+
+            roleHttpRequest.setRequestHeader(
+              "Authorization",
+              "Bearer " + localStorage.getItem("authKey")
+            );
+
+            roleHttpRequest.onreadystatechange = function () {
+              if (roleHttpRequest.readyState === 4) {
+                if (roleHttpRequest.status === 200) {
+                  localStorage.setItem(
+                    "userRole",
+                    roleHttpRequest.responseText
+                  );
+
+                  // Dopo aver impostato tutti i dati nella localStorage, ricarica la pagina
+                  navigate('/Home')
+                  window.location.reload();
+                }
+              }
+            };
+
+            roleHttpRequest.send();
+          }
+        } else {
+          console.error("Error: ", httpRequest.status, httpRequest.statusText);
+        }
+      }
+    };
+
+    httpRequest.send(jsonString);
   };
+
   return (
     <>
       <style>
@@ -40,12 +91,12 @@ export function LoginAdmin() {
           <h2>Login Admin Only</h2>
           <form onSubmit={handleSubmit}>
             <Stack direction={"column"} spacing={3}>
-              <TextField
+            <TextField
                 required
-                id="email"
+                id="username"
                 label="Fiscal Code"
                 variant="standard"
-                onChange={(e) => setCF(e.target.value)}
+                onChange={(e) => props.userObj.setUser({...props.userObj.user , username: e.target.value})}
                 style={{ marginBottom: "10px" }}
               />
               <TextField
@@ -53,7 +104,7 @@ export function LoginAdmin() {
                 id="password"
                 label="Password"
                 variant="standard"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => props.userObj.setUser({...props.userObj.user , password: e.target.value})}
                 style={{ marginBottom: "10px" }}
               />
               <FormControlLabel control={<Checkbox />} label="Remember me" />
@@ -84,9 +135,7 @@ export function LoginAdmin() {
   );
 }
 
-export function LoginClients() {
-  const [CF, setCF] = useState("");
-  const [password, setPassword] = useState("");
+export function LoginClients(props) {
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -95,8 +144,8 @@ export function LoginClients() {
     const apiUrl = "http://127.0.0.1:8080/public/authenticate";
 
     let jsonData = {
-      fiscalCode: CF,
-      password: password,
+      fiscalCode: props.userObj.user.username,
+      password: props.userObj.user.password,
     };
 
     var jsonString = JSON.stringify(jsonData);
@@ -110,7 +159,7 @@ export function LoginClients() {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
           localStorage.setItem("authKey", httpRequest.responseText);
-
+       
           if (localStorage.getItem("authKey") !== "") {
             const whoAmIUrl = "http://127.0.0.1:8080/public/retrieve_role";
             var roleHttpRequest = new XMLHttpRequest();
@@ -177,10 +226,10 @@ export function LoginClients() {
             <Stack direction={"column"} spacing={3}>
               <TextField
                 required
-                id="email"
+                id="username"
                 label="Fiscal Code"
                 variant="standard"
-                onChange={(e) => setCF(e.target.value)}
+                onChange={(e) => props.userObj.setUser({...props.userObj.user , username: e.target.value})}
                 style={{ marginBottom: "10px" }}
               />
               <TextField
@@ -188,7 +237,7 @@ export function LoginClients() {
                 id="password"
                 label="Password"
                 variant="standard"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => props.userObj.setUser({...props.userObj.user , password: e.target.value})}
                 style={{ marginBottom: "10px" }}
               />
               <FormControlLabel control={<Checkbox />} label="Remember me" />
@@ -217,18 +266,17 @@ export function LoginClients() {
   );
 }
 
-export function LoginPromoters() {
-  const [CF, setCF] = useState("");
-
-  const [password, setPassword] = useState("");
+export function LoginPromoters(props) {
+  // Ho tolto cf e password perche ora le nostre credenziali sono globali
+  // e quindi userObj di cui parlo in index
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const apiUrl = "http://127.0.0.1:8080/public/authenticate";
 
     let jsonData = {
-      fiscalCode: CF,
-      password: password,
+      fiscalCode: props.userObj.user.username,
+      password: props.userObj.user.password,
     };
 
     var jsonString = JSON.stringify(jsonData);
@@ -279,12 +327,12 @@ export function LoginPromoters() {
           <h2>Login as a Promoter</h2>
           <form onSubmit={handleSubmit}>
             <Stack direction={"column"} spacing={3}>
-              <TextField
+            <TextField
                 required
-                id="email"
+                id="username"
                 label="Fiscal Code"
                 variant="standard"
-                onChange={(e) => setCF(e.target.value)}
+                onChange={(e) => props.userObj.setUser({...props.userObj.user , username: e.target.value})}
                 style={{ marginBottom: "10px" }}
               />
               <TextField
@@ -292,7 +340,7 @@ export function LoginPromoters() {
                 id="password"
                 label="Password"
                 variant="standard"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => props.userObj.setUser({...props.userObj.user , password: e.target.value})}
                 style={{ marginBottom: "10px" }}
               />
 
@@ -323,16 +371,14 @@ export function LoginPromoters() {
 }
 
 export function LoginArtist() {
-  const [CF, setCF] = useState("");
-  const [password, setPassword] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const apiUrl = "http://127.0.0.1:8080/public/authenticate";
 
     let jsonData = {
-      fiscalCode: CF,
-      password: password,
+      fiscalCode: props.userObj.user.username,
+      password: props.userObj.user.password,
     };
 
     var jsonString = JSON.stringify(jsonData);
@@ -383,12 +429,12 @@ export function LoginArtist() {
           <h2>Login as a Artist</h2>
           <form onSubmit={handleSubmit}>
             <Stack direction={"column"} spacing={3}>
-              <TextField
+            <TextField
                 required
-                id="email"
+                id="username"
                 label="Fiscal Code"
                 variant="standard"
-                onChange={(e) => setCF(e.target.value)}
+                onChange={(e) => props.userObj.setUser({...props.userObj.user , username: e.target.value})}
                 style={{ marginBottom: "10px" }}
               />
               <TextField
@@ -396,10 +442,9 @@ export function LoginArtist() {
                 id="password"
                 label="Password"
                 variant="standard"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => props.userObj.setUser({...props.userObj.user , password: e.target.value})}
                 style={{ marginBottom: "10px" }}
               />
-
               <FormControlLabel control={<Checkbox />} label="Remember me" />
 
               <Button type="submit" variant="outlined">
