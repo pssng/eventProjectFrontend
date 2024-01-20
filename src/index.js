@@ -35,7 +35,6 @@ import {
 } from "./pages/Account";
 
 export default function App() {
-
   const renderSection = (x) => {
     switch (x) {
       case "ROLE_CUSTOMER":
@@ -45,7 +44,7 @@ export default function App() {
       case "ROLE_PROMOTER":
         return <AccountPromoters />;
       case "ROLE_ADMIN":
-         return <AccountAdmin />;
+        return <AccountAdmin />;
       default:
         return null;
     }
@@ -78,8 +77,8 @@ export default function App() {
           mostrare una section diversa
           Passaggi: fai il login, identifica il ruolo dell'utente, metti il ruolo dell'utente nei parametri
           */}
-          <Route path="/Account" element={renderSection(localStorage.getItem("userRole"))} />
-
+          {/*<Route path="/Account" element={renderSection(localStorage.getItem("userRole"))} />*/}
+          <Route path="/Account" element={renderSection("ROLE_ARTIST")} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>
