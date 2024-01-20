@@ -23,6 +23,7 @@ export function LoginAdmin(props) {
     httpRequest.open("POST", apiUrl, true);
     httpRequest.setRequestHeader("Content-Type", "application/json");
 
+  
     httpRequest.onreadystatechange = function () {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
@@ -46,6 +47,7 @@ export function LoginAdmin(props) {
                     roleHttpRequest.responseText
                   );
 
+                  props.userObj.setUser({...props.userObj.user, id: props.userObj.user.username})
                   // Dopo aver impostato tutti i dati nella localStorage, ricarica la pagina
                   navigate('/Home')
                   window.location.reload();
@@ -57,7 +59,7 @@ export function LoginAdmin(props) {
           }
         } else {
           console.error("Error: ", httpRequest.status, httpRequest.statusText);
-         // {id: '',username: '', password: ''}
+          props.userObj.setUser({id: '',username: '', password: ''})
         }
       }
     };
@@ -180,6 +182,7 @@ export function LoginClients(props) {
                     roleHttpRequest.responseText
                   );
 
+                  props.userObj.setUser({...props.userObj.user, id: props.userObj.user.username})
                   // Dopo aver impostato tutti i dati nella localStorage, ricarica la pagina
                   navigate('/Home')
                   window.location.reload();
@@ -272,6 +275,7 @@ export function LoginClients(props) {
 export function LoginPromoters(props) {
   // Ho tolto cf e password perche ora le nostre credenziali sono globali
   // e quindi userObj di cui parlo in index
+  const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -289,12 +293,40 @@ export function LoginPromoters(props) {
     httpRequest.open("POST", apiUrl, true);
     httpRequest.setRequestHeader("Content-Type", "application/json");
 
+
     httpRequest.onreadystatechange = function () {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
           localStorage.setItem("authKey", httpRequest.responseText);
-          // console.log(httpRequest.responseText);
-          props.userObj.setUser({...props.userObj.user, id: props.userObj.user.username})
+       
+          if (localStorage.getItem("authKey") !== "") {
+            const whoAmIUrl = "http://127.0.0.1:8080/public/retrieve_role";
+            var roleHttpRequest = new XMLHttpRequest();
+            roleHttpRequest.open("POST", whoAmIUrl, true);
+
+            roleHttpRequest.setRequestHeader(
+              "Authorization",
+              "Bearer " + localStorage.getItem("authKey")
+            );
+
+            roleHttpRequest.onreadystatechange = function () {
+              if (roleHttpRequest.readyState === 4) {
+                if (roleHttpRequest.status === 200) {
+                  localStorage.setItem(
+                    "userRole",
+                    roleHttpRequest.responseText
+                  );
+
+                  props.userObj.setUser({...props.userObj.user, id: props.userObj.user.username})
+                  // Dopo aver impostato tutti i dati nella localStorage, ricarica la pagina
+                  navigate('/Home')
+                  window.location.reload();
+                }
+              }
+            };
+
+            roleHttpRequest.send();
+          }
         } else {
           console.error("Error: ", httpRequest.status, httpRequest.statusText);
           props.userObj.setUser({id: '',username: '', password: ''})
@@ -376,6 +408,7 @@ export function LoginPromoters(props) {
 }
 
 export function LoginArtist(props) {
+  const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -393,18 +426,46 @@ export function LoginArtist(props) {
     httpRequest.open("POST", apiUrl, true);
     httpRequest.setRequestHeader("Content-Type", "application/json");
 
+
     httpRequest.onreadystatechange = function () {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
           localStorage.setItem("authKey", httpRequest.responseText);
-          // console.log(httpRequest.responseText);
+       
+          if (localStorage.getItem("authKey") !== "") {
+            const whoAmIUrl = "http://127.0.0.1:8080/public/retrieve_role";
+            var roleHttpRequest = new XMLHttpRequest();
+            roleHttpRequest.open("POST", whoAmIUrl, true);
+
+            roleHttpRequest.setRequestHeader(
+              "Authorization",
+              "Bearer " + localStorage.getItem("authKey")
+            );
+
+            roleHttpRequest.onreadystatechange = function () {
+              if (roleHttpRequest.readyState === 4) {
+                if (roleHttpRequest.status === 200) {
+                  localStorage.setItem(
+                    "userRole",
+                    roleHttpRequest.responseText
+                  );
+
+                  props.userObj.setUser({...props.userObj.user, id: props.userObj.user.username})
+                  // Dopo aver impostato tutti i dati nella localStorage, ricarica la pagina
+                  navigate('/Home')
+                  window.location.reload();
+                }
+              }
+            };
+
+            roleHttpRequest.send();
+          }
         } else {
           console.error("Error: ", httpRequest.status, httpRequest.statusText);
           props.userObj.setUser({id: '',username: '', password: ''})
         }
       }
     };
-
     httpRequest.send(jsonString);
   };
   return (
