@@ -35,24 +35,17 @@ import {
 } from "./pages/Account";
 
 export default function App() {
-  const [roleLog, setRoleLog] = React.useState(<></>);
-  const [isAuth, setIsAuth] = React.useState(false);
 
   const renderSection = (x) => {
     switch (x) {
-      case "noLog":
-        setIsAuth(false);
-        break;
-      case "client":
+      case "ROLE_CUSTOMER":
         return <AccountClient />;
-      case "artist":
+      case "ROLE_ARTIST":
         return <AccountArtist />;
-      case "promoter":
+      case "ROLE_PROMOTER":
         return <AccountPromoters />;
-
-      case "admin":
-        return <AccountAdmin />;
-
+      case "ROLE_ADMIN":
+         return <AccountAdmin />;
       default:
         return null;
     }
@@ -85,7 +78,7 @@ export default function App() {
           mostrare una section diversa
           Passaggi: fai il login, identifica il ruolo dell'utente, metti il ruolo dell'utente nei parametri
           */}
-          <Route path="/Account" element={renderSection("artist")} />
+          <Route path="/Account" element={renderSection(localStorage.getItem("userRole"))} />
 
           <Route path="*" element={<NoPage />} />
         </Route>

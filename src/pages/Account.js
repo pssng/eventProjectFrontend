@@ -45,6 +45,7 @@ import ReviewsIcon from "@mui/icons-material/Reviews";
 import Review from "./Components/Review";
 import ModalReview from "./Components/ModalReview";
 import ModalUploadArtwork from "./Components/ModalUploadArtwork";
+import axios from "axios";
 
 const drawerWidth = 240;
 
@@ -147,6 +148,8 @@ const events = [
     img: event3,
   },
 ];
+
+
 
 export function AccountClient() {
   const [currentSection, setCurrentSection] = useState("Profile");
