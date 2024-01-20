@@ -57,6 +57,7 @@ export function LoginAdmin(props) {
           }
         } else {
           console.error("Error: ", httpRequest.status, httpRequest.statusText);
+         // {id: '',username: '', password: ''}
         }
       }
     };
@@ -190,6 +191,7 @@ export function LoginClients(props) {
           }
         } else {
           console.error("Error: ", httpRequest.status, httpRequest.statusText);
+          props.userObj.setUser({id: '',username: '', password: ''})
         }
       }
     };
@@ -292,8 +294,10 @@ export function LoginPromoters(props) {
         if (httpRequest.status === 200) {
           localStorage.setItem("authKey", httpRequest.responseText);
           // console.log(httpRequest.responseText);
+          props.userObj.setUser({...props.userObj.user, id: props.userObj.user.username})
         } else {
           console.error("Error: ", httpRequest.status, httpRequest.statusText);
+          props.userObj.setUser({id: '',username: '', password: ''})
         }
       }
     };
@@ -396,6 +400,7 @@ export function LoginArtist(props) {
           // console.log(httpRequest.responseText);
         } else {
           console.error("Error: ", httpRequest.status, httpRequest.statusText);
+          props.userObj.setUser({id: '',username: '', password: ''})
         }
       }
     };

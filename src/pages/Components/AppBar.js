@@ -16,7 +16,7 @@ import { Link } from "react-router-dom/";
 function ResponsiveAppBar(props) {
   const [isAuth, setIsAuth] = React.useState(false);
   React.useEffect(() => { 
-    if( props.userObj.user.username !== ''){
+    if( props.userObj.user.id !== ''){
       setIsAuth(true)
     }
    },[props.userObj]);
