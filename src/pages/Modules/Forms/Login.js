@@ -1,8 +1,20 @@
 import { Box, Stack, Link, Grid } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button, Checkbox, FormControlLabel } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  FormControl,
+} from "@mui/material";
 import im3 from "../../../Assets/background.jpg";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
 
 export function LoginAdmin() {
   const [CF, setCF] = useState("");
@@ -11,6 +23,11 @@ export function LoginAdmin() {
     e.preventDefault();
     console.log("Email:", CF);
     console.log("Password:", password);
+  };
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
   };
   return (
     <>
@@ -44,18 +61,35 @@ export function LoginAdmin() {
                 required
                 id="email"
                 label="Fiscal Code"
-                variant="standard"
+                variant="outlined"
                 onChange={(e) => setCF(e.target.value)}
                 style={{ marginBottom: "10px" }}
               />
-              <TextField
-                required
-                id="password"
-                label="Password"
-                variant="standard"
+              <FormControl
+                variant="outlined"
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ marginBottom: "10px" }}
-              />
+              >
+                <InputLabel htmlFor="outlined-adornment-password">
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
+                />
+              </FormControl>
               <FormControlLabel control={<Checkbox />} label="Remember me" />
               <Button type="submit" variant="outlined">
                 Login
@@ -88,7 +122,11 @@ export function LoginClients() {
   const [CF, setCF] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -130,7 +168,7 @@ export function LoginClients() {
                   );
 
                   // Dopo aver impostato tutti i dati nella localStorage, ricarica la pagina
-                  navigate('/Home')
+                  navigate("/Home");
                   window.location.reload();
                 }
               }
@@ -172,25 +210,42 @@ export function LoginClients() {
         className={"center"}
       >
         <div>
-          <h2>Login as a Client</h2>
+          <h2>Login as a Customer</h2>
           <form onSubmit={handleSubmit}>
             <Stack direction={"column"} spacing={3}>
               <TextField
                 required
                 id="email"
                 label="Fiscal Code"
-                variant="standard"
+                variant="outlined"
                 onChange={(e) => setCF(e.target.value)}
                 style={{ marginBottom: "10px" }}
               />
-              <TextField
-                required
-                id="password"
-                label="Password"
-                variant="standard"
+              <FormControl
+                variant="outlined"
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ marginBottom: "10px" }}
-              />
+              >
+                <InputLabel htmlFor="outlined-adornment-password">
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
+                />
+              </FormControl>
               <FormControlLabel control={<Checkbox />} label="Remember me" />
               <Button type="submit" variant="outlined">
                 Login
@@ -219,7 +274,11 @@ export function LoginClients() {
 
 export function LoginPromoters() {
   const [CF, setCF] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
   const [password, setPassword] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -283,18 +342,35 @@ export function LoginPromoters() {
                 required
                 id="email"
                 label="Fiscal Code"
-                variant="standard"
+                variant="outlined"
                 onChange={(e) => setCF(e.target.value)}
                 style={{ marginBottom: "10px" }}
               />
-              <TextField
-                required
-                id="password"
-                label="Password"
-                variant="standard"
+              <FormControl
+                variant="outlined"
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ marginBottom: "10px" }}
-              />
+              >
+                <InputLabel htmlFor="outlined-adornment-password">
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
+                />
+              </FormControl>
 
               <FormControlLabel control={<Checkbox />} label="Remember me" />
 
@@ -323,6 +399,11 @@ export function LoginPromoters() {
 }
 
 export function LoginArtist() {
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
   const [CF, setCF] = useState("");
   const [password, setPassword] = useState("");
   const handleSubmit = (e) => {
@@ -348,7 +429,7 @@ export function LoginArtist() {
           localStorage.setItem("authKey", httpRequest.responseText);
           // console.log(httpRequest.responseText);
         } else {
-          console.error("Error: ", httpRequest.status, httpRequest.statusText);
+          alert("Error: ", httpRequest.status, httpRequest.statusText);
         }
       }
     };
@@ -387,18 +468,35 @@ export function LoginArtist() {
                 required
                 id="email"
                 label="Fiscal Code"
-                variant="standard"
+                variant="outlined"
                 onChange={(e) => setCF(e.target.value)}
                 style={{ marginBottom: "10px" }}
               />
-              <TextField
-                required
-                id="password"
-                label="Password"
-                variant="standard"
+              <FormControl
+                variant="outlined"
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ marginBottom: "10px" }}
-              />
+              >
+                <InputLabel htmlFor="outlined-adornment-password">
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
+                />
+              </FormControl>
 
               <FormControlLabel control={<Checkbox />} label="Remember me" />
 
@@ -415,7 +513,7 @@ export function LoginArtist() {
                   <Link href={"/forgotPassword"}>{"Forgot Password?"}</Link>
                 </Grid>
                 <Grid item>
-                  <Link href={"/signUpPromoters"}>{"Sign Up"}</Link>{" "}
+                  <Link href={"/signUpArtist"}>{"Sign Up"}</Link>{" "}
                 </Grid>
               </Grid>
             </Stack>

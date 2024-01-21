@@ -12,11 +12,12 @@ export function EventCard({
   luogo,
   categoria,
   emailOrganizzatore,
+  location,
 }) {
   const navigate = useNavigate();
   return (
     <Stack
-    margin={'1rem'}
+      margin={"1rem"}
       spacing={1}
       style={{
         width: "15rem",
@@ -79,6 +80,7 @@ export function EventCard({
                 startDate,
                 endDate,
                 img,
+                location,
               },
             });
           }}

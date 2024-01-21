@@ -4,6 +4,7 @@ import { Box, Stack } from "@mui/material";
 import event1 from "../Assets/event1.jpg";
 import event2 from "../Assets/event2.jpg";
 import event3 from "../Assets/event3.jpg";
+import { useLocation } from "react-router-dom";
 export const Catalog = () => {
   const events = [
     {
@@ -82,7 +83,7 @@ export const Catalog = () => {
       img: event3,
     },
   ];
-
+  let location = useLocation();
   return (
     <>
       <Typography variant="h4" component={"div"} style={{ margin: "0.5rem" }}>
@@ -118,6 +119,7 @@ export const Catalog = () => {
                 prezzo={event.eventPrice}
                 descrizione={event.eventDescription}
                 img={event.img}
+                location={location.pathname}
               />
             </Grid>
           ))}

@@ -27,13 +27,16 @@ import {
 } from "./pages/Modules/Forms/Signup";
 import ForgotPassword from "./pages/Modules/Forms/ForgotPassword";
 import { EventPage } from "./pages/Components/EventPage";
+import { ArtistPage } from "./pages/Components/ArtistPage";
 import {
   AccountAdmin,
   AccountClient,
   AccountPromoters,
   AccountArtist,
 } from "./pages/Account";
-
+import GenericReview from "./pages/Components/GenericReview";
+import GenericArtwork from "./pages/Components/GenericArtwork";
+import { RequestFormPromoterForArtist } from "./pages/Modules/Forms/RequestFormPromoterForArtist";
 export default function App() {
   const renderSection = (x) => {
     switch (x) {
@@ -57,7 +60,7 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="/Client" element={<Client />} />
           <Route path="/ManagerEvent" element={<ManagerEvent />} />
-          <Route path="/Artist" element={<Artist />} />
+          <Route path="/Artists" element={<Artist />} />
           <Route path="/PayPage" element={<PayPage />} />
           <Route path="/Contacts" element={<Contacts />} />
           <Route path="/Events" element={<Catalog />} />
@@ -72,13 +75,20 @@ export default function App() {
           <Route path="LoginArtist" element={<LoginArtist />} />
           <Route path="LoginAdmin" element={<LoginAdmin />} />
           <Route path="SignUpArtist" element={<SignUpArtist />} />
+          <Route path="/ArtistPage" element={<ArtistPage />} />
+          <Route path="/GenericReview" element={<GenericReview />} />
+          <Route path="/GenericArtwork" element={<GenericArtwork />} />
+          <Route
+            path="/RequestFormPromoterForArtist"
+            element={<RequestFormPromoterForArtist />}
+          />
           {/*Quando faccio il routing devo capire il ruolo dell utente e 
           reindirizzarlo all'apposito Account per ora standard ho il Client, inserire nei parametri il ruolo per 
           mostrare una section diversa
           Passaggi: fai il login, identifica il ruolo dell'utente, metti il ruolo dell'utente nei parametri
           */}
-          {/*<Route path="/Account" element={renderSection(localStorage.getItem("userRole"))} />*/}
           <Route path="/Account" element={renderSection("ROLE_ARTIST")} />
+
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

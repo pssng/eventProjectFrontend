@@ -40,7 +40,10 @@ function Review({ yourName, reviewArtist }) {
             <Typography
               variant="body2"
               color="text.secondary"
-              style={{ overflowWrap: "break-word", width: "100%" }}
+              style={{
+                overflowWrap: "break-word",
+                width: "100%",
+              }}
             >
               {reviewArtist}
             </Typography>

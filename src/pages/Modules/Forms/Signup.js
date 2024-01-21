@@ -64,7 +64,7 @@ export function SignUpClients() {
         className={"center"}
       >
         <div>
-          <h2>{"Sign Up as a Client"}</h2>
+          <h2>{"Sign Up as a Customer"}</h2>
           <form onSubmit={handleSubmit}>
             <Grid
               container

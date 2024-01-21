@@ -19,7 +19,7 @@ import { useLocation } from "react-router-dom";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import { Link } from "react-router-dom";
-export function EventPage() {
+export function EventPage(location) {
   const locationR = useLocation();
   const [isFavorited, setIsFavorited] = useState(false);
 
@@ -29,7 +29,7 @@ export function EventPage() {
 
   return (
     <Box style={{ textAlign: "left", padding: "1rem" }}>
-      <Link to={"/events"}>
+      <Link to={locationR.state.location}>
         <Button startIcon={<KeyboardDoubleArrowLeftIcon />}> Back</Button>
       </Link>
 
@@ -76,22 +76,32 @@ export function EventPage() {
                 </Typography>
               </Stack>
 
-              <Typography gutterBottom variant="h4" component="div" margin={'1rem'}>
+              <Typography
+                gutterBottom
+                variant="h4"
+                component="div"
+                margin={"1rem"}
+              >
                 {locationR.state.nome}
               </Typography>
 
               <hr style={{ color: "lightgray", width: "70%" }} />
 
-              <Typography variant="body1" component={'div'} olor="text.secondary" margin={'2rem 1rem 0 1rem '} style={{overflow:'auto', height:'10rem'}}>
+              <Typography
+                variant="body1"
+                component={"div"}
+                olor="text.secondary"
+                margin={"2rem 1rem 0 1rem "}
+                style={{ overflow: "auto", height: "10rem" }}
+              >
                 {locationR.state.descrizione}
-             
               </Typography>
             </CardContent>
 
             {/*TICKET ZONE */}
-            <CardContent style={{ textAlign: "right",margin:'0 1rem'}}>
+            <CardContent style={{ textAlign: "right", margin: "0 1rem" }}>
               <hr style={{ color: "lightgray" }} />
-              <Typography variant="h6" color="text.primary" component={'div'}>
+              <Typography variant="h6" color="text.primary" component={"div"}>
                 <b>Price: </b>
                 {locationR.state.prezzo}
               </Typography>
@@ -244,7 +254,7 @@ export function EventPage() {
                 </ul>
               </Grid>
             </Grid>
-            <Box style={{marginTop:'7rem'}}>
+            <Box style={{ marginTop: "7rem" }}>
               <Box
                 style={{
                   display: "flex",

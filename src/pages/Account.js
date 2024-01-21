@@ -46,7 +46,8 @@ import Review from "./Components/Review";
 import ModalReview from "./Components/ModalReview";
 import ModalUploadArtwork from "./Components/ModalUploadArtwork";
 import axios from "axios";
-
+import GenericReview from "./Components/GenericReview";
+import { useLocation } from "react-router-dom";
 const drawerWidth = 240;
 
 const opere = [
@@ -152,7 +153,7 @@ const events = [
 export function AccountClient() {
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
-
+  var location = useLocation();
   const renderSection = () => {
     switch (currentSection) {
       case "Profile":
@@ -212,6 +213,7 @@ export function AccountClient() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
                 />
               </Grid>
             ))}
@@ -257,6 +259,7 @@ export function AccountClient() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
                 />
               </Grid>
             ))}
@@ -480,27 +483,36 @@ export function AccountClient() {
             {[
               {
                 text: "Profile",
-                icon: <AccountBoxIcon style={{ color: "white" }} />,
+                icon: <AccountBoxIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Tickets",
-                icon: <ConfirmationNumberIcon style={{ color: "white" }} />,
+                icon: <ConfirmationNumberIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Favorites",
-                icon: <FavoriteIcon style={{ color: "white" }} />,
+                icon: <FavoriteIcon style={{ color: "gray" }} />,
               },
               {
                 text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
+                icon: <HistoryIcon style={{ color: "gray" }} />,
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
                 onClick={() => setCurrentSection(item.text)}
+                style={{
+                  color: currentSection === item.text ? "black" : "white",
+                }}
               >
-                <ListItemButton>
+                <ListItemButton
+                  style={{
+                    background:
+                      currentSection === item.text ? "white" : "black",
+                    color: currentSection === item.text ? "black" : "white",
+                  }}
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItemButton>
@@ -517,6 +529,7 @@ export function AccountClient() {
 export function AccountPromoters() {
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
+  var location = useLocation();
 
   const renderSection = () => {
     switch (currentSection) {
@@ -583,6 +596,7 @@ export function AccountPromoters() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
                 />
               </Grid>
             ))}
@@ -628,6 +642,7 @@ export function AccountPromoters() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
                 />
               </Grid>
             ))}
@@ -910,39 +925,48 @@ export function AccountPromoters() {
             {[
               {
                 text: "Profile",
-                icon: <AccountBoxIcon style={{ color: "white" }} />,
+                icon: <AccountBoxIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Tickets",
-                icon: <ConfirmationNumberIcon style={{ color: "white" }} />,
+                icon: <ConfirmationNumberIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Favorites",
-                icon: <FavoriteIcon style={{ color: "white" }} />,
+                icon: <FavoriteIcon style={{ color: "gray" }} />,
               },
               {
                 text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
+                icon: <HistoryIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Proposed Events",
-                icon: <CalendarViewDayIcon style={{ color: "white" }} />,
+                icon: <CalendarViewDayIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Incoming Requests",
-                icon: <InsertDriveFileIcon style={{ color: "white" }} />,
+                icon: <InsertDriveFileIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Send a Request",
-                icon: <ForwardToInboxIcon style={{ color: "white" }} />,
+                icon: <ForwardToInboxIcon style={{ color: "gray" }} />,
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
                 onClick={() => setCurrentSection(item.text)}
+                style={{
+                  color: currentSection === item.text ? "black" : "white",
+                }}
               >
-                <ListItemButton>
+                <ListItemButton
+                  style={{
+                    background:
+                      currentSection === item.text ? "white" : "black",
+                    color: currentSection === item.text ? "black" : "white",
+                  }}
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItemButton>
@@ -955,9 +979,10 @@ export function AccountPromoters() {
     </Box>
   );
 }
-//aggiunto le const e modificato la sezione artistic works
+//aggiunto le const e modificato la sezione Artworks
 export function AccountArtist() {
   //aggiunto qui opere
+  var location = useLocation();
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
   const [opere, setOpere] = useState([
@@ -1017,7 +1042,7 @@ export function AccountArtist() {
         return renderFavoritesSection();
       case "History of Events":
         return renderhistoryEventsSection();
-      case "Artistic Works":
+      case "Artworks":
         return renderOpereSection();
       case "Attended Events":
         return renderAttendedEventSection();
@@ -1072,6 +1097,7 @@ export function AccountArtist() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
                 />
               </Grid>
             ))}
@@ -1085,7 +1111,6 @@ export function AccountArtist() {
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
           Review
-          <ModalReview onReviewSubmit={handleReviewSubmit} />
         </Typography>
         <hr style={{ width: "70%", color: "lightgray" }} />
 
@@ -1101,8 +1126,8 @@ export function AccountArtist() {
           }}
         >
           <Grid container direction={"row"} spacing={3}>
-            {recensioniArtisti.map((rec) => (
-              <Grid item>
+            {recensioniArtisti.map((rec, index1) => (
+              <Grid item key={index1}>
                 {" "}
                 <Review
                   yourName={rec.yourName}
@@ -1152,6 +1177,7 @@ export function AccountArtist() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
                 />
               </Grid>
             ))}
@@ -1244,6 +1270,7 @@ export function AccountArtist() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
                 />
               </Grid>
             ))}
@@ -1490,7 +1517,7 @@ export function AccountArtist() {
       icon: <HistoryIcon style={{ color: "white" }} />,
     },
     {
-      text: "Artistic Works",
+      text: "Artworks",
       icon: <PaletteIcon style={{ color: "white" }} />,
     },
     {
@@ -1542,43 +1569,52 @@ export function AccountArtist() {
             {[
               {
                 text: "Profile",
-                icon: <AccountBoxIcon style={{ color: "white" }} />,
+                icon: <AccountBoxIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Tickets",
-                icon: <ConfirmationNumberIcon style={{ color: "white" }} />,
+                icon: <ConfirmationNumberIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Favorites",
-                icon: <FavoriteIcon style={{ color: "white" }} />,
+                icon: <FavoriteIcon style={{ color: "gray" }} />,
               },
               {
                 text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
+                icon: <HistoryIcon style={{ color: "gray" }} />,
               },
               {
-                text: "Artistic Works",
-                icon: <PaletteIcon style={{ color: "white" }} />,
+                text: "Artworks",
+                icon: <PaletteIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Attended Events",
-                icon: <CalendarViewDayIcon style={{ color: "white" }} />,
+                icon: <CalendarViewDayIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Request Participation",
-                icon: <ForwardToInboxIcon style={{ color: "white" }} />,
+                icon: <ForwardToInboxIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Artist Review",
-                icon: <ReviewsIcon style={{ color: "white" }} />,
+                icon: <ReviewsIcon style={{ color: "gray" }} />,
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
                 onClick={() => setCurrentSection(item.text)}
+                style={{
+                  color: currentSection === item.text ? "black" : "white",
+                }}
               >
-                <ListItemButton>
+                <ListItemButton
+                  style={{
+                    background:
+                      currentSection === item.text ? "white" : "black",
+                    color: currentSection === item.text ? "black" : "white",
+                  }}
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItemButton>
@@ -1827,23 +1863,32 @@ export function AccountAdmin() {
             {[
               {
                 text: "Profile",
-                icon: <AccountBoxIcon style={{ color: "white" }} />,
+                icon: <AccountBoxIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Incoming Requests",
-                icon: <InsertDriveFileIcon style={{ color: "white" }} />,
+                icon: <InsertDriveFileIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Support",
-                icon: <HelpOutlineIcon style={{ color: "white" }} />,
+                icon: <HelpOutlineIcon style={{ color: "gray" }} />,
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
                 onClick={() => setCurrentSection(item.text)}
+                style={{
+                  color: currentSection === item.text ? "black" : "white",
+                }}
               >
-                <ListItemButton>
+                <ListItemButton
+                  style={{
+                    background:
+                      currentSection === item.text ? "white" : "black",
+                    color: currentSection === item.text ? "black" : "white",
+                  }}
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItemButton>
