@@ -11,6 +11,9 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
 import {
   Grid,
   TextField,
@@ -526,12 +529,12 @@ export function AccountClient() {
   );
 }
 
-export function AccountPromoters() {
+export function AccountPromoters(props) {
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
   var location = useLocation();
 
-  const renderSection = () => {
+  const renderSection = (data) => {
     switch (currentSection) {
       case "Profile":
         return renderProfileSection();
@@ -543,16 +546,15 @@ export function AccountPromoters() {
       case "History of Events":
         return renderhistoryEventsSection();
       case "Proposed Events":
-        return renderProposedEventsSection();
+        return renderProposedEventsSection(data);
       case "Incoming Requests":
         return renderIncomingReqSection();
       case "Send a Request":
-        return <Request></Request>;
+        return <Request onSubmit={props.receiveFormData} />;
       default:
         return null;
     }
   };
-
   const renderTicketSection = () => {
     return (
       <Box style={{ display: "block" }}>
@@ -694,7 +696,7 @@ export function AccountPromoters() {
       </Box>
     );
   };
-  const renderProposedEventsSection = () => {
+  const renderProposedEventsSection = (data) => {
     return (
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
@@ -711,7 +713,38 @@ export function AccountPromoters() {
             textAlign: "left",
           }}
         >
-          No requests found
+          {console.log(props.formDataList)}
+          {props.formDataList?.length > 0 ? (
+            <Grid
+              container
+              direction={"row"}
+              spacing={1}
+              style={{ justifyContent: "space-evenly" }}
+            >
+              {props.formDataList?.map((formData, index) => (
+                <div key={index}>
+                  <Card style={{ width: "15rem", textAlign: "center" }}>
+                    <CardMedia
+                      component="img"
+                      height="100"
+                      image={event1}
+                      alt="green iguana"
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {formData.eventName}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {formData.describe}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </Grid>
+          ) : (
+            "No Events Proposed"
+          )}
         </Box>
       </Box>
     );
@@ -975,7 +1008,7 @@ export function AccountPromoters() {
           </List>
         </Drawer>
       )}
-      {renderSection()}
+      {renderSection(props.formDataList)}
     </Box>
   );
 }
@@ -1628,17 +1661,19 @@ export function AccountArtist() {
   );
 }
 
-export function AccountAdmin() {
+export function AccountAdmin(props) {
   const [currentSection, setCurrentSection] = useState("Profile");
-  const theme = useTheme();
 
-  const renderSection = () => {
+  const theme = useTheme();
+  var location = useLocation();
+
+  const renderSection = (data) => {
     switch (currentSection) {
       case "Profile":
         return renderProfileSection();
       // Aggiungi altri casi per le sezioni aggiuntive
       case "Incoming Requests":
-        return renderIncomingReqSection();
+        return renderIncomingReqSection(data);
       case "Support":
         return renderSupportSection();
       default:
@@ -1646,11 +1681,11 @@ export function AccountAdmin() {
     }
   };
 
-  const renderIncomingReqSection = () => {
+  const renderIncomingReqSection = (data) => {
     return (
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
-          Incoming Requests <hr style={{ width: "70%", color: "lightgray" }} />
+          Proposed Event <hr style={{ width: "70%", color: "lightgray" }} />
         </Typography>
 
         <Box
@@ -1659,12 +1694,42 @@ export function AccountAdmin() {
             border: "groove 1px gray",
             borderRadius: "10px",
             height: "70vh",
-            padding: "2rem",
+            padding: "1rem",
             textAlign: "left",
-            overflowX: "scroll",
           }}
         >
-          no data found
+          {console.log(props.formDataList)}
+          {props.formDataList?.length > 0 ? (
+            <Grid
+              container
+              direction={"row"}
+              spacing={1}
+              style={{ justifyContent: "space-evenly" }}
+            >
+              {props.formDataList?.map((formData, index) => (
+                <div key={index}>
+                  <Card style={{ width: "15rem", textAlign: "center" }}>
+                    <CardMedia
+                      component="img"
+                      height="100"
+                      image={event1}
+                      alt="green iguana"
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {formData.eventName}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {formData.describe}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </Grid>
+          ) : (
+            "No Requests"
+          )}
         </Box>
       </Box>
     );
@@ -1897,7 +1962,7 @@ export function AccountAdmin() {
           </List>
         </Drawer>
       )}
-      {renderSection()}
+      {renderSection(props.formDataList)}
     </Box>
   );
 }

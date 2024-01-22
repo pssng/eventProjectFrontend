@@ -59,7 +59,8 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-export const Request = () => {
+export const Request = ({ onSubmit }) => {
+  const [formData, setFormData] = useState(null);
   var data = new Date();
   var gg, mm, aaaa;
   gg = data.getDate() + "-";
@@ -93,13 +94,30 @@ export const Request = () => {
     } = event;
     setOurThemes(
       // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value,
+      typeof value === "string" ? value.split(",") : value
     );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     handleSendTicket();
+    const data = {
+      eventName,
+      describe,
+      locationName,
+      locationAddress,
+      eventRegion,
+      locationDescribe,
+      eventPrice,
+      promoterCf,
+      maxCustomers,
+      ourThemes,
+      pic,
+      permissionDocumentPath,
+      promoterIdCardPath,
+      buttonText,
+    };
+    onSubmit(data);
   };
   const handleSendTicket = () => {
     alert("Sended! Check your email!");
