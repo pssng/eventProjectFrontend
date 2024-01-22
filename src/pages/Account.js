@@ -688,6 +688,7 @@ export function AccountPromoters(props) {
                   prezzo={event.prezzo}
                   descrizione={event.descrizione}
                   img={event.img}
+                  location={location.pathname}
                 />
               </Grid>
             ))}

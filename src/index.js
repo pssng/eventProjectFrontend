@@ -38,7 +38,7 @@ import GenericReview from "./pages/Components/GenericReview";
 import GenericArtwork from "./pages/Components/GenericArtwork";
 import { RequestFormPromoterForArtist } from "./pages/Modules/Forms/RequestFormPromoterForArtist";
 export default function App() {
-  const [formDataList, setFormDataList] = useState([1, 2, 3]);
+  const [formDataList, setFormDataList] = useState([]);
   const receiveFormData = (data) => {
     setFormDataList([...formDataList, data]);
   };
@@ -103,7 +103,7 @@ export default function App() {
           mostrare una section diversa
           Passaggi: fai il login, identifica il ruolo dell'utente, metti il ruolo dell'utente nei parametri
           */}
-          <Route path="/Account" element={renderSection("ROLE_ADMIN")} />
+          <Route path="/Account" element={renderSection("ROLE_PROMOTER")} />
 
           <Route path="*" element={<NoPage />} />
         </Route>

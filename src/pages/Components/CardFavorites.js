@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { IconButton } from "@mui/material";
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 function CardLarge({
   descrizione,
   nome,
@@ -22,6 +22,7 @@ function CardLarge({
   luogo,
   categoria,
   emailOrganizzatore,
+  location,
 }) {
   const navigate = useNavigate();
   const [isFavorited, setIsFavorited] = useState(false);
@@ -30,7 +31,7 @@ function CardLarge({
     setIsFavorited(!isFavorited);
   };
   return (
-    <Card style={{ width: "15rem",textAlign:'center' }}>
+    <Card style={{ width: "15rem", textAlign: "center" }}>
       <CardMedia
         component="img"
         height="100"
@@ -58,8 +59,7 @@ function CardLarge({
           )}
         </IconButton>
         <IconButton
-        variant="text"
-        
+          variant="text"
           onClick={() => {
             navigate("/EventPage", {
               replace: true,
@@ -75,10 +75,12 @@ function CardLarge({
                 luogo,
                 categoria,
                 emailOrganizzatore,
+                location,
               },
             });
           }}
-        ><KeyboardDoubleArrowRightIcon/>
+        >
+          <KeyboardDoubleArrowRightIcon />
         </IconButton>
       </Stack>
     </Card>
