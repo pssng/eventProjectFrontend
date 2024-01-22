@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useState, useEffect } from "react";
 
-function CardOpere({ description, title, id, onUpdate, onDelete, onInsert }) {
+function CardOpere({ description, title, id, onUpdate, onDelete }) {
   const navigate = useNavigate();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
 
@@ -39,7 +39,7 @@ function CardOpere({ description, title, id, onUpdate, onDelete, onInsert }) {
   };
   useEffect(() => {
     // Questo effetto collaterale si attiverà ogni volta che cardData cambierà
-    console.log("Dati della card aggiornati:", title, description);
+    console.log("Dati della card aggiornati:", cardData);
   }, [cardData]); // Assicurati di specificare cardData come dipendenza
 
   const handleUpdate = (updatedTitle, updatedDescription) => {
@@ -60,7 +60,6 @@ function CardOpere({ description, title, id, onUpdate, onDelete, onInsert }) {
       onUpdate(updatedTitle, updatedDescription, id);
     }
   };
-
   return (
     <Card style={{ width: "15rem", textAlign: "left" }}>
       <CardMedia

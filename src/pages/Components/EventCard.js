@@ -12,6 +12,7 @@ export function EventCard({
   luogo,
   categoria,
   emailOrganizzatore,
+  location,
 }) {
   const navigate = useNavigate();
   return (
@@ -59,7 +60,7 @@ export function EventCard({
       {<hr />}
       {
         <Typography align="right" variant="body1">
-          <b>Price:</b>
+          <b>Ticket Price:</b>
           {`   ${prezzo} `}
         </Typography>
       }
@@ -79,6 +80,7 @@ export function EventCard({
                 startDate,
                 endDate,
                 img,
+                location,
               },
             });
           }}

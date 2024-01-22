@@ -88,6 +88,8 @@ export function LoginClients() {
   const [CF, setCF] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -129,9 +131,38 @@ export function LoginClients() {
                     roleHttpRequest.responseText
                   );
 
-                  // Dopo aver impostato tutti i dati nella localStorage, ricarica la pagina
-                  navigate('/Home')
-                  window.location.reload();
+                  if (localStorage.getItem("userRole") !== "") {
+                    const generalInfoUrl =
+                      "http://127.0.0.1:8080/public/generals";
+                    var generalsHttpRequest = new XMLHttpRequest();
+                    generalsHttpRequest.open("GET", generalInfoUrl, true);
+
+                    generalsHttpRequest.setRequestHeader(
+                      "Authorization",
+                      "Bearer " + localStorage.getItem("authKey")
+                    );
+                    generalsHttpRequest.onreadystatechange = function () {
+                      if (generalsHttpRequest.readyState === 4) {
+                        if (generalsHttpRequest.status === 200) {
+                          var responseBody = JSON.parse(
+                            generalsHttpRequest.responseText
+                          );
+                          localStorage.setItem("name", responseBody.name);
+                          localStorage.setItem("surname", responseBody.surname);
+                          localStorage.setItem("email", responseBody.email);
+                          localStorage.setItem("city", responseBody.city);
+                          localStorage.setItem("address", responseBody.address);
+                          localStorage.setItem(
+                            "birthDate",
+                            responseBody.birthDate
+                          );
+                          localStorage.setItem("fiscalCode", CF);
+                        }
+                      }
+                    };
+
+                    generalsHttpRequest.send();
+                  }
                 }
               }
             };
@@ -172,7 +203,7 @@ export function LoginClients() {
         className={"center"}
       >
         <div>
-          <h2>Login as a Client</h2>
+          <h2>Login as a Customer</h2>
           <form onSubmit={handleSubmit}>
             <Stack direction={"column"} spacing={3}>
               <TextField
@@ -192,7 +223,17 @@ export function LoginClients() {
                 style={{ marginBottom: "10px" }}
               />
               <FormControlLabel control={<Checkbox />} label="Remember me" />
-              <Button type="submit" variant="outlined">
+              <Button
+                type="submit"
+                variant="outlined"
+                onClick={() => {
+                  localStorage.clear();
+                  navigate("/Account?loggedIn=true");
+                  setIsLoggedIn(true);
+                  navigate("/Account?loggedIn=true");
+                }}
+                autoFocus
+              >
                 Login
               </Button>
 

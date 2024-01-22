@@ -20,8 +20,9 @@ import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrow
 import ModalRequestArtistForPromoter from "./ModalRequestArtistForPromoter";
 import { Link } from "react-router-dom";
 import ModalPayment from "./ModalPayment";
+import ModalReview from "./ModalReview";
 
-export function EventPage() {
+export function EventPageAccount() {
   const locationR = useLocation();
   const [isFavorited, setIsFavorited] = useState(false);
 
@@ -31,7 +32,7 @@ export function EventPage() {
 
   return (
     <Box style={{ textAlign: "left", padding: "1rem" }}>
-      <Link to={"/events"}>
+      <Link to={"/Account"}>
         <Button startIcon={<KeyboardDoubleArrowLeftIcon />}> Back</Button>
       </Link>
 
@@ -58,7 +59,7 @@ export function EventPage() {
                   <PlaceIcon
                     style={{ fontSize: 30, verticalAlign: "middle" }}
                   />
-                  {locationR.state.luogo}
+                  {locationR.state.eventRegion}
                 </Typography>
 
                 <Typography variant="body1" component={"div"}>
@@ -96,34 +97,20 @@ export function EventPage() {
                 margin={"2rem 1rem 0 1rem "}
                 style={{ overflow: "auto", height: "10rem" }}
               >
-                {locationR.state.descrizione}
+                {locationR.state.eventDescription}
               </Typography>
             </CardContent>
             {/*TICKET ZONE */}
             <CardContent>
               <hr style={{ color: "lightgray" }} />
-              <Grid container justifyContent="space-between">
-                <Grid item>
-                  <Typography
-                    style={{
-                      textAlign: "left",
-                    }}
-                  >
-                    Are you an artist?
-                    <ModalRequestArtistForPromoter />
+              <Grid container justifyContent="center">
+                <Grid item xs={12} style={{ textAlign: "center" }}>
+                  <Typography>
+                    Did you like the event? Let us know what do you think!
                   </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography
-                    variant="h6"
-                    color="text.primary"
-                    style={{
-                      textAlign: "right",
-                    }}
-                  >
-                    <b>Ticket Price: </b>
-                    {locationR.state.prezzo}
-                  </Typography>
+                  <Link to="/GenericReview" style={{ margin: "auto" }}>
+                    <Button size="large">Leave a review</Button>
+                  </Link>
                 </Grid>
               </Grid>
             </CardContent>
@@ -211,7 +198,7 @@ export function EventPage() {
                       Category:
                     </Typography>
                     <Typography style={{ color: "gray" }}>
-                      {locationR.state.categoria}
+                      {locationR.state.eventCategory}
                     </Typography>
                   </li>
                 </ul>
@@ -251,7 +238,7 @@ export function EventPage() {
                       Promoter:
                     </Typography>
                     <Typography style={{ color: "gray" }}>
-                      {locationR.state.organizzatore}
+                      {locationR.state.eventPromoter}
                     </Typography>
                   </li>
 
@@ -299,18 +286,6 @@ export function EventPage() {
                     />
                   )}
                 </IconButton>
-              </Box>
-              <Box
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Typography component={"div"} variant="body1" color="white">
-                  Buy Now
-                </Typography>
-                <ModalPayment />
               </Box>
             </Box>
           </Box>

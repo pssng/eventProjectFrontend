@@ -93,7 +93,7 @@ export const Request = () => {
     } = event;
     setOurThemes(
       // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value,
+      typeof value === "string" ? value.split(",") : value
     );
   };
 
@@ -148,15 +148,6 @@ export const Request = () => {
                   id="outlined-required"
                   label="Event Name"
                   onChange={(e) => setEventName(e.target.value)}
-                  style={{ width: "90%" }}
-                />
-              </Grid>
-              <Grid item md="4">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Describe Event"
-                  onChange={(e) => setDescribe(e.target.value)}
                   style={{ width: "90%" }}
                 />
               </Grid>

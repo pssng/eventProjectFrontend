@@ -22,6 +22,7 @@ function CardLarge({
   luogo,
   categoria,
   emailOrganizzatore,
+  location,
 }) {
   const navigate = useNavigate();
   const [isFavorited, setIsFavorited] = useState(false);
@@ -75,6 +76,7 @@ function CardLarge({
                 luogo,
                 categoria,
                 emailOrganizzatore,
+                location,
               },
             });
           }}
