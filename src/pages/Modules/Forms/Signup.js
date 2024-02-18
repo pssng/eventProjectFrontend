@@ -10,19 +10,35 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import im3 from "../../../Assets/background.jpg";
 import { validCF } from "./reg";
-
+import { styled } from "@mui/material/styles";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import Alert from "@mui/material/Alert";
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 export function SignUpClients() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
-  const [birthday, setBirthday] = useState("");
+  const [birthday, setBirthday] = React.useState(dayjs("2022-04-17"));
   const [city, setCity] = useState("");
-  const [nation, setNation] = useState("");
   const [address, setAddress] = useState("");
-
+  const [imageProfile, setImageProfile] = useState("");
   const [err, setErr] = useState("");
-
   const [fiscalCode, setFiscalCode] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
@@ -31,15 +47,48 @@ export function SignUpClients() {
     event.preventDefault();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validCF.test(fiscalCode)) {
-      //QUi chiamata api
+      const apiUrl = "http://127.0.0.1:8080/public/new_customer";
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fiscalCode: fiscalCode,
+            password: password,
+            name: name,
+            surname: surname,
+            city: city,
+            address: address,
+            birthDate: birthday,
+            email: email,
+            imgPath: imageProfile,
+          }),
+        });
+
+        if (response.ok) {
+          <Alert severity="success">
+            "User " + {fiscalCode} + " signed up successfully."
+          </Alert>;
+        }
+      } catch (error) {
+        console.error("Error during signup:", error);
+
+        <Alert severity="error">
+          Failed to sign up. Please try again later.
+        </Alert>;
+      }
     } else {
-      setErr("Fiscal Code not valid");
+      setErr("Invalid Fiscal Code");
     }
   };
+
   return (
     <>
       <style>
@@ -64,7 +113,7 @@ export function SignUpClients() {
         className={"center"}
       >
         <div>
-          <h2>{"Sign Up as a Client"}</h2>
+          <h2>{"Sign Up as a Customer"}</h2>
           <form onSubmit={handleSubmit}>
             <Grid
               container
@@ -89,12 +138,16 @@ export function SignUpClients() {
                 />
               </Grid>
               <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Date of Birth"
-                  onChange={(e) => setBirthday(e.target.value)}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    required
+                    label="Birth Date"
+                    defaultValue={dayjs("2022-04-17")}
+                    // con il backend usare = label="Controlled field"
+                    // con il backend usare = value={birthday}
+                    onChange={(e) => setBirthday(e.target.value)}
+                  />
+                </LocalizationProvider>
               </Grid>
               <Grid item md="5">
                 <TextField
@@ -118,14 +171,6 @@ export function SignUpClients() {
                   id="outlined-required"
                   label="City"
                   onChange={(e) => setCity(e.target.value)}
-                />
-              </Grid>
-              <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Nation"
-                  onChange={(e) => setNation(e.target.value)}
                 />
               </Grid>
 
@@ -166,11 +211,24 @@ export function SignUpClients() {
               </Grid>
               <Grid item md="10">
                 <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Upload file
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={(e) => setImageProfile(e.target)}
+                  />
+                </Button>
+              </Grid>
+              <Grid item md="10">
+                <Button
                   type="submit"
                   variant="outlined"
                   style={{ float: "right" }}
                 >
-                  Register
+                  Sign In
                 </Button>
                 {err}
               </Grid>
@@ -189,7 +247,6 @@ export function SignUpPromoters() {
   const [birthday, setBirthday] = useState("");
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
-  const [nation, setNation] = useState("");
   const [fiscalCode, setFiscalCode] = useState("");
 
   const [err, setErr] = useState("");
@@ -199,10 +256,40 @@ export function SignUpPromoters() {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (validCF.test(fiscalCode)) {
-      //QUi chiamata api
+      const apiUrl = "http://127.0.0.1:8080/public/new_promoter";
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fiscalCode: fiscalCode,
+            password: password,
+            name: name,
+            surname: surname,
+            city: city,
+            address: address,
+            birthDate: birthday,
+            email: email,
+          }),
+        });
+
+        if (response.ok) {
+          alert("User " + fiscalCode + " signed up successfully.");
+        } else {
+          const errorText = await response.text();
+          alert("Failed to sign up. Server error: " + errorText);
+        }
+      } catch (error) {
+        console.error("Error during signup:", error);
+        alert("Failed to sign up. Please try again later.");
+      }
     } else {
       setErr("Fiscal Code not valid");
     }
@@ -256,12 +343,16 @@ export function SignUpPromoters() {
                 />
               </Grid>
               <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Date of Birth"
-                  onChange={(e) => setBirthday(e.target.value)}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    required
+                    label="Birth Date"
+                    defaultValue={dayjs("2022-04-17")}
+                    // con il backend usare = label="Controlled field"
+                    // con il backend usare = value={birthday}
+                    onChange={(e) => setBirthday(e.target.value)}
+                  />
+                </LocalizationProvider>
               </Grid>
               <Grid item md="5">
                 <TextField
@@ -287,14 +378,7 @@ export function SignUpPromoters() {
                   onChange={(e) => setCity(e.target.value)}
                 />
               </Grid>
-              <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Nation"
-                  onChange={(e) => setNation(e.target.value)}
-                />
-              </Grid>
+
               <Grid item md="5">
                 <TextField
                   required
@@ -336,7 +420,7 @@ export function SignUpPromoters() {
                   variant="outlined"
                   style={{ float: "right" }}
                 >
-                  Register
+                  Sign In
                 </Button>
                 {err}
               </Grid>
@@ -356,7 +440,6 @@ export function SignUpArtist() {
   const [birthday, setBirthday] = useState("");
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
-  const [nation, setNation] = useState("");
   const [fiscalCode, setFiscalCode] = useState("");
 
   const [err, setErr] = useState("");
@@ -366,10 +449,40 @@ export function SignUpArtist() {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (validCF.test(fiscalCode)) {
-      //QUi chiamata api
+      const apiUrl = "http://127.0.0.1:8080/public/new_artist";
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fiscalCode: fiscalCode,
+            password: password,
+            name: name,
+            surname: surname,
+            city: city,
+            address: address,
+            birthDate: birthday,
+            email: email,
+          }),
+        });
+
+        if (response.ok) {
+          alert("User " + fiscalCode + " signed up successfully.");
+        } else {
+          const errorText = await response.text();
+          alert("Failed to sign up. Server error: " + errorText);
+        }
+      } catch (error) {
+        console.error("Error during signup:", error);
+        alert("Failed to sign up. Please try again later.");
+      }
     } else {
       setErr("Fiscal Code not valid");
     }
@@ -423,12 +536,16 @@ export function SignUpArtist() {
                 />
               </Grid>
               <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Date of Birth"
-                  onChange={(e) => setBirthday(e.target.value)}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    required
+                    label="Birth Date"
+                    defaultValue={dayjs("2022-04-17")}
+                    // con il backend usare = label="Controlled field"
+                    // con il backend usare = value={birthday}
+                    onChange={(e) => setBirthday(e.target.value)}
+                  />
+                </LocalizationProvider>
               </Grid>
               <Grid item md="5">
                 <TextField
@@ -454,14 +571,7 @@ export function SignUpArtist() {
                   onChange={(e) => setCity(e.target.value)}
                 />
               </Grid>
-              <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Nation"
-                  onChange={(e) => setNation(e.target.value)}
-                />
-              </Grid>
+
               <Grid item md="5">
                 <TextField
                   required
@@ -503,7 +613,7 @@ export function SignUpArtist() {
                   variant="outlined"
                   style={{ float: "right" }}
                 >
-                  Register
+                  Sign In
                 </Button>
                 {err}
               </Grid>

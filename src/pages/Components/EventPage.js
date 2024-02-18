@@ -16,20 +16,26 @@ import { useState, useEffect } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useLocation } from "react-router-dom";
-import PaymentsIcon from "@mui/icons-material/Payments";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import ModalRequestArtistForPromoter from "./ModalRequestArtistForPromoter";
 import { Link } from "react-router-dom";
+import ModalPayment from "./ModalPayment";
+
 export function EventPage() {
   const locationR = useLocation();
   const [isFavorited, setIsFavorited] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+
 
   const handleFavoriteClick = () => {
     setIsFavorited(!isFavorited);
   };
 
+  console.log("ID: "+locationR.state.id);
+
   return (
     <Box style={{ textAlign: "left", padding: "1rem" }}>
-      <Link to={"/events"}>
+      <Link to={locationR.state.location}>
         <Button startIcon={<KeyboardDoubleArrowLeftIcon />}> Back</Button>
       </Link>
 
@@ -76,25 +82,54 @@ export function EventPage() {
                 </Typography>
               </Stack>
 
-              <Typography gutterBottom variant="h4" component="div" margin={'1rem'}>
+              <Typography
+                gutterBottom
+                variant="h4"
+                component="div"
+                margin={"1rem"}
+              >
                 {locationR.state.nome}
               </Typography>
 
               <hr style={{ color: "lightgray", width: "70%" }} />
 
-              <Typography variant="body1" component={'div'} olor="text.secondary" margin={'2rem 1rem 0 1rem '} style={{overflow:'auto', height:'10rem'}}>
+              <Typography
+                variant="body1"
+                component={"div"}
+                olor="text.secondary"
+                margin={"2rem 1rem 0 1rem "}
+                style={{ overflow: "auto", height: "10rem" }}
+              >
                 {locationR.state.descrizione}
-             
               </Typography>
             </CardContent>
-
             {/*TICKET ZONE */}
-            <CardContent style={{ textAlign: "right",margin:'0 1rem'}}>
+            <CardContent>
               <hr style={{ color: "lightgray" }} />
-              <Typography variant="h6" color="text.primary" component={'div'}>
-                <b>Price: </b>
-                {locationR.state.prezzo}
-              </Typography>
+              <Grid container justifyContent="space-between">
+                <Grid item>
+                  <Typography
+                    style={{
+                      textAlign: "left",
+                    }}
+                  >
+                    Are you an artist?
+                    <ModalRequestArtistForPromoter />
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography
+                    variant="h6"
+                    color="text.primary"
+                    style={{
+                      textAlign: "right",
+                    }}
+                  >
+                    <b>Ticket Price: </b>
+                    {locationR.state.prezzo}
+                  </Typography>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
         </Grid>
@@ -244,7 +279,7 @@ export function EventPage() {
                 </ul>
               </Grid>
             </Grid>
-            <Box style={{marginTop:'7rem'}}>
+            <Box style={{ marginTop: "7rem" }}>
               <Box
                 style={{
                   display: "flex",
@@ -279,13 +314,7 @@ export function EventPage() {
                 <Typography component={"div"} variant="body1" color="white">
                   Buy Now
                 </Typography>
-                <IconButton
-                  aria-label="buy now"
-                  onClick={() => {}}
-                  color={"white"}
-                >
-                  <PaymentsIcon style={{ fontSize: 30, color: "white" }} />
-                </IconButton>
+                <ModalPayment quantity = {quantity} setQuantity = {setQuantity} id = {locationR.state.id}/>
               </Box>
             </Box>
           </Box>

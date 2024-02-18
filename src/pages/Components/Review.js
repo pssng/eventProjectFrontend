@@ -9,10 +9,10 @@ import {
   CardContent,
   Card,
 } from "@mui/material";
-import Rating from "./Rating";
+import StaticRating from "./StaticRating";
 import Typography from "@mui/material/Typography";
 
-function Review({ yourName, reviewArtist }) {
+function Review({ yourName, reviewArtist, rating }) {
   return (
     <Card
       style={{
@@ -68,7 +68,7 @@ function Review({ yourName, reviewArtist }) {
               Rating
             </Typography>
             <div style={{ margin: "auto" }}>
-              <Rating />
+              <StaticRating value={rating} />{" "}
             </div>
           </Stack>
         </Grid>

@@ -1,6 +1,7 @@
 import { Box, Grid, TextField, Button, Typography } from "@mui/material";
 import { useState } from "react";
 import im3 from "../Assets/background.jpg";
+import Alert from "@mui/material/Alert";
 
 export const Contacts = () => {
   const [name, setName] = useState("");
@@ -10,20 +11,43 @@ export const Contacts = () => {
   const [confermaEmail, setConfermaEmail] = useState("");
   const [buttonText, setButtonText] = useState("Send Ticket!");
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Name", name);
-    console.log("Surname", surname);
-    console.log("Email", email);
-    console.log("Conferma Email", confermaEmail);
-    console.log("Describe your Problem", describe);
+
+  const handleSubmit = () => {
+    
+    const apiUrl = "http://127.0.0.1:8080/public/support/new_ticket"
+
+    let jsonData = {
+      userRealName: name,
+      userRealSurname: surname,
+      userEmail: email,
+      ticketDescription:describe,
+  };
+
+  var jsonString = JSON.stringify(jsonData);
+
+  var httpRequest = new XMLHttpRequest();
+
+  httpRequest.open("POST",apiUrl,true);
+  httpRequest.setRequestHeader("Content-Type", "application/json");
+
+  httpRequest.onreadystatechange = function(){
+    if(httpRequest.readyState === 4){
+      if(httpRequest.status === 200){
+        console.log("ok");
+      }
+    }
+  }
+
+  httpRequest.send(jsonString);
+
   };
   const handleSendTicket = () => {
-    alert("Sended! Check your email!");
+    <Alert severity="success">Sent! Check your email..</Alert>;
+    handleSubmit();
     setButtonDisabled(true);
   };
   function handleClick() {
-    setButtonText("Sended!");
+    setButtonText("Sent!");
   }
 
   return (

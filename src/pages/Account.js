@@ -1,5 +1,8 @@
 import * as React from "react";
-import { useState } from "react";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,6 +14,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import {
   Grid,
   TextField,
@@ -18,6 +26,8 @@ import {
   CardActions,
   Button,
   IconButton,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import { EventCard } from "./Components/EventCard";
 import event1 from "../Assets/event1.jpg";
@@ -26,7 +36,7 @@ import event3 from "../Assets/event3.jpg";
 import CardLarge from "./Components/CardFavorites";
 import { Request } from "./Modules/Forms/Request";
 import { useTheme } from "@mui/material/styles";
-
+import { Logout } from "@mui/icons-material";
 import CardOpere from "./Components/CardOpere";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Link } from "react-router-dom";
@@ -46,31 +56,13 @@ import Review from "./Components/Review";
 import ModalReview from "./Components/ModalReview";
 import ModalUploadArtwork from "./Components/ModalUploadArtwork";
 import axios from "axios";
+import GenericReview from "./Components/GenericReview";
+import { useNavigate, useLocation } from "react-router-dom";
+import LogoutIcon from "@mui/icons-material/Logout";
+import PlaceIcon from "@mui/icons-material/Place";
+
 
 const drawerWidth = 240;
-
-const opere = [
-  {
-    nome: "venere",
-    organizzatore: "Marck jset",
-    descrizione: "lorem impsWEEEjdhuceh",
-    img: event1,
-  },
-  {
-    nome: "Bacio",
-    organizzatore: "Marck jset",
-
-    descrizione: "lorem impsWEEEjdhuceh",
-    img: event2,
-  },
-  {
-    nome: "Infinito",
-    organizzatore: "Marck jset",
-
-    descrizione: "lorem impsWEEEjdhuceh",
-    img: event3,
-  },
-];
 const events = [
   {
     eventId: 4,
@@ -148,11 +140,44 @@ const events = [
     img: event3,
   },
 ];
+const opere = [
+  {
+    nome: "venere",
+    organizzatore: "Marck jset",
+    descrizione: "lorem impsWEEEjdhuceh",
+    img: event1,
+  },
+  {
+    nome: "Bacio",
+    organizzatore: "Marck jset",
 
-export function AccountClient() {
+    descrizione: "lorem impsWEEEjdhuceh",
+    img: event2,
+  },
+  {
+    nome: "Infinito",
+    organizzatore: "Marck jset",
+
+    descrizione: "lorem impsWEEEjdhuceh",
+    img: event3,
+  },
+];
+
+export function AccountClient(props) {
+  const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
+  var location = useLocation();
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+  const [open, setOpen] = React.useState(false);
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   const renderSection = () => {
     switch (currentSection) {
       case "Profile":
@@ -163,7 +188,6 @@ export function AccountClient() {
         return renderFavoritesSection();
       case "History of Events":
         return renderhistoryEventsSection();
-
       default:
         return null;
     }
@@ -212,6 +236,7 @@ export function AccountClient() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
                 />
               </Grid>
             ))}
@@ -308,6 +333,7 @@ export function AccountClient() {
       </Box>
     );
   };
+
   const renderProfileSection = () => {
     return (
       <Box
@@ -344,7 +370,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Name"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("name")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -354,7 +380,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Surname"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("surname")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -364,7 +390,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Date of Birth"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("birthDate")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -374,7 +400,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Email"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("email")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -384,7 +410,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="City"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("city")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -393,8 +419,8 @@ export function AccountClient() {
             <Grid item>
               <TextField
                 id="outlined-read-only-input"
-                label="Nation"
-                defaultValue="Hello World"
+                label="Address"
+                defaultValue={localStorage.getItem("address")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -404,7 +430,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Fiscal Code"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("fiscalCode")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -414,7 +440,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Role"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("userRole")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -473,52 +499,119 @@ export function AccountClient() {
           <Typography variant="h5">My Account</Typography>
           <Typography variant="caption" style={{ marginTop: "0px" }}>
             {" "}
-            For Clients{" "}
+            For Customer{" "}
           </Typography>
           <Divider />
           <List>
             {[
-              {
+                 {
                 text: "Profile",
-                icon: <AccountBoxIcon style={{ color: "white" }} />,
+                icon: <AccountBoxIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Tickets",
-                icon: <ConfirmationNumberIcon style={{ color: "white" }} />,
+                icon: <ConfirmationNumberIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Favorites",
-                icon: <FavoriteIcon style={{ color: "white" }} />,
+                icon: <FavoriteIcon style={{ color: "gray" }} />,
               },
               {
                 text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
+                icon: <HistoryIcon style={{ color: "gray" }} />,
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
                 onClick={() => setCurrentSection(item.text)}
+                style={{
+                  color: currentSection === item.text ? "black" : "white",
+                }}
               >
-                <ListItemButton>
+                <ListItemButton
+                  style={{
+                    background:
+                      currentSection === item.text ? "white" : "black",
+                    color: currentSection === item.text ? "black" : "white",
+                  }}
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
+          {/*LOGOUT SECTION */}
+          <React.Fragment>
+            <Box mt="auto" p={2}>
+              <Button
+                fullWidth
+                variant="outlined"
+                style={{ color: "black", backgroundColor: "white" }}
+                onClick={handleClickOpen}
+              >
+                <Typography variant="button" fontWeight="bold">
+                  Logout
+                </Typography>
+              </Button>
+            </Box>
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {"Are you sure you want to log out?"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  If you choose to log out you will be redirected to the home
+                  page.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>No</Button>
+                <Button
+                  onClick={() => {
+                    localStorage.clear();
+                    handleClose();
+                    navigate("/Home?loggedOut=true");
+                    setIsLoggedOut(true);
+                    props.setIsAuth(false);
+                    navigate("/Home?loggedOut=true");
+                  }}
+                  autoFocus
+                >
+                  Yes
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </React.Fragment>
         </Drawer>
       )}
       {renderSection()}
     </Box>
   );
 }
-
-export function AccountPromoters() {
+export function AccountPromoters(props) {
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
+  const navigate = useNavigate();
+  var location = useLocation();
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+  const [open, setOpen] = React.useState(false);
 
-  const renderSection = () => {
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const renderSection = (data) => {
     switch (currentSection) {
       case "Profile":
         return renderProfileSection();
@@ -530,11 +623,11 @@ export function AccountPromoters() {
       case "History of Events":
         return renderhistoryEventsSection();
       case "Proposed Events":
-        return renderProposedEventsSection();
+        return renderProposedEventsSection(data);
       case "Incoming Requests":
         return renderIncomingReqSection();
       case "Send a Request":
-        return <Request></Request>;
+        return <Request onSubmit={props.receiveFormData} />;
       default:
         return null;
     }
@@ -545,11 +638,6 @@ export function AccountPromoters() {
       <Box style={{ display: "block" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
           Tickets
-          <Link to={"../events"} style={{ float: "right" }}>
-            <IconButton color="success" fontSize={"inherit"}>
-              <AddCircleOutlineIcon />
-            </IconButton>
-          </Link>
           <hr style={{ width: "70%", color: "lightgray" }} />
         </Typography>
 
@@ -583,6 +671,7 @@ export function AccountPromoters() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
                 />
               </Grid>
             ))}
@@ -628,6 +717,8 @@ export function AccountPromoters() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
+
                 />
               </Grid>
             ))}
@@ -671,6 +762,7 @@ export function AccountPromoters() {
                   prezzo={event.prezzo}
                   descrizione={event.descrizione}
                   img={event.img}
+                  location={location.pathname}
                 />
               </Grid>
             ))}
@@ -679,7 +771,7 @@ export function AccountPromoters() {
       </Box>
     );
   };
-  const renderProposedEventsSection = () => {
+   const renderProposedEventsSection = (data) => {
     return (
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
@@ -696,7 +788,38 @@ export function AccountPromoters() {
             textAlign: "left",
           }}
         >
-          No requests found
+          {console.log(props.formDataList)}
+          {props.formDataList?.length > 0 ? (
+            <Grid
+              container
+              direction={"row"}
+              spacing={1}
+              style={{ justifyContent: "space-evenly" }}
+            >
+              {props.formDataList?.map((formData, index) => (
+                <div key={index}>
+                  <Card style={{ width: "15rem", textAlign: "center" }}>
+                    <CardMedia
+                      component="img"
+                      height="100"
+                      image={event1}
+                      alt="green iguana"
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {formData.eventName}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {formData.describe}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </Grid>
+          ) : (
+            "No Events Proposed"
+          )}
         </Box>
       </Box>
     );
@@ -762,7 +885,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Name"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("name")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -772,7 +895,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Surname"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("surname")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -782,7 +905,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Date of Birth"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("birthDate")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -792,7 +915,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Email"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("email")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -802,7 +925,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="City"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("city")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -811,8 +934,8 @@ export function AccountPromoters() {
             <Grid item>
               <TextField
                 id="outlined-read-only-input"
-                label="Nation"
-                defaultValue="Hello World"
+                label="Address"
+                defaultValue={localStorage.getItem("address")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -822,7 +945,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Fiscal Code"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("fiscalCode")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -832,7 +955,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Role"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("userRole")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -910,56 +1033,230 @@ export function AccountPromoters() {
             {[
               {
                 text: "Profile",
-                icon: <AccountBoxIcon style={{ color: "white" }} />,
+                icon: <AccountBoxIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Tickets",
-                icon: <ConfirmationNumberIcon style={{ color: "white" }} />,
+                icon: <ConfirmationNumberIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Favorites",
-                icon: <FavoriteIcon style={{ color: "white" }} />,
+                icon: <FavoriteIcon style={{ color: "gray" }} />,
               },
               {
                 text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
+                icon: <HistoryIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Proposed Events",
-                icon: <CalendarViewDayIcon style={{ color: "white" }} />,
+                icon: <CalendarViewDayIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Incoming Requests",
-                icon: <InsertDriveFileIcon style={{ color: "white" }} />,
+                icon: <InsertDriveFileIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Send a Request",
-                icon: <ForwardToInboxIcon style={{ color: "white" }} />,
+                icon: <ForwardToInboxIcon style={{ color: "gray" }} />,
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
                 onClick={() => setCurrentSection(item.text)}
+                style={{
+                  color: currentSection === item.text ? "black" : "white",
+                }}
               >
-                <ListItemButton>
+                <ListItemButton
+                  style={{
+                    background:
+                      currentSection === item.text ? "white" : "black",
+                    color: currentSection === item.text ? "black" : "white",
+                  }}
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
+          {/*LOGOUT SECTION */}
+          <React.Fragment>
+            <Box mt="auto" p={2}>
+              <Button
+                fullWidth
+                variant="outlined"
+                style={{ color: "black", backgroundColor: "white" }}
+                onClick={handleClickOpen}
+              >
+                <Typography variant="button" fontWeight="bold">
+                  Logout
+                </Typography>
+              </Button>
+            </Box>
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {"Are you sure you want to log out?"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  If you choose to log out you will be redirected to the home
+                  page.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>No</Button>
+                <Button
+                  onClick={() => {
+                    localStorage.clear();
+                    handleClose();
+                    navigate("/Home?loggedOut=true");
+                    setIsLoggedOut(true);
+                    props.setIsAuth(false);
+                    navigate("/Home?loggedOut=true");
+                  }}
+                  autoFocus
+                >
+                  Yes
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </React.Fragment>
         </Drawer>
       )}
-      {renderSection()}
+            {renderSection(props.formDataList)}
+
     </Box>
   );
 }
-//aggiunto le const e modificato la sezione artistic works
-export function AccountArtist() {
+
+export function AccountArtist(
+  eventName,
+  eventDescription,
+  startDate,
+  endDate,
+  eventCategory,
+  eventRegion,
+  eventPrice,
+  eventPromoter,
+  emailOrganizzatore,
+  img,
+  props,
+) {
+  const events = [
+    {
+      eventId: 4,
+      eventName: "Sarà davvero una torta?",
+      eventDescription:
+        "Se sei un appassionato di dolci e ami le sorprese, facciamo al caso tuo!",
+      maximumCapacity: 70,
+      startDate: "2024-05-20",
+      endDate: "2024-05-20",
+      eventCategory: "Cucina",
+      eventRegion: "Lazio",
+      eventPrice: "$ 23,54",
+      eventPromoter: "Mark Datels",
+      emailOrganizzatore: "Mark_Datels@exemple.xyz",
+      img: event3,
+    },
+    {
+      eventId: 4,
+      eventName: "Sarà davvero una torta?",
+      eventDescription:
+        "Se sei un appassionato di dolci e ami le sorprese, facciamo al caso tuo!",
+      maximumCapacity: 70,
+      startDate: "2024-05-20",
+      endDate: "2024-05-20",
+      eventCategory: "Cucina",
+      eventRegion: "Lazio",
+      eventPrice: "$ 23,54",
+      eventPromoter: "Mark Datels",
+      emailOrganizzatore: "Mark_Datels@exemple.xyz",
+      img: event3,
+    },
+    {
+      eventId: 4,
+      eventName: "Sarà davvero una torta?",
+      eventDescription:
+        "Se sei un appassionato di dolci e ami le sorprese, facciamo al caso tuo!",
+      maximumCapacity: 70,
+      startDate: "2024-05-20",
+      endDate: "2024-05-20",
+      eventCategory: "Cucina",
+      eventRegion: "Lazio",
+      eventPrice: "$ 23,54",
+      eventPromoter: "Mark Datels",
+      emailOrganizzatore: "Mark_Datels@exemple.xyz",
+      img: event3,
+    },
+    {
+      eventId: 4,
+      eventName: "Sarà davvero una torta?",
+      eventDescription:
+        "Se sei un appassionato di dolci e ami le sorprese, facciamo al caso tuo!",
+      maximumCapacity: 70,
+      startDate: "2024-05-20",
+      endDate: "2024-05-20",
+      eventCategory: "Cucina",
+      eventRegion: "Lazio",
+      eventPrice: "$ 23,54",
+      eventPromoter: "Mark Datels",
+      emailOrganizzatore: "Mark_Datels@exemple.xyz",
+      img: event3,
+    },
+    {
+      eventId: 4,
+      eventName: "Sarà davvero una torta?",
+      eventDescription:
+        "Se sei un appassionato di dolci e ami le sorprese, facciamo al caso tuo!",
+      maximumCapacity: 70,
+      startDate: "2024-05-20",
+      endDate: "2024-05-20",
+      eventCategory: "Cucina",
+      eventRegion: "Lazio",
+      eventPrice: "$ 23,54",
+      eventPromoter: "Mark Datels",
+      emailOrganizzatore: "Mark_Datels@exemple.xyz",
+      img: event3,
+    },
+  ];
   //aggiunto qui opere
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
+  const navigate = useNavigate();
+  var location = useLocation();
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setIsLoggedOut(false);
+  };
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    if (queryParams.get("loggedIn")) {
+      // Se la query string contiene "loggedOut=true", mostra la Snackbar
+      setIsLoggedOut(true);
+    }
+  }, [location.search]);
+
   const [opere, setOpere] = useState([
     {
       nome: "venere",
@@ -1017,7 +1314,7 @@ export function AccountArtist() {
         return renderFavoritesSection();
       case "History of Events":
         return renderhistoryEventsSection();
-      case "Artistic Works":
+      case "Artworks":
         return renderOpereSection();
       case "Attended Events":
         return renderAttendedEventSection();
@@ -1025,20 +1322,17 @@ export function AccountArtist() {
         return <Request></Request>;
       case "Artist Review":
         return renderArtistReview();
+
       default:
         return null;
     }
   };
+
   const renderTicketSection = () => {
     return (
       <Box style={{ display: "block" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
           Tickets
-          <Link to={"../events"} style={{ float: "right" }}>
-            <IconButton color="success" fontSize={"inherit"}>
-              <AddCircleOutlineIcon />
-            </IconButton>
-          </Link>
           <hr style={{ width: "70%", color: "lightgray" }} />
         </Typography>
 
@@ -1048,7 +1342,7 @@ export function AccountArtist() {
             border: "groove 1px gray",
             borderRadius: "10px",
             height: "80vh",
-            padding: "2rem",
+            padding: "2rem", 
             textAlign: "left",
             overflowX: "scroll",
           }}
@@ -1072,6 +1366,8 @@ export function AccountArtist() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
+
                 />
               </Grid>
             ))}
@@ -1085,7 +1381,6 @@ export function AccountArtist() {
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
           Review
-          <ModalReview onReviewSubmit={handleReviewSubmit} />
         </Typography>
         <hr style={{ width: "70%", color: "lightgray" }} />
 
@@ -1101,8 +1396,8 @@ export function AccountArtist() {
           }}
         >
           <Grid container direction={"row"} spacing={3}>
-            {recensioniArtisti.map((rec) => (
-              <Grid item>
+            {recensioniArtisti.map((rec,index1) => (
+              <Grid item key={index1}>
                 {" "}
                 <Review
                   yourName={rec.yourName}
@@ -1141,18 +1436,73 @@ export function AccountArtist() {
           >
             {events.map((event) => (
               <Grid item>
-                <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.img}
-                />
+                <Stack
+                  margin={"1rem"}
+                  spacing={1}
+                  style={{
+                    width: "15rem",
+                    wordWrap: "breakWord",
+                    textAlign: "center",
+                  }}
+                >
+                  <img
+                    src={event.img}
+                    style={{
+                      border: "1px solid #ddd",
+                      bordeRadius: "4px",
+                      padding: "5px",
+                      width: "14rem",
+                      height: "7rem",
+                    }}
+                  ></img>
+                  <Typography component={"i"} variant="h6">
+                    <b>{event.eventName}</b>
+                  </Typography>
+                  <Typography variant="subtitle">
+                    <i>On:</i>
+                    {`  ${event.startDate} to ${event.endDate}`}
+                  </Typography>
+                  <Typography>
+                    <PlaceIcon />
+                    {`  ${event.eventRegion} `}
+                  </Typography>
+                  <Typography component={"subtitle"}>
+                    <i>Category:</i>
+                    {`  ${event.eventCategory} `}
+                  </Typography>
+                  {/* <Typography component={'div'} variant="body1" sx ={{ textOverflow: 'ellipsis', overflow: 'hidden',
+            whiteSpace: 'nowrap'}}>{descrizione}</Typography>
+        */}
+                  <Typography align="right" variant="caption">
+                    <i>By:</i>
+                    {`   ${event.eventPromoter}`}
+                  </Typography>
+                  {<hr />}
+
+                  {
+                    <Button
+                      onClick={() => {
+                        navigate("/EventPageAccount", {
+                          replace: true,
+                          state: {
+                            eventName: event.eventName,
+                            eventDescription: event.eventDescription, 
+                            startDate: event.startDate,
+                            endDate: event.endDate,
+                            eventCategory: event.eventCategory,
+                            eventRegion: event.eventRegion,
+                            eventPromoter: event.eventPromoter,
+                            emailOrganizzatore: event.emailOrganizzatore,
+                            img: event.img,
+                          },
+                        });
+                      }}
+                    >
+                      {" "}
+                      Show More
+                    </Button>
+                  }
+                </Stack>
               </Grid>
             ))}
           </Grid>
@@ -1199,6 +1549,8 @@ export function AccountArtist() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                                    location={location.pathname}
+
                 />
               </Grid>
             ))}
@@ -1244,6 +1596,8 @@ export function AccountArtist() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.img}
+                  location={location.pathname}
+
                 />
               </Grid>
             ))}
@@ -1356,119 +1710,138 @@ export function AccountArtist() {
 
   const renderProfileSection = () => {
     return (
-      <Box
-        style={{
-          height: "30rem",
-          width: "40rem",
-          padding: "2rem",
-          backgroundColor: "#a0c4ff",
-        }}
-        className="center"
-      >
-        <div
+      <div>
+        {isLoggedIn && (
+          <Snackbar
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            open={isLoggedIn}
+            autoHideDuration={3000}
+            onClose={handleCloseSnackbar}
+          >
+            <Alert
+              onClose={handleCloseSnackbar}
+              severity="success"
+              variant="filled"
+            >
+              Welcome back {localStorage.getItem("name")} +{" "}
+              {localStorage.getItem("surname")}
+            </Alert>
+          </Snackbar>
+        )}
+        <Box
           style={{
-            backgroundColor: "#eaf4f4",
             height: "30rem",
             width: "40rem",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "black",
+            padding: "2rem",
+            backgroundColor: "#a0c4ff",
           }}
+          className="center"
         >
-          <Typography variant="h4" style={{ marginBottom: "1em" }}>
-            Profile
-          </Typography>
-          <Grid
-            container
-            direction={"row"}
-            spacing={3}
-            style={{ justifyContent: "center" }}
+          <div
+            style={{
+              backgroundColor: "#eaf4f4",
+              height: "30rem",
+              width: "40rem",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "black",
+            }}
           >
-            <Grid item>
-              <TextField
-                id="outlined-read-only-input"
-                label="Name"
-                defaultValue="Hello World"
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
+            <Typography variant="h4" style={{ marginBottom: "1em" }}>
+              Profile
+            </Typography>
+            <Grid
+              container
+              direction={"row"}
+              spacing={3}
+              style={{ justifyContent: "center" }}
+            >
+              <Grid item>
+                <TextField
+                  id="outlined-read-only-input"
+                  label="Name"
+                  defaultValue={localStorage.getItem("name")}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  id="outlined-read-only-input"
+                  label="Surname"
+                  defaultValue={localStorage.getItem("surname")}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  id="outlined-read-only-input"
+                  label="Date of Birth"
+                  defaultValue={localStorage.getItem("birthDate")}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  id="outlined-read-only-input"
+                  label="Email"
+                  defaultValue={localStorage.getItem("email")}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  id="outlined-read-only-input"
+                  label="City"
+                  defaultValue={localStorage.getItem("city")}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  id="outlined-read-only-input"
+                  label="Address"
+                  defaultValue={localStorage.getItem("address")}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  id="outlined-read-only-input"
+                  label="Fiscal Code"
+                  defaultValue={localStorage.getItem("fiscalCode")}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  id="outlined-read-only-input"
+                  label="Role"
+                  defaultValue={localStorage.getItem("userRole")}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
             </Grid>
-            <Grid item>
-              <TextField
-                id="outlined-read-only-input"
-                label="Surname"
-                defaultValue="Hello World"
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                id="outlined-read-only-input"
-                label="Date of Birth"
-                defaultValue="Hello World"
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                id="outlined-read-only-input"
-                label="Email"
-                defaultValue="Hello World"
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                id="outlined-read-only-input"
-                label="City"
-                defaultValue="Hello World"
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                id="outlined-read-only-input"
-                label="Nation"
-                defaultValue="Hello World"
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                id="outlined-read-only-input"
-                label="Fiscal Code"
-                defaultValue="Hello World"
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                id="outlined-read-only-input"
-                label="Role"
-                defaultValue="Hello World"
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-          </Grid>
-        </div>
-      </Box>
+          </div>
+        </Box>
+      </div>
     );
   };
 
@@ -1490,7 +1863,7 @@ export function AccountArtist() {
       icon: <HistoryIcon style={{ color: "white" }} />,
     },
     {
-      text: "Artistic Works",
+      text: "Artworks",
       icon: <PaletteIcon style={{ color: "white" }} />,
     },
     {
@@ -1542,79 +1915,146 @@ export function AccountArtist() {
             {[
               {
                 text: "Profile",
-                icon: <AccountBoxIcon style={{ color: "white" }} />,
+                icon: <AccountBoxIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Tickets",
-                icon: <ConfirmationNumberIcon style={{ color: "white" }} />,
+                icon: <ConfirmationNumberIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Favorites",
-                icon: <FavoriteIcon style={{ color: "white" }} />,
+                icon: <FavoriteIcon style={{ color: "gray" }} />,
               },
               {
                 text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
+                icon: <HistoryIcon style={{ color: "gray" }} />,
               },
               {
-                text: "Artistic Works",
-                icon: <PaletteIcon style={{ color: "white" }} />,
+                text: "Artworks",
+                icon: <PaletteIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Attended Events",
-                icon: <CalendarViewDayIcon style={{ color: "white" }} />,
+                icon: <CalendarViewDayIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Request Participation",
-                icon: <ForwardToInboxIcon style={{ color: "white" }} />,
+                icon: <ForwardToInboxIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Artist Review",
-                icon: <ReviewsIcon style={{ color: "white" }} />,
+                icon: <ReviewsIcon style={{ color: "gray" }} />,
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
                 onClick={() => setCurrentSection(item.text)}
+                style={{
+                  color: currentSection === item.text ? "black" : "white",
+                }}
               >
-                <ListItemButton>
+                <ListItemButton
+                  style={{
+                    background:
+                      currentSection === item.text ? "white" : "black",
+                    color: currentSection === item.text ? "black" : "white",
+                  }}
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
+          {/*LOGOUT SECTION */}
+          <React.Fragment>
+            <Box mt="auto" p={2}>
+              <Button
+                fullWidth
+                variant="outlined"
+                style={{ color: "black", backgroundColor: "white" }}
+                onClick={handleClickOpen}
+              >
+                <Typography variant="button" fontWeight="bold">
+                  Logout
+                </Typography>
+              </Button>
+            </Box>
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {"Are you sure you want to log out?"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  If you choose to log out you will be redirected to the home
+                  page.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>No</Button>
+                <Button
+                  onClick={() => {
+                    localStorage.clear();
+                    handleClose();
+                    navigate("/Home?loggedOut=true");
+                    setIsLoggedOut(true);
+                    props.setIsAuth(false);
+                    navigate("/Home?loggedOut=true");
+                  }}
+                  autoFocus
+                >
+                  Yes
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </React.Fragment>
         </Drawer>
       )}
       {renderSection()}
     </Box>
   );
 }
-
-export function AccountAdmin() {
+export function AccountAdmin(props) {
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
+  const navigate = useNavigate();
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+  const [open, setOpen] = React.useState(false);
 
-  const renderSection = () => {
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const renderSection = (data) => {
     switch (currentSection) {
       case "Profile":
         return renderProfileSection();
       // Aggiungi altri casi per le sezioni aggiuntive
       case "Incoming Requests":
-        return renderIncomingReqSection();
+        return renderIncomingReqSection(data);
       case "Support":
         return renderSupportSection();
+
       default:
         return null;
     }
   };
 
-  const renderIncomingReqSection = () => {
+  const renderIncomingReqSection = (data) => {
     return (
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
-          Incoming Requests <hr style={{ width: "70%", color: "lightgray" }} />
+          Proposed Event <hr style={{ width: "70%", color: "lightgray" }} />
         </Typography>
 
         <Box
@@ -1623,17 +2063,46 @@ export function AccountAdmin() {
             border: "groove 1px gray",
             borderRadius: "10px",
             height: "70vh",
-            padding: "2rem",
+            padding: "1rem",
             textAlign: "left",
-            overflowX: "scroll",
           }}
         >
-          no data found
+          {console.log(props.formDataList)}
+          {props.formDataList?.length > 0 ? (
+            <Grid
+              container
+              direction={"row"}
+              spacing={1}
+              style={{ justifyContent: "space-evenly" }}
+            >
+              {props.formDataList?.map((formData, index) => (
+                <div key={index}>
+                  <Card style={{ width: "15rem", textAlign: "center" }}>
+                    <CardMedia
+                      component="img"
+                      height="100"
+                      image={event1}
+                      alt="green iguana"
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {formData.eventName}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {formData.describe}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </Grid>
+          ) : (
+            "No Requests"
+          )}
         </Box>
       </Box>
     );
   };
-
   const renderSupportSection = () => {
     return (
       <Box style={{ display: "block", width: "100%" }}>
@@ -1694,7 +2163,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Name"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("name")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1704,7 +2173,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Surname"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("surname")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1714,7 +2183,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Date of Birth"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("birthDate")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1724,7 +2193,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Email"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("email")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1734,7 +2203,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="City"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("city")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1743,8 +2212,8 @@ export function AccountAdmin() {
             <Grid item>
               <TextField
                 id="outlined-read-only-input"
-                label="Nation"
-                defaultValue="Hello World"
+                label="Address"
+                defaultValue={localStorage.getItem("address")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1754,7 +2223,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Fiscal Code"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("fiscalCode")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1764,7 +2233,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Role"
-                defaultValue="Hello World"
+                defaultValue={localStorage.getItem("userRole")}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1827,32 +2296,88 @@ export function AccountAdmin() {
             {[
               {
                 text: "Profile",
-                icon: <AccountBoxIcon style={{ color: "white" }} />,
+                icon: <AccountBoxIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Incoming Requests",
-                icon: <InsertDriveFileIcon style={{ color: "white" }} />,
+                icon: <InsertDriveFileIcon style={{ color: "gray" }} />,
               },
               {
                 text: "Support",
-                icon: <HelpOutlineIcon style={{ color: "white" }} />,
+                icon: <HelpOutlineIcon style={{ color: "gray" }} />,
               },
-            ].map((item) => (
+        ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
                 onClick={() => setCurrentSection(item.text)}
+                style={{
+                  color: currentSection === item.text ? "black" : "white",
+                }}
               >
-                <ListItemButton>
+                <ListItemButton
+                  style={{
+                    background:
+                      currentSection === item.text ? "white" : "black",
+                    color: currentSection === item.text ? "black" : "white",
+                  }}
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
+          {/*LOGOUT SECTION */}
+          <React.Fragment>
+            <Box mt="auto" p={2}>
+              <Button
+                fullWidth
+                variant="outlined"
+                style={{ color: "black", backgroundColor: "white" }}
+                onClick={handleClickOpen}
+              >
+                <Typography variant="button" fontWeight="bold">
+                  Logout
+                </Typography>
+              </Button>
+            </Box>
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {"Are you sure you want to log out?"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  If you choose to log out you will be redirected to the home
+                  page.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>No</Button>
+                <Button
+                  onClick={() => {
+                    localStorage.clear();
+                    handleClose();
+                    navigate("/Home?loggedOut=true");
+                    setIsLoggedOut(true);
+                    props.setIsAuth(false);
+                    navigate("/Home?loggedOut=true");
+                  }}
+                  autoFocus
+                >
+                  Yes
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </React.Fragment>
         </Drawer>
       )}
-      {renderSection()}
+      {renderSection(props.formDataList)}
     </Box>
   );
 }

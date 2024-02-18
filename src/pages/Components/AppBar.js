@@ -12,16 +12,20 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import LoginIcon from "@mui/icons-material/Login";
 import { Link } from "react-router-dom/";
+import { useLocation } from "react-router-dom/";
 
-function ResponsiveAppBar() {
-  const [isAuth, setIsAuth] = React.useState(true);
+function ResponsiveAppBar(props) {
 
-  
-  const pages = [{ name: "Home" }, { name: "Events" }, { name: "Contacts" }];
+  const pages = [
+    { name: "Home" },
+    { name: "Events" },
+    { name: "Contacts" },
+    { name: "Artists" },
+  ];
 
   const logins = [
     { name: "Promoters", action: "/loginPromoters" },
-    { name: "Clients", action: "/loginClients" },
+    { name: "Customer", action: "/loginClients" },
     { name: "Artist", action: "/loginArtist" },
     { name: "Admin", action: "/loginAdmin" },
   ];
@@ -43,7 +47,10 @@ function ResponsiveAppBar() {
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
+  let location = useLocation();
 
+  const pathName = window.location.pathname;
+  console.log("APPBAR: " + props.isAuth);
   return (
     <AppBar
       position="static"
@@ -140,20 +147,36 @@ function ResponsiveAppBar() {
                 to={`/${page.name}`}
                 key={page.name}
               >
-                <Button sx={{ my: 2, color: "white", display: "block" }}>
+                <Button
+                  style={{
+                    background:
+                      pathName === `/${page.name}` ? "aliceblue" : "black",
+                    color: pathName === `/${page.name}` ? "black" : "white",
+                    textDecoration: "none",
+                  }}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
                   {page.name}
                 </Button>
               </Link>
             ))}
           </Box>
 
-          {isAuth ? (
-           <Link
+          {props.isAuth ? (
+            <Link
               style={{ textDecoration: "none" }}
               to={`/Account`}
               key={"Account"}
             >
-              <Button sx={{ my: 2, color: "white", display: "block" }}>
+              <Button
+                style={{
+                  background: pathName === "/Account" ? "white" : "black",
+                  color: pathName === "/Account" ? "black" : "white",
+                  textDecoration: "none",
+                  display: "block",
+                }}
+                sx={{ my: 2, display: "block" }}
+              >
                 {"Account"}
               </Button>
             </Link>

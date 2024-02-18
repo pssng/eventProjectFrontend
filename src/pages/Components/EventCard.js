@@ -2,6 +2,7 @@ import { Box, Button, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PlaceIcon from "@mui/icons-material/Place";
 export function EventCard({
+  id,
   nome,
   descrizione,
   organizzatore,
@@ -12,6 +13,7 @@ export function EventCard({
   luogo,
   categoria,
   emailOrganizzatore,
+  location,
 }) {
   const navigate = useNavigate();
   return (
@@ -59,7 +61,7 @@ export function EventCard({
       {<hr />}
       {
         <Typography align="right" variant="body1">
-          <b>Price:</b>
+          <b>Ticket Price:</b>
           {`   ${prezzo} `}
         </Typography>
       }
@@ -69,6 +71,7 @@ export function EventCard({
             navigate("/EventPage", {
               replace: true,
               state: {
+                id,
                 categoria,
                 nome,
                 luogo,
@@ -79,6 +82,7 @@ export function EventCard({
                 startDate,
                 endDate,
                 img,
+                location,
               },
             });
           }}
