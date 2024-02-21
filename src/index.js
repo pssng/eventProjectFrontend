@@ -11,7 +11,8 @@ import { ManagerEvent } from "./pages/ManagerEvent";
 import { useState } from "react";
 import { Client } from "./pages/Client";
 import { Artist } from "./pages/Artist";
-import { PayPage } from "./pages/PayPage";
+import { PaymentCorrect} from "./pages/PaymentCorrect";
+import { PaymentError } from "./pages/PaymentError";
 import { Contacts } from "./pages/Contacts";
 import { Catalog } from "./pages/Catalog";
 import { RequestFormEventArtist } from "./pages/Modules/Forms/RequestFormArtist";
@@ -80,7 +81,7 @@ export default function App() {
           <Route path="/Client" element={<Client />} />
           <Route path="/ManagerEvent" element={<ManagerEvent />} />
           <Route path="/Artists" element={<Artist />} />
-          <Route path="/PayPage" element={<PayPage />} />
+        
           <Route path="/Contacts" element={<Contacts />} />
           <Route path="/Events" element={<Catalog />} />
           <Route path="/RequestArtist" element={<RequestFormEventArtist />} />
@@ -108,6 +109,8 @@ export default function App() {
           {/*<Route path="/Account" element={renderSection(localStorage.getItem("userRole"))}/>*/}
           <Route path="*" element={<NoPage />} />
         </Route>
+        <Route path="/PaymentCorrect" element={<PaymentCorrect />} />
+          <Route path="/PaymentError" element={<PaymentError />} />
       </Routes>
     </BrowserRouter>
   );
