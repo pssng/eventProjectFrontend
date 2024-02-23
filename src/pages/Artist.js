@@ -1,8 +1,4 @@
 import { Typography, Grid, Box } from "@mui/material";
-import paolo from "../Assets/paolo.jpg";
-import armando from "../Assets/armando.png";
-import angelo from "../Assets/angelo.jpg";
-import raffaele from "../Assets/raffaele.png";
 import { ArtistCard } from "./Components/ArtistCard";
 import { useState, useEffect } from "react";
 

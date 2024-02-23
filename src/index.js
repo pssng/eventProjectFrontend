@@ -11,7 +11,8 @@ import { ManagerEvent } from "./pages/ManagerEvent";
 import { useState } from "react";
 import { Client } from "./pages/Client";
 import { Artist } from "./pages/Artist";
-import { PayPage } from "./pages/PayPage";
+import { PaymentCorrect } from "./pages/PaymentCorrect";
+import { PaymentError } from "./pages/PaymentError";
 import { Contacts } from "./pages/Contacts";
 import { Catalog } from "./pages/Catalog";
 import { RequestFormEventArtist } from "./pages/Modules/Forms/RequestFormArtist";
@@ -40,19 +41,22 @@ import GenericReview from "./pages/Components/GenericReview";
 import GenericArtwork from "./pages/Components/GenericArtwork";
 export default function App() {
   const [formDataList, setFormDataList] = useState([]);
-  const receiveFormData = (data) => {
+  const receiveFormData = data => {
     setFormDataList([...formDataList, data]);
   };
 
   var cf = localStorage.getItem("fiscalCode");
   const [isAuth, setIsAuth] = React.useState();
-  React.useEffect(() => {
-    if (cf !== undefined) {
-      setIsAuth(true);
-    }
-  }, [cf]);
+  React.useEffect(
+    () => {
+      if (cf !== undefined) {
+        setIsAuth(true);
+      }
+    },
+    [cf]
+  );
 
-  const renderSection = (x) => {
+  const renderSection = x => {
     switch (x) {
       case "ROLE_CUSTOMER":
         return <AccountClient isAuth={isAuth} setIsAuth={setIsAuth} />;
@@ -88,26 +92,40 @@ export default function App() {
     //Usare il Router per consentire la navigazione tra le pagine all'interno della piattaforma
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout isAuth={isAuth} setIsAuth={setIsAuth}/>}>
+        <Route
+          path="/"
+          element={<Layout isAuth={isAuth} setIsAuth={setIsAuth} />}
+        >
           <Route index element={<Home />} />
           <Route path="/Client" element={<Client />} />
           <Route path="/ManagerEvent" element={<ManagerEvent />} />
           <Route path="/Artists" element={<Artist />} />
-          <Route path="/PayPage" element={<PayPage />} />
           <Route path="/Contacts" element={<Contacts />} />
           <Route path="/Events" element={<Catalog />} />
           <Route path="/RequestArtist" element={<RequestFormEventArtist />} />
           <Route path="/Home" element={<Home />} />
-          <Route path="/Loginpromoters" element={<LoginPromoters isAuth={isAuth} setIsAuth={setIsAuth}/>} />
+          <Route
+            path="/Loginpromoters"
+            element={<LoginPromoters isAuth={isAuth} setIsAuth={setIsAuth} />}
+          />
           <Route path="/SignUppromoters" element={<SignUpPromoters />} />
-          <Route path="/Loginclients" element={<LoginClients isAuth={isAuth} setIsAuth={setIsAuth}/>} />
+          <Route
+            path="/Loginclients"
+            element={<LoginClients isAuth={isAuth} setIsAuth={setIsAuth} />}
+          />
           <Route path="/SignUpclients" element={<SignUpClients />} />
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
           <Route path="/EventPage" element={<EventPage />} />
           <Route path="/EventPageAccount" element={<EventPageAccount />} />
 
-          <Route path="/LoginArtist" element={<LoginArtist isAuth={isAuth} setIsAuth={setIsAuth}/>} />
-          <Route path="/LoginAdmin" element={<LoginAdmin isAuth={isAuth} setIsAuth={setIsAuth}/>} />
+          <Route
+            path="/LoginArtist"
+            element={<LoginArtist isAuth={isAuth} setIsAuth={setIsAuth} />}
+          />
+          <Route
+            path="/LoginAdmin"
+            element={<LoginAdmin isAuth={isAuth} setIsAuth={setIsAuth} />}
+          />
           <Route path="/SignUpArtist" element={<SignUpArtist />} />
           <Route path="/ArtistPage" element={<ArtistPage />} />
           <Route path="/GenericReview" element={<GenericReview />} />
@@ -125,6 +143,8 @@ export default function App() {
           />
           <Route path="*" element={<NoPage />} />
         </Route>
+        <Route path="/PaymentCorrect" element={<PaymentCorrect />} />
+        <Route path="/PaymentError" element={<PaymentError />} />
       </Routes>
     </BrowserRouter>
   );

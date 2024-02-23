@@ -18,22 +18,28 @@ export function EventCard({
   const navigate = useNavigate();
   return (
     <Stack
-    margin={'1rem'}
-      spacing={1}
+      margin={"1rem"}
+      spacing={2}
+      justifyContent={"space-around"}
       style={{
-        width: "15rem",
+        width: "20rem",
         wordWrap: "breakWord",
         textAlign: "center",
+        
       }}
+      border="1px black groove"
+      borderRadius= "30px"
+      bgcolor= "rgba(255,255,240)"
+
     >
       <img
         src={img}
         style={{
-          border: "1px solid #ddd",
-          bordeRadius: "4px",
-          padding: "5px",
-          width: "14rem",
-          height: "7rem",
+          width: "100%",
+          height: "10rem",
+          objectFit: "cover",
+          borderTopRightRadius:"30px",
+          borderTopLeftRadius: "30px"
         }}
       ></img>
       <Typography component={"i"} variant="h6">
@@ -54,15 +60,14 @@ export function EventCard({
       {/* <Typography component={'div'} variant="body1" sx ={{ textOverflow: 'ellipsis', overflow: 'hidden',
             whiteSpace: 'nowrap'}}>{descrizione}</Typography>
         */}
-      <Typography align="right" variant="caption">
-        <i>By:</i>
-        {`   ${organizzatore}`}
+      <Typography align="right" variant="caption" style={{ marginRight: "1rem" }}  >
+        <i>By: {`${organizzatore}`}</i>
+        
       </Typography>
       {<hr />}
       {
-        <Typography align="right" variant="body1">
-          <b>Ticket Price:</b>
-          {`   ${prezzo} `}
+        <Typography align="right" variant="body1" style={{ marginRight: "1rem" }}  >
+          <b>Ticket Price: ${`${prezzo} `}</b>
         </Typography>
       }
       {prezzo && (

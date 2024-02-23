@@ -6,7 +6,7 @@ import event2 from "../Assets/event2.jpg";
 import event3 from "../Assets/event3.jpg";
 import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Rating from "./Rating";
+import Rating from "./Components/Rating";
 
 
 export const Catalog = () => {
@@ -52,18 +52,18 @@ export const Catalog = () => {
         <Grid
           container
           direction={"row"}
-          justifyContent={"space-around"}
-          spacing={2}
+          //justifyContent={"space-around"}
+          spacing={10}
         >
           {events.map((event) => (
             <Grid item>
               <EventCard
                 id={event.eventId}
-                emailOrganizzatore={event.emailOrganizzatore}
+                emailOrganizzatore={event.promoterEmail}
                 luogo={event.locationAddress + ", " + event.locationCity}
                 categoria={event.eventCategory}
                 nome={event.eventName}
-                organizzatore={event.eventPromoter}
+                organizzatore={event.promoterInfo}
                 startDate={event.eventStartDate}
                 endDate={event.eventEndDate}
                 prezzo={event.eventPrice}

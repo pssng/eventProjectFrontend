@@ -54,7 +54,7 @@ function ResponsiveAppBar(props) {
   return (
     <AppBar
       position="static"
-      style={{ background: "black" }}
+      style={{ background: "#22223B" }}
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
     >
       <Container maxWidth="xl">
@@ -150,7 +150,7 @@ function ResponsiveAppBar(props) {
                 <Button
                   style={{
                     background:
-                      pathName === `/${page.name}` ? "aliceblue" : "black",
+                      pathName === `/${page.name}` ? "#F2E9E4" : "#22223B",
                     color: pathName === `/${page.name}` ? "black" : "white",
                     textDecoration: "none",
                   }}
@@ -170,7 +170,7 @@ function ResponsiveAppBar(props) {
             >
               <Button
                 style={{
-                  background: pathName === "/Account" ? "white" : "black",
+                  background: pathName === "/Account" ? "#F2E9E4" : "#22223B",
                   color: pathName === "/Account" ? "black" : "white",
                   textDecoration: "none",
                   display: "block",

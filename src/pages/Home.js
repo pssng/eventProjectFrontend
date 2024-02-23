@@ -70,10 +70,11 @@ const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 export const Home = () => {
   const stringDevs = [
-    "Dawid Adrian Danila | 0124002590",
-    "Carmela Pia Fiore | 0124002523",
-    "Maria Grazia Di Giorgio | 0124002701",
     "Paolo Coletta | 0124002554",
+    "Dawid Adrian Danila | 0124002590",
+    "Maria Grazia Di Giorgio | 0124002701",
+    "Carmela Pia Fiore | 0124002523",
+
   ];
 
   const theme = useTheme();
@@ -147,7 +148,7 @@ export const Home = () => {
         </Slide>
         {/* web */}
         <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <Grid container spacing={2} direction={"row"} className="row-img">
+          <Grid container spacing={2} direction={"row"} className="row-img" style={{backgroundColor: "#4A4E69"}}>
             <Grid item lg={4}>
               <img src={imgclient} alt="img" />
             </Grid>
@@ -197,7 +198,7 @@ export const Home = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid container spacing={2} direction={"row"} className="row-img">
+          <Grid container spacing={2} direction={"row"} className="row-img" style={{backgroundColor: "#4A4E69"}}>
             <Grid item container direction={"column"} lg={3}>
               <Grid item md={4}>
                 <span>
@@ -248,7 +249,7 @@ export const Home = () => {
             </Grid>
           </Grid>
           {/* Qua Inizia per artist */}
-          <Grid container spacing={2} direction={"row"} className="row-img">
+          <Grid container spacing={2} direction={"row"} className="row-img" style={{backgroundColor: "#4A4E69"}}>
             <Grid item lg={4}>
               <img src={img3} alt="img" />
             </Grid>
@@ -375,7 +376,7 @@ export const Home = () => {
           </Grid>
           {/* Qua finisce artist */}
         </Box>
-        <footer style={{ backgroundColor: "black", color: "white" }}>
+        <footer style={{ backgroundColor: "#22223B", color: "white" }}>
           <Stack
             //contiene tutto e modificato cose
             direction={"row"}
