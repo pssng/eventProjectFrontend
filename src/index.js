@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
@@ -16,12 +16,7 @@ import { PaymentError } from "./pages/PaymentError";
 import { Contacts } from "./pages/Contacts";
 import { Catalog } from "./pages/Catalog";
 import { RequestFormEventArtist } from "./pages/Modules/Forms/RequestFormArtist";
-import {
-  LoginClients,
-  LoginPromoters,
-  LoginAdmin,
-  LoginArtist,
-} from "./pages/Modules/Forms/Login";
+import { Login } from "./pages/Modules/Forms/Login";
 import {
   SignUpClients,
   SignUpPromoters,
@@ -39,63 +34,38 @@ import {
 } from "./pages/Account";
 import GenericReview from "./pages/Components/GenericReview";
 import GenericArtwork from "./pages/Components/GenericArtwork";
+import { retrieveGenerals, retriveRole } from "./pages/api/api";
 export default function App() {
-  const [formDataList, setFormDataList] = useState([]);
-  const receiveFormData = data => {
-    setFormDataList([...formDataList, data]);
-  };
+  retrieveGenerals();
+  retriveRole();
 
-  var cf = localStorage.getItem("fiscalCode");
-  const [isAuth, setIsAuth] = React.useState();
-  React.useEffect(
-    () => {
-      if (cf !== undefined) {
-        setIsAuth(true);
-      }
-    },
-    [cf]
-  );
-
-  const renderSection = x => {
+  const token = localStorage.getItem("authKey");
+  const [isAuth, setIsAuth] = useState(token !== null && token !== undefined);
+  var userRole;
+useEffect(()=>{
+  if (isAuth) {
+     userRole = localStorage.getItem("userRole");
+  }
+},[token])
+  const renderSection = (x) => {
     switch (x) {
       case "ROLE_CUSTOMER":
-        return <AccountClient isAuth={isAuth} setIsAuth={setIsAuth} />;
+        return <AccountClient />;
       case "ROLE_ARTIST":
-        return <AccountArtist isAuth={isAuth} setIsAuth={setIsAuth} />;
-
+        return <AccountArtist />;
       case "ROLE_PROMOTER":
-        return (
-          <AccountPromoters
-            formDataList={formDataList}
-            setFormDataList={setFormDataList}
-            receiveFormData={receiveFormData}
-            isAuth={isAuth}
-            setIsAuth={setIsAuth}
-          />
-        );
+        return <AccountPromoters />;
       case "ROLE_ADMIN":
-        return (
-          <AccountAdmin
-            formDataList={formDataList}
-            setFormDataList={setFormDataList}
-            receiveFormData={receiveFormData}
-            isAuth={isAuth}
-            setIsAuth={setIsAuth}
-          />
-        );
+        return <AccountAdmin />;
       default:
         return null;
     }
   };
-
   return (
     //Usare il Router per consentire la navigazione tra le pagine all'interno della piattaforma
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={<Layout isAuth={isAuth} setIsAuth={setIsAuth} />}
-        >
+        <Route path="/" element={<Layout isAuth={isAuth} />}>
           <Route index element={<Home />} />
           <Route path="/Client" element={<Client />} />
           <Route path="/ManagerEvent" element={<ManagerEvent />} />
@@ -104,28 +74,16 @@ export default function App() {
           <Route path="/Events" element={<Catalog />} />
           <Route path="/RequestArtist" element={<RequestFormEventArtist />} />
           <Route path="/Home" element={<Home />} />
-          <Route
-            path="/Loginpromoters"
-            element={<LoginPromoters isAuth={isAuth} setIsAuth={setIsAuth} />}
-          />
+          <Route path="/Login" element={<Login />} />
           <Route path="/SignUppromoters" element={<SignUpPromoters />} />
-          <Route
-            path="/Loginclients"
-            element={<LoginClients isAuth={isAuth} setIsAuth={setIsAuth} />}
-          />
+          <Route path="/Login" element={<Login />} />
           <Route path="/SignUpclients" element={<SignUpClients />} />
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
           <Route path="/EventPage" element={<EventPage />} />
           <Route path="/EventPageAccount" element={<EventPageAccount />} />
 
-          <Route
-            path="/LoginArtist"
-            element={<LoginArtist isAuth={isAuth} setIsAuth={setIsAuth} />}
-          />
-          <Route
-            path="/LoginAdmin"
-            element={<LoginAdmin isAuth={isAuth} setIsAuth={setIsAuth} />}
-          />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Login" element={<Login />} />
           <Route path="/SignUpArtist" element={<SignUpArtist />} />
           <Route path="/ArtistPage" element={<ArtistPage />} />
           <Route path="/GenericReview" element={<GenericReview />} />
@@ -136,11 +94,7 @@ export default function App() {
           Passaggi: fai il login, identifica il ruolo dell'utente, metti il ruolo dell'utente nei parametri
           */}
           {/* <Route path="/Account" element={renderSection("ROLE_ARTIST")} />  */}
-          {console.log("CIAO " + localStorage.getItem("userRole"))}
-          <Route
-            path="/Account"
-            element={renderSection(localStorage.getItem("userRole"))}
-          />
+          <Route path="/Account" element={renderSection(userRole)} />
           <Route path="*" element={<NoPage />} />
         </Route>
         <Route path="/PaymentCorrect" element={<PaymentCorrect />} />

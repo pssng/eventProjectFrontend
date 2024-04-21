@@ -7,30 +7,30 @@ import event3 from "../Assets/event3.jpg";
 import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Rating from "./Components/Rating";
+import axios from "axios";
 
 
 export const Catalog = () => {
   const [events, setEvents] = useState([]);
 
-  const apiUrl = "http://127.0.0.1:8080/public/events/get_all";
+  const apiUrl = "http://localhost:8080/public/events/get_all";
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchEvents = async () => {
       try {
-        const response = await fetch(apiUrl);
-        if (response.ok) {
-          const data = await response.json();
-          setEvents(data); // Imposta lo stato degli artisti con i dati ottenuti dalla chiamata API
-        } else {
-          console.error("Errore durante la chiamata API:", response.statusText);
-        }
+        const response = await axios.get(apiUrl);
+        // Otteniamo i dati dall'API
+        const eventList = response.data;
+        // Impostiamo lo stato degli eventi con l'array ricevuto
+        setEvents(eventList);
       } catch (error) {
-        console.error("Errore durante la chiamata API:", error);
+        console.error('Errore durante il recupero degli eventi:', error);
       }
     };
 
-    fetchData();
-  }, [apiUrl]);
+    // Chiamiamo la funzione per recuperare gli eventi quando il componente viene montato
+    fetchEvents();
+  }, []); // La dipendenza vuota assicura che questa chiamata venga fatta solo una volta
 
   let location = useLocation();
   return (
@@ -44,35 +44,41 @@ export const Catalog = () => {
           margin: "0 2rem",
           border: "groove 1px gray",
           borderRadius: "10px",
-          height: "70vh",
+          height: "80vh",
           textAlign: "left",
           overflowX: "scroll",
         }}
       >
         <Grid
+          padding={2}
           container
           direction={"row"}
-          //justifyContent={"space-around"}
-          spacing={10}
+          justifyContent={"space-around"}
+          spacing={2}
         >
-          {events.map((event) => (
-            <Grid item>
-              <EventCard
-                id={event.eventId}
-                emailOrganizzatore={event.promoterEmail}
-                luogo={event.locationAddress + ", " + event.locationCity}
-                categoria={event.eventCategory}
-                nome={event.eventName}
-                organizzatore={event.promoterInfo}
-                startDate={event.eventStartDate}
-                endDate={event.eventEndDate}
-                prezzo={event.eventPrice}
-                descrizione={event.eventDescription}
-                img={event.img}
-                location={location.pathname}
-              />
-            </Grid>
-          ))}
+          {events.length > 0 &&
+            events.map((event) => (
+              <Grid item key={event.eventId}>
+                <EventCard
+                  emailOrganizzatore={event.promoterEmail}
+                  luogo={
+                    event.locationAddress +
+                    ", ( " +
+                    event.locationCity +
+                    " ) " +
+                    event.locationName
+                  }
+                  categoria={event.eventCategory}
+                  nome={event.eventName}
+                  organizzatore={event.promoterInfo}
+                  startDate={event.eventStartDate}
+                  endDate={event.eventEndDate}
+                  prezzo={event.eventPrice}
+                  descrizione={event.eventDescription}
+                  img={event.eventPicPath}
+                />
+              </Grid>
+            ))}
         </Grid>
       </Box>
     </>

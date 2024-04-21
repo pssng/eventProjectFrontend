@@ -179,7 +179,7 @@ export const Home = () => {
                   <Link
                     key={"login"}
                     style={{ textDecoration: "none", color: "white" }}
-                    to={`/loginclients`}
+                    to={`/login`}
                   >
                     <KeyboardDoubleArrowLeftIcon />{" "}
                     <Typography textAlign="center"> {"Login"}</Typography>
@@ -226,7 +226,7 @@ export const Home = () => {
                   <Link
                     key={"loginprom"}
                     style={{ textDecoration: "none", color: "white" }}
-                    to={`/loginpromoters`}
+                    to={`/login`}
                   >
                     <KeyboardDoubleArrowLeftIcon />{" "}
                     <Typography textAlign="center"> {"Login"}</Typography>
@@ -279,7 +279,7 @@ export const Home = () => {
                   <Link
                     key={"login"}
                     style={{ textDecoration: "none", color: "white" }}
-                    to={`/loginartist`}
+                    to={`/login`}
                   >
                     <KeyboardDoubleArrowLeftIcon />{" "}
                     <Typography textAlign="center"> {"Login"}</Typography>
