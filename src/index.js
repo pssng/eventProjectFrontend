@@ -36,15 +36,18 @@ import GenericReview from "./pages/Components/GenericReview";
 import GenericArtwork from "./pages/Components/GenericArtwork";
 import { retrieveGenerals, retriveRole } from "./pages/api/api";
 export default function App() {
+
+  const token = localStorage.getItem("authKey");
+ 
   retrieveGenerals();
   retriveRole();
 
-  const token = localStorage.getItem("authKey");
   const [isAuth, setIsAuth] = useState(token !== null && token !== undefined);
   var userRole;
 useEffect(()=>{
   if (isAuth) {
      userRole = localStorage.getItem("userRole");
+     
   }
 },[token])
   const renderSection = (x) => {
