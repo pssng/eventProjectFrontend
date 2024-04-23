@@ -169,6 +169,7 @@ function ResponsiveAppBar(props) {
               key={"Account"}
             >
               <Button
+              onClick={()=>navigate("/Acccount")}
                 style={{
                   background: pathName === "/Account" ? "#F2E9E4" : "#22223B",
                   color: pathName === "/Account" ? "black" : "white",

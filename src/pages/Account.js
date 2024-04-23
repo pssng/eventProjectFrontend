@@ -41,8 +41,9 @@ import ModalUploadArtwork from "./Components/ModalUploadArtwork";
 import { retrieveGenerals, retriveRole } from "./api/api";
 
 const drawerWidth = 240;
-const generals = localStorage.getItem("userGenerals");
+const generals = JSON.parse(localStorage.getItem('userGenerals'));
 const role = localStorage.getItem("userRole");
+
 const events = [];
 export function AccountClient() {
   const [currentSection, setCurrentSection] = useState("Profile");
@@ -52,7 +53,7 @@ export function AccountClient() {
   const renderSection = () => {
     switch (currentSection) {
       case "Profile":
-        return renderProfileSection();
+        return renderProfileSection(generals,role);
       case "Tickets":
         return renderTicketSection();
       case "Favorites":
@@ -204,7 +205,8 @@ export function AccountClient() {
       </Box>
     );
   };
-  const renderProfileSection = () => {
+  const renderProfileSection = (generals,role) => {
+    console.log(generals)
     return (
       <Box
         style={{

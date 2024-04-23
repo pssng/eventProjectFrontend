@@ -43,13 +43,11 @@ export default function App() {
   retriveRole();
 
   const [isAuth, setIsAuth] = useState(token !== null && token !== undefined);
-  var userRole;
-useEffect(()=>{
-  if (isAuth) {
+  var userRole ;
+
+  if (isAuth) 
      userRole = localStorage.getItem("userRole");
-     
-  }
-},[token])
+ 
   const renderSection = (x) => {
     switch (x) {
       case "ROLE_CUSTOMER":
