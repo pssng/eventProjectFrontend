@@ -19,7 +19,7 @@ import event3 from "../Assets/event3.jpg";
 import CardLarge from "./Components/CardFavorites";
 import { Request } from "./Modules/Forms/Request";
 import { useTheme } from "@mui/material/styles";
-
+import LogoutIcon from '@mui/icons-material/Logout';
 import CardOpere from "./Components/CardOpere";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Link } from "react-router-dom";
@@ -39,21 +39,41 @@ import Review from "./Components/Review";
 import ModalReview from "./Components/ModalReview";
 import ModalUploadArtwork from "./Components/ModalUploadArtwork";
 import { retrieveGenerals, retriveRole } from "./api/api";
-
+import axios from "axios";
+import { useEffect } from "react";
 const drawerWidth = 240;
 const generals = JSON.parse(localStorage.getItem('userGenerals'));
 const role = localStorage.getItem("userRole");
 
-const events = [];
+
 export function AccountClient() {
   const [currentSection, setCurrentSection] = useState("Profile");
 
+  const [events, setEvents] = useState([]);
+
+
+  useEffect(() => {
+    const apiUrl = "http://localhost:8080/public/events/get_all";
+
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(apiUrl);
+        // Otteniamo i dati dall'API
+        const eventList = response.data;
+        // Impostiamo lo stato degli eventi con l'array ricevuto
+        setEvents(eventList);
+      } catch (error) {
+        console.error('Errore durante il recupero degli eventi:', error);
+      }
+    };
+    fetchEvents();
+  }, [])
   const theme = useTheme();
 
   const renderSection = () => {
     switch (currentSection) {
       case "Profile":
-        return renderProfileSection(generals,role);
+        return renderProfileSection(generals, role);
       case "Tickets":
         return renderTicketSection();
       case "Favorites":
@@ -97,18 +117,24 @@ export function AccountClient() {
             spacing={2}
           >
             {events.map((event) => (
-              <Grid item>
+              <Grid item key={event.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
+                  emailOrganizzatore={event.promoterEmail}
+                  luogo={
+                    event.locationAddress +
+                    ", ( " +
+                    event.locationCity +
+                    " ) " +
+                    event.locationName
+                  }
                   categoria={event.eventCategory}
                   nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
+                  organizzatore={event.promoterInfo}
+                  startDate={event.eventStartDate}
+                  endDate={event.eventEndDate}
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
-                  img={event.img}
+                  img={event.eventPicPath}
                 />
               </Grid>
             ))}
@@ -142,18 +168,24 @@ export function AccountClient() {
             spacing={2}
           >
             {events.map((event) => (
-              <Grid item>
+              <Grid item key={event.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
+                  emailOrganizzatore={event.promoterEmail}
+                  luogo={
+                    event.locationAddress +
+                    ", ( " +
+                    event.locationCity +
+                    " ) " +
+                    event.locationName
+                  }
                   categoria={event.eventCategory}
                   nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
+                  organizzatore={event.promoterInfo}
+                  startDate={event.eventStartDate}
+                  endDate={event.eventEndDate}
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
-                  img={event.img}
+                  img={event.eventPicPath}
                 />
               </Grid>
             ))}
@@ -191,12 +223,12 @@ export function AccountClient() {
               <Grid item>
                 {" "}
                 <CardLarge
-                  nome={event.nome}
-                  organizzatore={event.organizzatore}
-                  data={event.data}
-                  prezzo={event.prezzo}
-                  descrizione={event.descrizione}
-                  img={event.img}
+                  nome={event.eventName}
+                  organizzatore={event.promoterInfo}
+                  data={event.eventStartDate + " " + event.eventEndDate}
+                  prezzo={event.eventPrice}
+                  descrizione={event.eventDescription}
+                  img={event.eventPicPath}
                 />
               </Grid>
             ))}
@@ -205,7 +237,7 @@ export function AccountClient() {
       </Box>
     );
   };
-  const renderProfileSection = (generals,role) => {
+  const renderProfileSection = (generals, role) => {
     console.log(generals)
     return (
       <Box
@@ -342,7 +374,7 @@ export function AccountClient() {
     },
   ];
 
-  const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 1200px)` });
   return (
     <Box sx={{ display: isMobile ? "block" : "flex" }}>
       <CssBaseline />
@@ -391,12 +423,17 @@ export function AccountClient() {
               {
                 text: "History of Events",
                 icon: <HistoryIcon style={{ color: "white" }} />,
+              },{
+                text: "Logout",
+                icon: <LogoutIcon style={{ color: "white" }} />,
+                action: () => localStorage.clear()
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-                onClick={() => setCurrentSection(item.text)}
+
+                onClick={() => item.text === "Logout" ? item.action() : setCurrentSection(item.text)}
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -414,6 +451,26 @@ export function AccountClient() {
 
 export function AccountPromoters() {
   const [currentSection, setCurrentSection] = useState("Profile");
+
+  const [events, setEvents] = useState([]);
+
+
+  useEffect(() => {
+    const apiUrl = "http://localhost:8080/public/events/get_all";
+
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(apiUrl);
+        // Otteniamo i dati dall'API
+        const eventList = response.data;
+        // Impostiamo lo stato degli eventi con l'array ricevuto
+        setEvents(eventList);
+      } catch (error) {
+        console.error('Errore durante il recupero degli eventi:', error);
+      }
+    };
+    fetchEvents();
+  }, [])
   const theme = useTheme();
 
   const renderSection = () => {
@@ -469,18 +526,24 @@ export function AccountPromoters() {
             spacing={2}
           >
             {events.map((event) => (
-              <Grid item>
+              <Grid item key={event.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
+                  emailOrganizzatore={event.promoterEmail}
+                  luogo={
+                    event.locationAddress +
+                    ", ( " +
+                    event.locationCity +
+                    " ) " +
+                    event.locationName
+                  }
                   categoria={event.eventCategory}
                   nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
+                  organizzatore={event.promoterInfo}
+                  startDate={event.eventStartDate}
+                  endDate={event.eventEndDate}
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
-                  img={event.img}
+                  img={event.eventPicPath}
                 />
               </Grid>
             ))}
@@ -514,18 +577,24 @@ export function AccountPromoters() {
             spacing={2}
           >
             {events.map((event) => (
-              <Grid item>
+              <Grid item key={event.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
+                  emailOrganizzatore={event.promoterEmail}
+                  luogo={
+                    event.locationAddress +
+                    ", ( " +
+                    event.locationCity +
+                    " ) " +
+                    event.locationName
+                  }
                   categoria={event.eventCategory}
                   nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
+                  organizzatore={event.promoterInfo}
+                  startDate={event.eventStartDate}
+                  endDate={event.eventEndDate}
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
-                  img={event.img}
+                  img={event.eventPicPath}
                 />
               </Grid>
             ))}
@@ -563,12 +632,12 @@ export function AccountPromoters() {
               <Grid item>
                 {" "}
                 <CardLarge
-                  nome={event.nome}
-                  organizzatore={event.organizzatore}
-                  data={event.data}
-                  prezzo={event.prezzo}
-                  descrizione={event.descrizione}
-                  img={event.img}
+                  nome={event.eventName}
+                  organizzatore={event.promoterInfo}
+                  data={event.eventStartDate + " " + event.eventEndDate}
+                  prezzo={event.eventPrice}
+                  descrizione={event.eventDescription}
+                  img={event.eventPicPath}
                 />
               </Grid>
             ))}
@@ -771,7 +840,7 @@ export function AccountPromoters() {
       icon: <ForwardToInboxIcon style={{ color: "white" }} />,
     },
   ];
-  const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 1200px)` });
   return (
     <Box sx={{ display: isMobile ? "block" : "flex" }}>
       <CssBaseline />
@@ -834,11 +903,17 @@ export function AccountPromoters() {
                 text: "Send a Request",
                 icon: <ForwardToInboxIcon style={{ color: "white" }} />,
               },
+             {
+                text: "Logout",
+                icon: <LogoutIcon style={{ color: "white" }} />,
+                action: () => localStorage.clear()
+              },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-                onClick={() => setCurrentSection(item.text)}
+
+                onClick={() => item.text === "Logout" ? item.action() : setCurrentSection(item.text)}
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -855,6 +930,26 @@ export function AccountPromoters() {
 }
 //aggiunto le const e modificato la sezione artistic works
 export function AccountArtist() {
+
+  const [events, setEvents] = useState([]);
+
+
+  useEffect(() => {
+    const apiUrl = "http://localhost:8080/public/events/get_all";
+
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(apiUrl);
+        // Otteniamo i dati dall'API
+        const eventList = response.data;
+        // Impostiamo lo stato degli eventi con l'array ricevuto
+        setEvents(eventList);
+      } catch (error) {
+        console.error('Errore durante il recupero degli eventi:', error);
+      }
+    };
+    fetchEvents();
+  }, [])
   //aggiunto qui opere
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
@@ -958,18 +1053,24 @@ export function AccountArtist() {
             spacing={2}
           >
             {events.map((event) => (
-              <Grid item>
+              <Grid item key={event.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
+                  emailOrganizzatore={event.promoterEmail}
+                  luogo={
+                    event.locationAddress +
+                    ", ( " +
+                    event.locationCity +
+                    " ) " +
+                    event.locationName
+                  }
                   categoria={event.eventCategory}
                   nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
+                  organizzatore={event.promoterInfo}
+                  startDate={event.eventStartDate}
+                  endDate={event.eventEndDate}
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
-                  img={event.img}
+                  img={event.eventPicPath}
                 />
               </Grid>
             ))}
@@ -1038,18 +1139,24 @@ export function AccountArtist() {
             spacing={2}
           >
             {events.map((event) => (
-              <Grid item>
+              <Grid item key={event.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
+                  emailOrganizzatore={event.promoterEmail}
+                  luogo={
+                    event.locationAddress +
+                    ", ( " +
+                    event.locationCity +
+                    " ) " +
+                    event.locationName
+                  }
                   categoria={event.eventCategory}
                   nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
+                  organizzatore={event.promoterInfo}
+                  startDate={event.eventStartDate}
+                  endDate={event.eventEndDate}
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
-                  img={event.img}
+                  img={event.eventPicPath}
                 />
               </Grid>
             ))}
@@ -1087,16 +1194,12 @@ export function AccountArtist() {
               <Grid item>
                 {" "}
                 <CardLarge
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
-                  categoria={event.eventCategory}
                   nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
+                  organizzatore={event.promoterInfo}
+                  data={event.eventStartDate + " " + event.eventEndDate}
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
-                  img={event.img}
+                  img={event.eventPicPath}
                 />
               </Grid>
             ))}
@@ -1130,18 +1233,24 @@ export function AccountArtist() {
             spacing={2}
           >
             {events.map((event) => (
-              <Grid item>
+              <Grid item key={event.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
+                  emailOrganizzatore={event.promoterEmail}
+                  luogo={
+                    event.locationAddress +
+                    ", ( " +
+                    event.locationCity +
+                    " ) " +
+                    event.locationName
+                  }
                   categoria={event.eventCategory}
                   nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
+                  organizzatore={event.promoterInfo}
+                  startDate={event.eventStartDate}
+                  endDate={event.eventEndDate}
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
-                  img={event.img}
+                  img={event.eventPicPath}
                 />
               </Grid>
             ))}
@@ -1180,10 +1289,10 @@ export function AccountArtist() {
       const updatedOpere = opere.map((op) =>
         op.id === id
           ? {
-              ...op,
-              title: op.title + newTitle,
-              description: op.description + newDescription,
-            }
+            ...op,
+            title: op.title + newTitle,
+            description: op.description + newDescription,
+          }
           : op
       );
 
@@ -1404,7 +1513,7 @@ export function AccountArtist() {
       icon: <ReviewsIcon style={{ color: "white" }} />,
     },
   ];
-  const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 1200px)` });
   return (
     <Box sx={{ display: isMobile ? "block" : "flex" }}>
       <CssBaseline />
@@ -1469,12 +1578,17 @@ export function AccountArtist() {
               {
                 text: "Artist Review",
                 icon: <ReviewsIcon style={{ color: "white" }} />,
+              },{
+                text: "Logout",
+                icon: <LogoutIcon style={{ color: "white" }} />,
+                action: () => localStorage.clear()
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-                onClick={() => setCurrentSection(item.text)}
+
+                onClick={() => item.text === "Logout" ? item.action() : setCurrentSection(item.text)}
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -1492,6 +1606,26 @@ export function AccountArtist() {
 
 export function AccountAdmin() {
   const [currentSection, setCurrentSection] = useState("Profile");
+
+  const [events, setEvents] = useState([]);
+
+
+  useEffect(() => {
+    const apiUrl = "http://localhost:8080/public/events/get_all";
+
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(apiUrl);
+        // Otteniamo i dati dall'API
+        const eventList = response.data;
+        // Impostiamo lo stato degli eventi con l'array ricevuto
+        setEvents(eventList);
+      } catch (error) {
+        console.error('Errore durante il recupero degli eventi:', error);
+      }
+    };
+    fetchEvents();
+  }, [])
   const theme = useTheme();
 
   const renderSection = () => {
@@ -1688,7 +1822,7 @@ export function AccountAdmin() {
       icon: <HelpOutlineIcon style={{ color: "white" }} />,
     },
   ];
-  const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 1200px)` });
   return (
     <Box sx={{ display: isMobile ? "block" : "flex" }}>
       <CssBaseline />
@@ -1734,12 +1868,17 @@ export function AccountAdmin() {
               {
                 text: "Support",
                 icon: <HelpOutlineIcon style={{ color: "white" }} />,
+              }, {
+                text: "Logout",
+                icon: <LogoutIcon style={{ color: "white" }} />,
+                action: () => localStorage.clear()
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-                onClick={() => setCurrentSection(item.text)}
+
+                onClick={() => item.text === "Logout" ? item.action() : setCurrentSection(item.text)}
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>

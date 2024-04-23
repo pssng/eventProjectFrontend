@@ -77,14 +77,12 @@ export default function App() {
           <Route path="/Home" element={<Home />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/SignUppromoters" element={<SignUpPromoters />} />
-          <Route path="/Login" element={<Login />} />
+         
           <Route path="/SignUpclients" element={<SignUpClients />} />
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
           <Route path="/EventPage" element={<EventPage />} />
           <Route path="/EventPageAccount" element={<EventPageAccount />} />
 
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Login" element={<Login />} />
           <Route path="/SignUpArtist" element={<SignUpArtist />} />
           <Route path="/ArtistPage" element={<ArtistPage />} />
           <Route path="/GenericReview" element={<GenericReview />} />

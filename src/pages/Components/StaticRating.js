@@ -24,7 +24,6 @@ const StaticRating = ({ value }) => (
   <Box
     sx={{
       width: 200,
-      display: 'flex',
       alignItems: 'center',
     }}
   >

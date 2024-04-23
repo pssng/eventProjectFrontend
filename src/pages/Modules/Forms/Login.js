@@ -1,16 +1,20 @@
 import { Box, Stack, Link, Grid } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button, Checkbox, FormControlLabel } from "@mui/material";
+import { TextField, Button, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import im3 from "../../../Assets/background.jpg";
-import {sendLoginRequest} from "../../../pages/api/api"
+import { sendLoginRequest } from "../../../pages/api/api"
 export function Login() {
   const [CF, setCF] = useState("");
   const [password, setPassword] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
-   sendLoginRequest(CF,password);
-  
+
+    sendLoginRequest(CF, password);
+
+
+
+
   };
   return (
     <>
@@ -60,7 +64,6 @@ export function Login() {
               <Button type="submit" variant="outlined">
                 Login
               </Button>
-
               <Grid
                 container
                 direction={"row"}

@@ -1,23 +1,24 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SmallPlaceIcon from "@mui/icons-material/Place";
 import StaticRating from "./StaticRating";
+import cardartist from "../../Assets/cardartist.jpg"
 export function ArtistCard({ nome, cognome, luogo, image, rating }) {
   const navigate = useNavigate();
   return (
     <Stack
-      margin={"1rem"}
+      padding={"1rem"}
+      alignItems={"center"}
       spacing={2}
       justifyContent={"space-around"}
       style={{
         width: "20rem",
         wordWrap: "breakWord",
         textAlign: "center",
-        
+        backgroundImage: `url(${cardartist})`
       }}
       border="1px black groove"
-      borderRadius= "30px"
-      bgcolor= "rgba(255,255,240)"
+      borderRadius="30px"
     >
       <img
         src={image}
@@ -25,7 +26,7 @@ export function ArtistCard({ nome, cognome, luogo, image, rating }) {
           width: "100%",
           height: "10rem",
           objectFit: "cover",
-          borderTopRightRadius:"30px",
+          borderTopRightRadius: "30px",
           borderTopLeftRadius: "30px"
         }}
       ></img>
@@ -36,14 +37,12 @@ export function ArtistCard({ nome, cognome, luogo, image, rating }) {
       </Typography>
       <Typography>
         <SmallPlaceIcon fontSize="small" /> {`  ${luogo} `}
+
       </Typography>
-
-      <div style={{ margin: "auto" }}>
-        <StaticRating value={rating} />
-      </div>
-
-      {<hr />}
+      <>
+        <StaticRating value={rating} /></>
       <Button
+        variant="outlined"
         onClick={() => {
           navigate("/ArtistPage", {
             replace: true,

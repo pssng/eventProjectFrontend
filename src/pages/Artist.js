@@ -1,6 +1,7 @@
 import { Typography, Grid, Box } from "@mui/material";
 import { ArtistCard } from "./Components/ArtistCard";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export const Artist = () => {
   const [artists, setArtists] = useState([]);
@@ -10,13 +11,7 @@ export const Artist = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(apiUrl);
-        if (response.ok) {
-          const data = await response.json();
-          setArtists(data); // Imposta lo stato degli artisti con i dati ottenuti dalla chiamata API
-        } else {
-          console.error("Errore durante la chiamata API:", response.statusText);
-        }
+        const response = await axios(apiUrl).then(resp=>setArtists(resp.data))
       } catch (error) {
         console.error("Errore durante la chiamata API:", error);
       }
