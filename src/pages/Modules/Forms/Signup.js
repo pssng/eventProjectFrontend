@@ -192,6 +192,7 @@ export function SignUpClients() {
                   />
                 </FormControl>
               </Grid>
+              
               <Grid item md="10">
                 <Button
                   component="label"
@@ -201,7 +202,7 @@ export function SignUpClients() {
                   Upload file
                   <VisuallyHiddenInput
                     type="file"
-                    onChange={(e) => setImageProfile(e.target)}
+                    onChange={(e) => setImageProfile(e.target.value)}
                   />
                 </Button>
               </Grid>
@@ -227,20 +228,19 @@ export function SignUpPromoters() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
-  const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
-  const [fiscalCode, setFiscalCode] = useState("");
-
   const [imageProfile, setImageProfile] = useState("");
   const [birthday, setBirthday] = React.useState(dayjs());
+  const [city, setCity] = useState("");
   const [err, setErr] = useState("");
-  const [showPassword, setShowPassword] = React.useState(false);
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const [fiscalCode, setFiscalCode] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -262,7 +262,9 @@ export function SignUpPromoters() {
     } else {
       setErr("Invalid Fiscal Code");
     }
-  }; return (
+  };
+
+  return (
     <>
       <style>
         {`
@@ -315,10 +317,10 @@ export function SignUpPromoters() {
                   <DatePicker
                     required
                     label="Birth Date"
-                    defaultValue={dayjs("2022-04-17")}
+                    defaultValue={dayjs()}
                     // con il backend usare = label="Controlled field"
                     // con il backend usare = value={birthday}
-                    onChange={(e) => setBirthday(e)}
+                    onChange={(newValue) => setBirthday(newValue)}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -382,6 +384,7 @@ export function SignUpPromoters() {
                   />
                 </FormControl>
               </Grid>
+              
               <Grid item md="10">
                 <Button
                   component="label"
@@ -391,7 +394,7 @@ export function SignUpPromoters() {
                   Upload file
                   <VisuallyHiddenInput
                     type="file"
-                    onChange={(e) => setImageProfile(e.target)}
+                    onChange={(e) => setImageProfile(e.target.value)}
                   />
                 </Button>
               </Grid>
@@ -417,20 +420,19 @@ export function SignUpArtist() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
+  const [imageProfile, setImageProfile] = useState("");
+  const [birthday, setBirthday] = React.useState(dayjs());
+  const [city, setCity] = useState("");
+  const [err, setErr] = useState("");
   const [fiscalCode, setFiscalCode] = useState("");
 
-  const [imageProfile, setImageProfile] = useState("");
-  const [err, setErr] = useState("");
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -444,7 +446,7 @@ export function SignUpArtist() {
         "surname": surname,
         "city": city,
         "address": address,
-        "birthDate": birthday.toString,
+        "birthDate": birthday.toString(),
         "email": email,
         "imgPath": imageProfile
       }
@@ -453,6 +455,7 @@ export function SignUpArtist() {
       setErr("Invalid Fiscal Code");
     }
   };
+
   return (
     <>
       <style>
@@ -506,10 +509,10 @@ export function SignUpArtist() {
                   <DatePicker
                     required
                     label="Birth Date"
-                    defaultValue={dayjs("2022-04-17")}
+                    defaultValue={dayjs()}
                     // con il backend usare = label="Controlled field"
                     // con il backend usare = value={birthday}
-                    onChange={(e) => setBirthday(e)}
+                    onChange={(newValue) => setBirthday(newValue)}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -573,6 +576,7 @@ export function SignUpArtist() {
                   />
                 </FormControl>
               </Grid>
+              
               <Grid item md="10">
                 <Button
                   component="label"
@@ -582,7 +586,7 @@ export function SignUpArtist() {
                   Upload file
                   <VisuallyHiddenInput
                     type="file"
-                    onChange={(e) => setImageProfile(e.target)}
+                    onChange={(e) => setImageProfile(e.target.value)}
                   />
                 </Button>
               </Grid>

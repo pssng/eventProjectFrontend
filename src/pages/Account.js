@@ -728,8 +728,8 @@ export function AccountPromoters() {
             <Grid item>
               <TextField
                 id="outlined-read-only-input"
-                label={generals.name}
-                defaultValue="Hello World"
+                label="Name"
+                defaultValue={generals.name}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -738,8 +738,8 @@ export function AccountPromoters() {
             <Grid item>
               <TextField
                 id="outlined-read-only-input"
-                label={generals.surname}
-                defaultValue="Hello World"
+                label="Surname"
+                defaultValue={generals.surname}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1722,11 +1722,11 @@ export function AccountAdmin() {
             spacing={3}
             style={{ justifyContent: "center" }}
           >
-            <Grid item>
+          <Grid item>
               <TextField
                 id="outlined-read-only-input"
-                label={generals.name}
-                defaultValue="Hello World"
+                label="Name"
+                defaultValue={generals.name}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1735,8 +1735,8 @@ export function AccountAdmin() {
             <Grid item>
               <TextField
                 id="outlined-read-only-input"
-                label={generals.surname}
-                defaultValue="Hello World"
+                label="Surname"
+                defaultValue={generals.surname}
                 InputProps={{
                   readOnly: true,
                 }}
