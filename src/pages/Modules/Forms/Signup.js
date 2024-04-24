@@ -1,3 +1,4 @@
+
 import { Box, Grid } from "@mui/material";
 import * as React from "react";
 import { useState } from "react";
@@ -18,6 +19,7 @@ import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import Alert from "@mui/material/Alert";
+import { sendRegistrationRequest } from "../../api/api";
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -34,10 +36,10 @@ export function SignUpClients() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
-  const [birthday, setBirthday] = React.useState(dayjs("2022-04-17"));
-  const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
   const [imageProfile, setImageProfile] = useState("");
+  const [birthday, setBirthday] = React.useState(dayjs());
+  const [city, setCity] = useState("");
   const [err, setErr] = useState("");
   const [fiscalCode, setFiscalCode] = useState("");
 
@@ -51,39 +53,20 @@ export function SignUpClients() {
     e.preventDefault();
 
     if (validCF.test(fiscalCode)) {
-      const apiUrl = "http://127.0.0.1:8080/public/new_customer";
+      
 
-      try {
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fiscalCode: fiscalCode,
-            password: password,
-            name: name,
-            surname: surname,
-            city: city,
-            address: address,
-            birthDate: birthday,
-            email: email,
-            imgPath: imageProfile,
-          }),
-        });
-
-        if (response.ok) {
-          <Alert severity="success">
-            "User " + {fiscalCode} + " signed up successfully."
-          </Alert>;
-        }
-      } catch (error) {
-        console.error("Error during signup:", error);
-
-        <Alert severity="error">
-          Failed to sign up. Please try again later.
-        </Alert>;
+      let body = {
+        "fiscalCode": fiscalCode,
+        "password": password,
+        "name": name,
+        "surname": surname,
+        "city": city,
+        "address": address,
+        "birthDate": birthday.toString(),
+        "email": email,
+        "imgPath": imageProfile
       }
+      sendRegistrationRequest("customer", body)
     } else {
       setErr("Invalid Fiscal Code");
     }
@@ -142,10 +125,10 @@ export function SignUpClients() {
                   <DatePicker
                     required
                     label="Birth Date"
-                    defaultValue={dayjs("2022-04-17")}
+                    defaultValue={dayjs()}
                     // con il backend usare = label="Controlled field"
                     // con il backend usare = value={birthday}
-                    onChange={(e) => setBirthday(e.target.value)}
+                    onChange={(newValue) => setBirthday(newValue)}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -244,11 +227,12 @@ export function SignUpPromoters() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
-  const [birthday, setBirthday] = useState("");
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
   const [fiscalCode, setFiscalCode] = useState("");
 
+  const [imageProfile, setImageProfile] = useState("");
+  const [birthday, setBirthday] = React.useState(dayjs());
   const [err, setErr] = useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -256,45 +240,29 @@ export function SignUpPromoters() {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validCF.test(fiscalCode)) {
-      const apiUrl = "http://127.0.0.1:8080/public/new_promoter";
+      
 
-      try {
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fiscalCode: fiscalCode,
-            password: password,
-            name: name,
-            surname: surname,
-            city: city,
-            address: address,
-            birthDate: birthday,
-            email: email,
-          }),
-        });
-
-        if (response.ok) {
-          alert("User " + fiscalCode + " signed up successfully.");
-        } else {
-          const errorText = await response.text();
-          alert("Failed to sign up. Server error: " + errorText);
-        }
-      } catch (error) {
-        console.error("Error during signup:", error);
-        alert("Failed to sign up. Please try again later.");
+      let body = {
+        "fiscalCode": fiscalCode,
+        "password": password,
+        "name": name,
+        "surname": surname,
+        "city": city,
+        "address": address,
+        "birthDate": birthday.toString(),
+        "email": email,
+        "imgPath": imageProfile
       }
+      sendRegistrationRequest("promoter", body)
     } else {
-      setErr("Fiscal Code not valid");
+      setErr("Invalid Fiscal Code");
     }
-  };
-  return (
+  }; return (
     <>
       <style>
         {`
@@ -350,7 +318,7 @@ export function SignUpPromoters() {
                     defaultValue={dayjs("2022-04-17")}
                     // con il backend usare = label="Controlled field"
                     // con il backend usare = value={birthday}
-                    onChange={(e) => setBirthday(e.target.value)}
+                    onChange={(e) => setBirthday(e)}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -392,7 +360,7 @@ export function SignUpPromoters() {
                   variant="outlined"
                   onChange={(e) => setPassword(e.target.value)}
                 >
-                  <InputLabel required htmlFor="outlined-adornment-password">
+                  <InputLabel htmlFor="outlined-adornment-password">
                     Password
                   </InputLabel>
                   <OutlinedInput
@@ -416,6 +384,19 @@ export function SignUpPromoters() {
               </Grid>
               <Grid item md="10">
                 <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Upload file
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={(e) => setImageProfile(e.target)}
+                  />
+                </Button>
+              </Grid>
+              <Grid item md="10">
+                <Button
                   type="submit"
                   variant="outlined"
                   style={{ float: "right" }}
@@ -431,7 +412,6 @@ export function SignUpPromoters() {
     </>
   );
 }
-
 export function SignUpArtist() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -442,6 +422,7 @@ export function SignUpArtist() {
   const [address, setAddress] = useState("");
   const [fiscalCode, setFiscalCode] = useState("");
 
+  const [imageProfile, setImageProfile] = useState("");
   const [err, setErr] = useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -449,42 +430,27 @@ export function SignUpArtist() {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validCF.test(fiscalCode)) {
-      const apiUrl = "http://127.0.0.1:8080/public/new_artist";
+      
 
-      try {
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fiscalCode: fiscalCode,
-            password: password,
-            name: name,
-            surname: surname,
-            city: city,
-            address: address,
-            birthDate: birthday,
-            email: email,
-          }),
-        });
-
-        if (response.ok) {
-          alert("User " + fiscalCode + " signed up successfully.");
-        } else {
-          const errorText = await response.text();
-          alert("Failed to sign up. Server error: " + errorText);
-        }
-      } catch (error) {
-        console.error("Error during signup:", error);
-        alert("Failed to sign up. Please try again later.");
+      let body = {
+        "fiscalCode": fiscalCode,
+        "password": password,
+        "name": name,
+        "surname": surname,
+        "city": city,
+        "address": address,
+        "birthDate": birthday.toString,
+        "email": email,
+        "imgPath": imageProfile
       }
+      sendRegistrationRequest("artist", body)
     } else {
-      setErr("Fiscal Code not valid");
+      setErr("Invalid Fiscal Code");
     }
   };
   return (
@@ -543,7 +509,7 @@ export function SignUpArtist() {
                     defaultValue={dayjs("2022-04-17")}
                     // con il backend usare = label="Controlled field"
                     // con il backend usare = value={birthday}
-                    onChange={(e) => setBirthday(e.target.value)}
+                    onChange={(e) => setBirthday(e)}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -585,7 +551,7 @@ export function SignUpArtist() {
                   variant="outlined"
                   onChange={(e) => setPassword(e.target.value)}
                 >
-                  <InputLabel required htmlFor="outlined-adornment-password">
+                  <InputLabel htmlFor="outlined-adornment-password">
                     Password
                   </InputLabel>
                   <OutlinedInput
@@ -606,6 +572,19 @@ export function SignUpArtist() {
                     label="Password"
                   />
                 </FormControl>
+              </Grid>
+              <Grid item md="10">
+                <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Upload file
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={(e) => setImageProfile(e.target)}
+                  />
+                </Button>
               </Grid>
               <Grid item md="10">
                 <Button

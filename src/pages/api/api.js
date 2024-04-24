@@ -14,6 +14,17 @@ export async function sendLoginRequest(CF, password) {
     .catch((error) => console.log(error));
 }
 
+export async function sendRegistrationRequest(roleparam, userDetails) {
+  const apiUrl = "http://127.0.0.1:8080/public/new_user?role=" + roleparam ;
+
+  var response = await axios
+    .post(apiUrl, userDetails)
+    .then((resp) => console.log("ok"))
+    .catch((error) => console.log(error));
+}
+
+
+
 export async function retrieveGenerals() {
   const token = localStorage.getItem("authKey");
 
