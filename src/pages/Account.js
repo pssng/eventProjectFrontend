@@ -426,7 +426,8 @@ export function AccountClient() {
                 text: "Logout",
                 icon: <LogoutIcon style={{ color: "white" }} />,
                 action: () => {
-                  localStorage.clear(); window.location.reload();
+                  localStorage.clear();
+                  window.location.reload();
                   window.location.assign("/login");
                 },
               },
@@ -911,7 +912,8 @@ export function AccountPromoters() {
                 text: "Logout",
                 icon: <LogoutIcon style={{ color: "white" }} />,
                 action: () => {
-                  localStorage.clear(); window.location.reload();
+                  localStorage.clear();
+                  window.location.reload();
                   window.location.assign("/login");
                 },
               },
@@ -942,6 +944,7 @@ export function AccountPromoters() {
 export function AccountArtist() {
   const [events, setEvents] = useState([]);
   const [opere, setOpere] = useState([]);
+  const [favorite, getFavorite] = useState([]);
 
   useEffect(() => {
     const apiUrl = "http://localhost:8080/public";
@@ -965,8 +968,10 @@ export function AccountArtist() {
 
         const response = await axios
           .get(apiUrl + `/artworks/by-artist?fiscalCode=${fiscalCode}`)
-          .then((response) => {setOpere(response.data);console.log(response.data)});
-
+          .then((response) => {
+            setOpere(response.data);
+            console.log(response.data);
+          });
       } catch (error) {
         console.error("Errore durante il recupero delle opere:", error);
       }
@@ -1207,6 +1212,7 @@ export function AccountArtist() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.eventPicPath}
+                  id={event.evendId}
                 />
               </Grid>
             ))}
@@ -1306,16 +1312,16 @@ export function AccountArtist() {
             spacing={3}
             justifyContent={"space-around"}
           >
-            {opere.length>0 &&
-            opere.map((op) => (
-              <Grid item key={op.id}>
-                <CardOpere
-                  title={op.artworkName}
-                  description={op.artworkDescription}
-                  id={op.artworkId}
-                />
-              </Grid>
-            ))}
+            {opere.length > 0 &&
+              opere.map((op) => (
+                <Grid item key={op.id}>
+                  <CardOpere
+                    title={op.artworkName}
+                    description={op.artworkDescription}
+                    id={op.artworkId}
+                  />
+                </Grid>
+              ))}
           </Grid>
         </Box>
       </Box>
@@ -1544,7 +1550,8 @@ export function AccountArtist() {
                 text: "Logout",
                 icon: <LogoutIcon style={{ color: "white" }} />,
                 action: () => {
-                  localStorage.clear(); window.location.reload();
+                  localStorage.clear();
+                  window.location.reload();
                   window.location.assign("/login");
                 },
               },
@@ -1840,7 +1847,8 @@ export function AccountAdmin() {
                 text: "Logout",
                 icon: <LogoutIcon style={{ color: "white" }} />,
                 action: () => {
-                  localStorage.clear(); window.location.reload();
+                  localStorage.clear();
+                  window.location.reload();
                   window.location.assign("/login");
                 },
               },

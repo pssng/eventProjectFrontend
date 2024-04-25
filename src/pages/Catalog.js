@@ -9,7 +9,6 @@ import { useState, useEffect } from "react";
 import Rating from "./Components/Rating";
 import axios from "axios";
 
-
 export const Catalog = () => {
   const [events, setEvents] = useState([]);
 
@@ -24,7 +23,7 @@ export const Catalog = () => {
         // Impostiamo lo stato degli eventi con l'array ricevuto
         setEvents(eventList);
       } catch (error) {
-        console.error('Errore durante il recupero degli eventi:', error);
+        console.error("Errore durante il recupero degli eventi:", error);
       }
     };
 
@@ -76,6 +75,7 @@ export const Catalog = () => {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.eventPicPath}
+                  id={event.eventId}
                 />
               </Grid>
             ))}

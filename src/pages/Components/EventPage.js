@@ -20,15 +20,58 @@ import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrow
 import ModalRequestArtistForPromoter from "./ModalRequestArtistForPromoter";
 import { Link } from "react-router-dom";
 import ModalPayment from "./ModalPayment";
+import axios from "axios";
 
 export function EventPage() {
   const locationR = useLocation();
   const [isFavorited, setIsFavorited] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const generals = JSON.parse(localStorage.getItem("userGenerals"));
+  const apiUrl = "http://localhost:8080/public";
 
-  const handleFavoriteClick = () => {
-    setIsFavorited(!isFavorited);
+  const handleFavoriteClick = async () => {
+    try {
+      // Verifica lo stato corrente del pulsante
+      if (isFavorited) {
+        // Se l'elemento è già nei preferiti, esegui la chiamata API per rimuoverlo dai preferiti
+        await removeFromFavorites();
+      } else {
+        // Altrimenti, esegui la chiamata API per aggiungere l'elemento ai preferiti
+        await addToFavorites();
+      }
+
+      // Aggiorna lo stato del pulsante dei preferiti
+      setIsFavorited(!isFavorited);
+    } catch (error) {
+      console.error("Errore durante il cambio di stato dei preferiti:", error);
+      // Gestisci eventuali errori qui
+    }
   };
+
+  const addToFavorites = async () => {
+    try {
+      const fiscalCode = generals.fiscalCode;
+      const eventId = locationR.state.id;
+      if (!fiscalCode) {
+        console.error("Codice fiscale utente non valido");
+        return;
+      }
+
+      const requestBody = {
+        fiscalCode: fiscalCode,
+        eventId: eventId,
+      };
+
+      await axios.post(apiUrl + "/addFav", requestBody);
+
+      // Handle successful addition to favorites
+      console.log("Added to favorites successfully");
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+    }
+  };
+
+  const removeFromFavorites = async () => {};
 
   console.log("ID: " + locationR.state.id);
 
@@ -82,18 +125,21 @@ export function EventPage() {
             <CardContent>
               <Stack direction={"row"} justifyContent={"space-around"}>
                 <Typography variant="body1" component={"div"}>
-                  {" "}<PlaceIcon
+                  {" "}
+                  <PlaceIcon
                     style={{ fontSize: 30, verticalAlign: "middle" }}
                   />
                   {locationR.state.luogo}
                 </Typography>
 
                 <Typography variant="body1" component={"div"}>
-                  {" "}<EventIcon
+                  {" "}
+                  <EventIcon
                     style={{ fontSize: 30, verticalAlign: "middle" }}
                   />{" "}
                   <i>
-                    {" "}<b>from</b>
+                    {" "}
+                    <b>from</b>
                   </i>
                   {" " + locationR.state.startDate + " "}
                   <i>
@@ -145,7 +191,8 @@ export function EventPage() {
                       }}
                       onClick={handleCollaborate}
                     >
-                      {" "}COLLABORATE{" "}
+                      {" "}
+                      COLLABORATE{" "}
                     </button>
                   </Typography>
                 </Grid>
@@ -157,9 +204,7 @@ export function EventPage() {
                       textAlign: "right",
                     }}
                   >
-                    <b>
-                      Ticket Price: ${locationR.state.prezzo}{" "}
-                    </b>
+                    <b>Ticket Price: ${locationR.state.prezzo} </b>
                   </Typography>
                 </Grid>
               </Grid>
@@ -328,11 +373,13 @@ export function EventPage() {
                   onClick={handleFavoriteClick}
                   color={isFavorited ? "white" : "default"}
                 >
-                  {isFavorited
-                    ? <FavoriteIcon style={{ fontSize: 30, color: "white" }} />
-                    : <FavoriteBorderIcon
-                        style={{ fontSize: 30, color: "white" }}
-                      />}
+                  {isFavorited ? (
+                    <FavoriteIcon style={{ fontSize: 30, color: "white" }} />
+                  ) : (
+                    <FavoriteBorderIcon
+                      style={{ fontSize: 30, color: "white" }}
+                    />
+                  )}
                 </IconButton>
               </Box>
               <Box

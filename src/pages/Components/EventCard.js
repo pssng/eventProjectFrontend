@@ -13,6 +13,7 @@ export function EventCard({
   luogo,
   categoria,
   emailOrganizzatore,
+  id,
 }) {
   const navigate = useNavigate();
   return (
@@ -84,6 +85,7 @@ export function EventCard({
                 startDate,
                 endDate,
                 img,
+                id,
               },
             });
           }}
