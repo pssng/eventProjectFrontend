@@ -48,14 +48,15 @@ const role = localStorage.getItem("userRole");
 export function AccountClient() {
   const [currentSection, setCurrentSection] = useState("Profile");
 
+  const [tickets, setTickets] = useState([]);
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    const apiUrl = "http://localhost:8080/public/events/get_all";
+    const apiUrl = "http://localhost:8080/";
 
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(apiUrl);
+        const response = await axios.get(apiUrl + "public/events/get_all");
         // Otteniamo i dati dall'API
         const eventList = response.data;
         // Impostiamo lo stato degli eventi con l'array ricevuto
@@ -65,6 +66,23 @@ export function AccountClient() {
       }
     };
     fetchEvents();
+
+    const fetchTickets = async () => {
+      const token = localStorage.getItem("authKey");
+      try {
+        const response = await axios
+          .get(apiUrl + "auth/tickets/bought", {
+            headers: {
+              "Content-Type": "application/json", // Esempio di header
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((resp) => setTickets(resp.data));
+      } catch (error) {
+        console.error("Errore durante il recupero degli eventi:", error);
+      }
+    };
+    fetchTickets();
   }, []);
   const theme = useTheme();
 
@@ -76,8 +94,7 @@ export function AccountClient() {
         return renderTicketSection();
       case "Favorites":
         return renderFavoritesSection();
-      case "History of Events":
-        return renderhistoryEventsSection();
+ 
 
       default:
         return null;
@@ -108,31 +125,31 @@ export function AccountClient() {
             overflowX: "scroll",
           }}
         >
-          <Grid
+            <Grid
             container
             direction={"row"}
             justifyContent={"space-around"}
             spacing={2}
           >
-            {events.map((event) => (
-              <Grid item key={event.eventId}>
+            {tickets.map((event) => (
+              <Grid item key={event.eventData.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.promoterEmail}
+                  emailOrganizzatore={event.eventData.promoterEmail}
                   luogo={
-                    event.locationAddress +
+                    event.eventData.locationAddress +
                     ", ( " +
-                    event.locationCity +
+                    event.eventData.locationCity +
                     " ) " +
-                    event.locationName
+                    event.eventData.locationName
                   }
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.promoterInfo}
-                  startDate={event.eventStartDate}
-                  endDate={event.eventEndDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.eventPicPath}
+                  categoria={event.eventData.eventCategory}
+                  nome={event.eventData.eventName}
+                  organizzatore={event.eventData.promoterInfo}
+                  startDate={event.eventData.eventStartDate}
+                  endDate={event.eventData.eventEndDate}
+                  prezzo={event.eventData.eventPrice}
+                  descrizione={event.eventData.eventDescription}
+                  img={event.eventData.eventPicPath}
                 />
               </Grid>
             ))}
@@ -141,58 +158,7 @@ export function AccountClient() {
       </Box>
     );
   };
-  const renderhistoryEventsSection = () => {
-    return (
-      <Box style={{ display: "block", width: "100%" }}>
-        <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
-          History Events <hr style={{ width: "70%", color: "lightgray" }} />
-        </Typography>
-
-        <Box
-          style={{
-            margin: "1rem",
-            border: "groove 1px gray",
-            borderRadius: "10px",
-            height: "70vh",
-            padding: "2rem",
-            textAlign: "left",
-            overflowX: "scroll",
-          }}
-        >
-          <Grid
-            container
-            direction={"row"}
-            justifyContent={"space-around"}
-            spacing={2}
-          >
-            {events.map((event) => (
-              <Grid item key={event.eventId}>
-                <EventCard
-                  emailOrganizzatore={event.promoterEmail}
-                  luogo={
-                    event.locationAddress +
-                    ", ( " +
-                    event.locationCity +
-                    " ) " +
-                    event.locationName
-                  }
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.promoterInfo}
-                  startDate={event.eventStartDate}
-                  endDate={event.eventEndDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.eventPicPath}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Box>
-    );
-  };
-
+  
   const renderFavoritesSection = () => {
     return (
       <Box style={{ display: "block", width: "100%" }}>
@@ -366,10 +332,7 @@ export function AccountClient() {
       text: "Favorites",
       icon: <FavoriteIcon style={{ color: "white" }} />,
     },
-    {
-      text: "History of Events",
-      icon: <HistoryIcon style={{ color: "white" }} />,
-    },
+
   ];
 
   const isMobile = useMediaQuery({ query: `(max-width: 1200px)` });
@@ -418,10 +381,7 @@ export function AccountClient() {
                 text: "Favorites",
                 icon: <FavoriteIcon style={{ color: "white" }} />,
               },
-              {
-                text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
-              },
+         
               {
                 text: "Logout",
                 icon: <LogoutIcon style={{ color: "white" }} />,
@@ -487,8 +447,6 @@ export function AccountPromoters() {
         return renderTicketSection();
       case "Favorites":
         return renderFavoritesSection();
-      case "History of Events":
-        return renderhistoryEventsSection();
       case "Proposed Events":
         return renderProposedEventsSection();
       case "Incoming Requests":
@@ -519,57 +477,6 @@ export function AccountPromoters() {
             border: "groove 1px gray",
             borderRadius: "10px",
             height: "80vh",
-            padding: "2rem",
-            textAlign: "left",
-            overflowX: "scroll",
-          }}
-        >
-          <Grid
-            container
-            direction={"row"}
-            justifyContent={"space-around"}
-            spacing={2}
-          >
-            {events.map((event) => (
-              <Grid item key={event.eventId}>
-                <EventCard
-                  emailOrganizzatore={event.promoterEmail}
-                  luogo={
-                    event.locationAddress +
-                    ", ( " +
-                    event.locationCity +
-                    " ) " +
-                    event.locationName
-                  }
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.promoterInfo}
-                  startDate={event.eventStartDate}
-                  endDate={event.eventEndDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.eventPicPath}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Box>
-    );
-  };
-  const renderhistoryEventsSection = () => {
-    return (
-      <Box style={{ display: "block", width: "100%" }}>
-        <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
-          History Events <hr style={{ width: "70%", color: "lightgray" }} />
-        </Typography>
-
-        <Box
-          style={{
-            margin: "1rem",
-            border: "groove 1px gray",
-            borderRadius: "10px",
-            height: "70vh",
             padding: "2rem",
             textAlign: "left",
             overflowX: "scroll",
@@ -828,10 +735,7 @@ export function AccountPromoters() {
       text: "Favorites",
       icon: <FavoriteIcon style={{ color: "white" }} />,
     },
-    {
-      text: "History of Events",
-      icon: <HistoryIcon style={{ color: "white" }} />,
-    },
+ 
     {
       text: "Proposed Events",
       icon: <CalendarViewDayIcon style={{ color: "white" }} />,
@@ -892,10 +796,7 @@ export function AccountPromoters() {
                 text: "Favorites",
                 icon: <FavoriteIcon style={{ color: "white" }} />,
               },
-              {
-                text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
-              },
+       
               {
                 text: "Proposed Events",
                 icon: <CalendarViewDayIcon style={{ color: "white" }} />,
@@ -943,15 +844,15 @@ export function AccountPromoters() {
 //aggiunto le const e modificato la sezione artistic works
 export function AccountArtist() {
   const [events, setEvents] = useState([]);
+  const [tickets, setTickets] = useState([]);
   const [opere, setOpere] = useState([]);
-  const [favorite, getFavorite] = useState([]);
 
   useEffect(() => {
-    const apiUrl = "http://localhost:8080/public";
+    const apiUrl = "http://localhost:8080";
 
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(apiUrl + "/events/get_all");
+        const response = await axios.get(apiUrl + "/public/events/get_all");
         // Otteniamo i dati dall'API
         const eventList = response.data;
         // Impostiamo lo stato degli eventi con l'array ricevuto
@@ -961,13 +862,28 @@ export function AccountArtist() {
       }
     };
     fetchEvents();
-
+    const fetchTickets = async () => {
+      const token = localStorage.getItem("authKey");
+      try {
+        const response = await axios
+          .get(apiUrl + "/auth/tickets/bought", {
+            headers: {
+              "Content-Type": "application/json", // Esempio di header
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((resp) => setTickets(resp.data));
+      } catch (error) {
+        console.error("Errore durante il recupero dei ticket:", error);
+      }
+    };
+    fetchTickets();
     const fetchOpere = async () => {
       try {
         const fiscalCode = generals.fiscalCode;
 
         const response = await axios
-          .get(apiUrl + `/artworks/by-artist?fiscalCode=${fiscalCode}`)
+          .get(apiUrl + `/public/artworks/by-artist?fiscalCode=${fiscalCode}`)
           .then((response) => {
             setOpere(response.data);
             console.log(response.data);
@@ -1020,8 +936,7 @@ export function AccountArtist() {
         return renderTicketSection();
       case "Favorites":
         return renderFavoritesSection();
-      case "History of Events":
-        return renderhistoryEventsSection();
+      
       case "Artistic Works":
         return renderOpereSection();
       case "Attended Events":
@@ -1064,25 +979,25 @@ export function AccountArtist() {
             justifyContent={"space-around"}
             spacing={2}
           >
-            {events.map((event) => (
-              <Grid item key={event.eventId}>
+            {tickets.map((ticket) => (
+              <Grid item key={ticket.eventData.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.promoterEmail}
+                  emailOrganizzatore={ticket.eventData.promoterEmail}
                   luogo={
-                    event.locationAddress +
+                    ticket.eventData.locationAddress +
                     ", ( " +
-                    event.locationCity +
+                    ticket.eventData.locationCity +
                     " ) " +
-                    event.locationName
+                    ticket.eventData.locationName
                   }
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.promoterInfo}
-                  startDate={event.eventStartDate}
-                  endDate={event.eventEndDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.eventPicPath}
+                  categoria={ticket.eventData.eventCategory}
+                  nome={ticket.eventData.eventName}
+                  organizzatore={ticket.eventData.promoterInfo}
+                  startDate={ticket.eventData.eventStartDate}
+                  endDate={ticket.eventData.eventEndDate}
+                  prezzo={ticket.eventData.eventPrice}
+                  descrizione={ticket.eventData.eventDescription}
+                  img={ticket.eventData.eventPicPath}
                 />
               </Grid>
             ))}
@@ -1126,58 +1041,7 @@ export function AccountArtist() {
       </Box>
     );
   };
-  const renderhistoryEventsSection = () => {
-    return (
-      <Box style={{ display: "block", width: "100%" }}>
-        <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
-          History Events <hr style={{ width: "70%", color: "lightgray" }} />
-        </Typography>
-
-        <Box
-          style={{
-            margin: "1rem",
-            border: "groove 1px gray",
-            borderRadius: "10px",
-            height: "70vh",
-            padding: "2rem",
-            textAlign: "left",
-            overflowX: "scroll",
-          }}
-        >
-          <Grid
-            container
-            direction={"row"}
-            justifyContent={"space-around"}
-            spacing={2}
-          >
-            {events.map((event) => (
-              <Grid item key={event.eventId}>
-                <EventCard
-                  emailOrganizzatore={event.promoterEmail}
-                  luogo={
-                    event.locationAddress +
-                    ", ( " +
-                    event.locationCity +
-                    " ) " +
-                    event.locationName
-                  }
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.promoterInfo}
-                  startDate={event.eventStartDate}
-                  endDate={event.eventEndDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.eventPicPath}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Box>
-    );
-  };
-
+ 
   const renderFavoritesSection = () => {
     return (
       <Box style={{ display: "block", width: "100%" }}>
@@ -1212,7 +1076,6 @@ export function AccountArtist() {
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
                   img={event.eventPicPath}
-                  id={event.evendId}
                 />
               </Grid>
             ))}
@@ -1459,10 +1322,7 @@ export function AccountArtist() {
       text: "Favorites",
       icon: <FavoriteIcon style={{ color: "white" }} />,
     },
-    {
-      text: "History of Events",
-      icon: <HistoryIcon style={{ color: "white" }} />,
-    },
+    
     {
       text: "Artistic Works",
       icon: <PaletteIcon style={{ color: "white" }} />,
@@ -1526,10 +1386,7 @@ export function AccountArtist() {
                 text: "Favorites",
                 icon: <FavoriteIcon style={{ color: "white" }} />,
               },
-              {
-                text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
-              },
+      
               {
                 text: "Artistic Works",
                 icon: <PaletteIcon style={{ color: "white" }} />,
