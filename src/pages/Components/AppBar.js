@@ -12,7 +12,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import LoginIcon from "@mui/icons-material/Login";
 import { Link } from "react-router-dom/";
-import { useNavigate ,useLocation} from "react-router-dom/";
+import { useNavigate, useLocation } from "react-router-dom/";
 
 function ResponsiveAppBar(props) {
   const navigate = useNavigate();
@@ -50,7 +50,6 @@ function ResponsiveAppBar(props) {
   let location = useLocation();
 
   const pathName = window.location.pathname;
-  console.log("APPBAR: " + props.isAuth);
   return (
     <AppBar
       position="static"
@@ -169,7 +168,10 @@ function ResponsiveAppBar(props) {
               key={"Account"}
             >
               <Button
-              onClick={()=>navigate("/Acccount")}
+                onClick={() => {
+                  navigate("/Account");
+                  window.location.reload();
+                }}
                 style={{
                   background: pathName === "/Account" ? "#F2E9E4" : "#22223B",
                   color: pathName === "/Account" ? "black" : "white",
@@ -184,11 +186,10 @@ function ResponsiveAppBar(props) {
           ) : (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open login">
-                <IconButton onClick={()=>navigate("/login")} sx={{ p: 0 }}>
+                <IconButton onClick={() => navigate("/login")} sx={{ p: 0 }}>
                   <LoginIcon style={{ color: "white" }} alt="Your logins" />
                 </IconButton>
               </Tooltip>
-              
             </Box>
           )}
         </Toolbar>

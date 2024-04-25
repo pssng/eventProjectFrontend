@@ -39,7 +39,8 @@ export const Artist = () => {
       >
         <Grid container direction={"row"} spacing={2}>
           {artists.map((artist) => (
-            <Grid item key={artist.id}>
+     
+            <Grid item key={artist.imgPath}>
               <ArtistCard
                 nome={artist.name}
                 cognome={artist.surname}

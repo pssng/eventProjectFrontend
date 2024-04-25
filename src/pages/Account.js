@@ -19,7 +19,7 @@ import event3 from "../Assets/event3.jpg";
 import CardLarge from "./Components/CardFavorites";
 import { Request } from "./Modules/Forms/Request";
 import { useTheme } from "@mui/material/styles";
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from "@mui/icons-material/Logout";
 import CardOpere from "./Components/CardOpere";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Link } from "react-router-dom";
@@ -42,15 +42,13 @@ import { retrieveGenerals, retriveRole } from "./api/api";
 import axios from "axios";
 import { useEffect } from "react";
 const drawerWidth = 240;
-const generals = JSON.parse(localStorage.getItem('userGenerals'));
+const generals = JSON.parse(localStorage.getItem("userGenerals"));
 const role = localStorage.getItem("userRole");
-
 
 export function AccountClient() {
   const [currentSection, setCurrentSection] = useState("Profile");
 
   const [events, setEvents] = useState([]);
-
 
   useEffect(() => {
     const apiUrl = "http://localhost:8080/public/events/get_all";
@@ -63,11 +61,11 @@ export function AccountClient() {
         // Impostiamo lo stato degli eventi con l'array ricevuto
         setEvents(eventList);
       } catch (error) {
-        console.error('Errore durante il recupero degli eventi:', error);
+        console.error("Errore durante il recupero degli eventi:", error);
       }
     };
     fetchEvents();
-  }, [])
+  }, []);
   const theme = useTheme();
 
   const renderSection = () => {
@@ -238,7 +236,7 @@ export function AccountClient() {
     );
   };
   const renderProfileSection = (generals, role) => {
-    console.log(generals)
+    console.log(generals);
     return (
       <Box
         style={{
@@ -423,17 +421,24 @@ export function AccountClient() {
               {
                 text: "History of Events",
                 icon: <HistoryIcon style={{ color: "white" }} />,
-              },{
+              },
+              {
                 text: "Logout",
                 icon: <LogoutIcon style={{ color: "white" }} />,
-                action: () => localStorage.clear()
+                action: () => {
+                  localStorage.clear(); window.location.reload();
+                  window.location.assign("/login");
+                },
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-
-                onClick={() => item.text === "Logout" ? item.action() : setCurrentSection(item.text)}
+                onClick={() =>
+                  item.text === "Logout"
+                    ? item.action()
+                    : setCurrentSection(item.text)
+                }
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -454,7 +459,6 @@ export function AccountPromoters() {
 
   const [events, setEvents] = useState([]);
 
-
   useEffect(() => {
     const apiUrl = "http://localhost:8080/public/events/get_all";
 
@@ -466,11 +470,11 @@ export function AccountPromoters() {
         // Impostiamo lo stato degli eventi con l'array ricevuto
         setEvents(eventList);
       } catch (error) {
-        console.error('Errore durante il recupero degli eventi:', error);
+        console.error("Errore durante il recupero degli eventi:", error);
       }
     };
     fetchEvents();
-  }, [])
+  }, []);
   const theme = useTheme();
 
   const renderSection = () => {
@@ -903,17 +907,23 @@ export function AccountPromoters() {
                 text: "Send a Request",
                 icon: <ForwardToInboxIcon style={{ color: "white" }} />,
               },
-             {
+              {
                 text: "Logout",
                 icon: <LogoutIcon style={{ color: "white" }} />,
-                action: () => localStorage.clear()
+                action: () => {
+                  localStorage.clear(); window.location.reload();
+                  window.location.assign("/login");
+                },
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-
-                onClick={() => item.text === "Logout" ? item.action() : setCurrentSection(item.text)}
+                onClick={() =>
+                  item.text === "Logout"
+                    ? item.action()
+                    : setCurrentSection(item.text)
+                }
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -930,54 +940,42 @@ export function AccountPromoters() {
 }
 //aggiunto le const e modificato la sezione artistic works
 export function AccountArtist() {
-
   const [events, setEvents] = useState([]);
-
+  const [opere, setOpere] = useState([]);
 
   useEffect(() => {
-    const apiUrl = "http://localhost:8080/public/events/get_all";
+    const apiUrl = "http://localhost:8080/public";
 
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(apiUrl);
+        const response = await axios.get(apiUrl + "/events/get_all");
         // Otteniamo i dati dall'API
         const eventList = response.data;
         // Impostiamo lo stato degli eventi con l'array ricevuto
         setEvents(eventList);
       } catch (error) {
-        console.error('Errore durante il recupero degli eventi:', error);
+        console.error("Errore durante il recupero degli eventi:", error);
       }
     };
     fetchEvents();
-  }, [])
+
+    const fetchOpere = async () => {
+      try {
+        const fiscalCode = generals.fiscalCode;
+
+        const response = await axios
+          .get(apiUrl + `/artworks/by-artist?fiscalCode=${fiscalCode}`)
+          .then((response) => setOpere(response.data));
+      } catch (error) {
+        console.error("Errore durante il recupero delle opere:", error);
+      }
+    };
+    fetchOpere();
+  }, []);
+
   //aggiunto qui opere
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
-  const [opere, setOpere] = useState([
-    {
-      nome: "venere",
-      organizzatore: "Marck jset",
-      descrizione: "lorem impsWEEEjdhuceh",
-      id: 1,
-      img: event1,
-    },
-    {
-      nome: "Bacio",
-      organizzatore: "Marck jset",
-
-      descrizione: "lorem impsWEEEjdhuceh",
-      id: 2,
-      img: event2,
-    },
-    {
-      nome: "Infinito",
-      organizzatore: "Marck jset",
-
-      descrizione: "lorem impsWEEEjdhuceh",
-      id: 3,
-      img: event3,
-    },
-  ]);
   const [recensioniArtisti, setRecensioniArtisti] = useState([
     {
       yourName: "Mario Rossi",
@@ -995,8 +993,16 @@ export function AccountArtist() {
   const handleReviewSubmit = (newReview) => {
     setRecensioniArtisti([...recensioniArtisti, newReview]);
   };
-  const handleUploadArtwork = (newArtwork) => {
-    setOpere([...opere, newArtwork]);
+  const handleUploadArtwork = async (newArtwork) => {
+    const apiUrl = "http://localhost:8080/auth";
+    try {
+      const response = await axios.post(apiUrl + "/artworks/new");
+      // Otteniamo i dati dall'API
+      const opereList = response.data;
+      setOpere(opereList);
+    } catch (error) {
+      console.error("Errore durante il recupero delle opere:", error);
+    }
   };
 
   const renderSection = () => {
@@ -1261,67 +1267,24 @@ export function AccountArtist() {
   };
 
   const renderOpereSection = () => {
-    const handleUpdateOpere = (id, updatedTitle, updatedDescription) => {
-      // Implementa la logica per l'aggiornamento dell'opera con l'id specifico
-      const updatedOpere = opere.map((op) =>
-        op.id === id
-          ? { ...op, nome: updatedTitle, descrizione: updatedDescription }
-          : op
-      );
-
-      // Aggiorna lo stato delle opere con i nuovi dati
-      setOpere(updatedOpere);
-
-      onInsert(id, updatedTitle, updatedDescription);
+    // request body => {
+    //   "artworkId": 0,
+    //   "artworkName": "string",
+    //   "artworkDescription": "string",
+    //   "artworkYear": "string"
+    // }
+    const handleUpdateOpere = (id) => {
+      // Implementa la logica per l'aggiornare una opera tramite l'id
     };
-
     const handleDeleteOpere = (id) => {
       // Implementa la logica per l'eliminazione dell'opera con l'id specifico
-      const updatedOpere = opere.filter((op) => op.id !== id);
-
-      // Aggiorna lo stato delle opere rimuovendo l'opera eliminata
-      setOpere(updatedOpere);
-    };
-
-    // Aggiungi questa funzione che aggiunge title e description a un'opera specifica
-    const onInsert = (id, newTitle, newDescription) => {
-      // Trova l'opera con l'id specifico
-      const updatedOpere = opere.map((op) =>
-        op.id === id
-          ? {
-            ...op,
-            title: op.title + newTitle,
-            description: op.description + newDescription,
-          }
-          : op
-      );
-
-      // Aggiorna lo stato delle opere con i nuovi dati
-      setOpere(updatedOpere);
-    };
-
-    const handleInsertOpere = (id, newTitle, newDescription) => {
-      // Aggiungi la nuova opera allo stato delle opere
-      const newOpere = [
-        ...opere,
-        { id, nome: newTitle, descrizione: newDescription },
-      ];
-      setOpere(newOpere);
     };
 
     return (
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
           Artworks
-          <ModalUploadArtwork
-            onUploadArtwork={(newArtwork) =>
-              handleInsertOpere(
-                newArtwork.id,
-                newArtwork.title,
-                newArtwork.description
-              )
-            }
-          />
+          <ModalUploadArtwork />
         </Typography>
         <hr style={{ width: "70%", color: "lightgray" }} />
 
@@ -1344,14 +1307,10 @@ export function AccountArtist() {
           >
             {opere.map((op) => (
               <Grid item key={op.id}>
-                {/* Passa la prop onUpdate correttamente a CardOpere */}
                 <CardOpere
                   title={op.nome}
                   description={op.descrizione}
                   id={op.id}
-                  onUpdate={handleUpdateOpere}
-                  onDelete={handleDeleteOpere}
-                  onInsert={onInsert}
                 />
               </Grid>
             ))}
@@ -1578,17 +1537,24 @@ export function AccountArtist() {
               {
                 text: "Artist Review",
                 icon: <ReviewsIcon style={{ color: "white" }} />,
-              },{
+              },
+              {
                 text: "Logout",
                 icon: <LogoutIcon style={{ color: "white" }} />,
-                action: () => localStorage.clear()
+                action: () => {
+                  localStorage.clear(); window.location.reload();
+                  window.location.assign("/login");
+                },
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-
-                onClick={() => item.text === "Logout" ? item.action() : setCurrentSection(item.text)}
+                onClick={() =>
+                  item.text === "Logout"
+                    ? item.action()
+                    : setCurrentSection(item.text)
+                }
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -1609,7 +1575,6 @@ export function AccountAdmin() {
 
   const [events, setEvents] = useState([]);
 
-
   useEffect(() => {
     const apiUrl = "http://localhost:8080/public/events/get_all";
 
@@ -1621,11 +1586,11 @@ export function AccountAdmin() {
         // Impostiamo lo stato degli eventi con l'array ricevuto
         setEvents(eventList);
       } catch (error) {
-        console.error('Errore durante il recupero degli eventi:', error);
+        console.error("Errore durante il recupero degli eventi:", error);
       }
     };
     fetchEvents();
-  }, [])
+  }, []);
   const theme = useTheme();
 
   const renderSection = () => {
@@ -1722,7 +1687,7 @@ export function AccountAdmin() {
             spacing={3}
             style={{ justifyContent: "center" }}
           >
-          <Grid item>
+            <Grid item>
               <TextField
                 id="outlined-read-only-input"
                 label="Name"
@@ -1868,17 +1833,24 @@ export function AccountAdmin() {
               {
                 text: "Support",
                 icon: <HelpOutlineIcon style={{ color: "white" }} />,
-              }, {
+              },
+              {
                 text: "Logout",
                 icon: <LogoutIcon style={{ color: "white" }} />,
-                action: () => localStorage.clear()
+                action: () => {
+                  localStorage.clear(); window.location.reload();
+                  window.location.assign("/login");
+                },
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-
-                onClick={() => item.text === "Logout" ? item.action() : setCurrentSection(item.text)}
+                onClick={() =>
+                  item.text === "Logout"
+                    ? item.action()
+                    : setCurrentSection(item.text)
+                }
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>

@@ -9,6 +9,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import axios from "axios";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -40,9 +41,10 @@ export default function ModalUploadArtwork({ onUploadArtwork }) {
   const [uploadImage, setUploadImage] = useState("");
   const [theme, setTheme] = useState("");
   const [artworkData, setArtworkData] = useState({
+    artworkId: 0,
     artworkName: "",
     artworkDescription: "",
-    artworkImage: "",
+    artworkYear: "",
   });
 
   const handleOpen = () => {
@@ -52,18 +54,38 @@ export default function ModalUploadArtwork({ onUploadArtwork }) {
     setOpen(false);
   };
 
-  const handleUploadArtwork = () => {
-    // Chiamare la funzione di aggiornamento passata come prop
-    onUploadArtwork(artworkData);
+  const handleUploadArtwork = async (requestedBody) => {
+    const apiUrl = "http://localhost:8080/auth";
+    try {
+      const token = localStorage.getItem("authKey");
+
+      const response = await axios
+        .post(apiUrl + "/artworks/new", requestedBody, {
+          headers: {
+            "Content-Type": "application/json", // Esempio di header
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then(
+          (response) =>
+            "l'opera con id:" +
+            response.data.artWorkId +
+            "è stata salvata correttamente"
+        );
+    } catch (error) {
+      console.error("Errore durante il salvataggio dell'opera", error);
+    }
     // Resetta i dati della recensione nel modulo
     setArtworkData({
+      artworkId: 0,
       artworkName: "",
       artworkDescription: "",
-      artworkImage: "",
+      artworkYear: "",
     });
     // Chiudi il modulo
     handleClose();
   };
+
   return (
     <div style={{ float: "right" }}>
       <IconButton
@@ -158,7 +180,7 @@ export default function ModalUploadArtwork({ onUploadArtwork }) {
               variant="contained"
               size="small"
               endIcon={<SendIcon />}
-              onClick={handleUploadArtwork}
+              onClick={handleUploadArtwork(artworkData)}
             >
               Send
             </Button>
