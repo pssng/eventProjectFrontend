@@ -24,7 +24,7 @@ import axios from "axios";
 
 export function EventPage() {
   const locationR = useLocation();
-  const [isFavorited, setIsFavorited] = useState(false);
+  const [isFavorited, setIsFavorited] = useState();
   const [quantity, setQuantity] = useState(1);
   const generals = JSON.parse(localStorage.getItem("userGenerals"));
   const apiUrl = "http://localhost:8080/public";
@@ -71,7 +71,23 @@ export function EventPage() {
     }
   };
 
-  const removeFromFavorites = async () => {};
+  const removeFromFavorites = async () => {
+    try {
+      const eventId = locationR.state.id;
+      const response = await axios.delete(apiUrl + `/removeFav/${eventId}`);
+      if (response.status === 200) {
+        // Handle successful deletion
+        console.log("Favorite deleted successfully");
+        // Update the UI to reflect the deletion
+        // For example, remove the favorite from the list of favorites
+      } else {
+        // Handle error
+        console.error("Error deleting favorite:", response.data);
+      }
+    } catch (error) {
+      console.error("Error deleting favorite:", error);
+    }
+  };
 
   console.log("ID: " + locationR.state.id);
 
