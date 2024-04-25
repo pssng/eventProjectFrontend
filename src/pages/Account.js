@@ -1310,9 +1310,9 @@ export function AccountArtist() {
             opere.map((op) => (
               <Grid item key={op.id}>
                 <CardOpere
-                  title={op.nome}
-                  description={op.descrizione}
-                  id={op.id}
+                  title={op.artworkName}
+                  description={op.artworkDescription}
+                  id={op.artworkId}
                 />
               </Grid>
             ))}

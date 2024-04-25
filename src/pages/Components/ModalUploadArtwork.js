@@ -103,21 +103,9 @@ export default function ModalUploadArtwork({ onUploadArtwork }) {
         aria-labelledby="parent-modal-title"
         aria-describedby="parent-modal-description"
       >
-        <Box sx={{ ...style, width: 400 }}>
+        <Box sx={{ ...style, width: 400, borderRadius: "30px" }}>
           <h2>Upload your artwork</h2>
-          <TextField
-            id="standard-multiline-flexible"
-            multiline
-            maxRows={4}
-            variant="standard"
-            required
-            label="Artwork's name"
-            value={artworkData.artworkName}
-            onChange={(e) =>
-              setArtworkData({ ...artworkData, artworkName: e.target.value })
-            }
-            style={{ width: "100%" }}
-          />{" "}
+
           <TextField
             id="standard-multiline-static"
             multiline
@@ -160,12 +148,28 @@ export default function ModalUploadArtwork({ onUploadArtwork }) {
                 />
               </Grid>
             </Grid>
-
-            <Grid item md="10">
-              <Typography fontStyle={"italic"}>Upload Your Images</Typography>
+            <Grid item md="6">
+              <TextField
+                id="standard-multiline-flexible"
+                multiline
+                maxRows={4}
+                variant="standard"
+                required
+                label="Artwork's name"
+                value={artworkData.artworkName}
+                onChange={(e) =>
+                  setArtworkData({
+                    ...artworkData,
+                    artworkName: e.target.value,
+                  })
+                }
+                style={{ width: "100%" }}
+              />{" "}
+            </Grid>
+            <Grid item md="4">
               <Button
                 component="label"
-                variant="contained"
+                variant="outlined"
                 startIcon={<CloudUploadIcon />}
               >
                 Upload Image
@@ -180,7 +184,7 @@ export default function ModalUploadArtwork({ onUploadArtwork }) {
               variant="contained"
               size="small"
               endIcon={<SendIcon />}
-              onClick={()=>handleUploadArtwork(artworkData)}
+              onClick={() => {handleUploadArtwork(artworkData);alert("Upload Succes");window.location.reload()}}
             >
               Send
             </Button>
