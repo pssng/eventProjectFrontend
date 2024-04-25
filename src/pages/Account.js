@@ -965,7 +965,8 @@ export function AccountArtist() {
 
         const response = await axios
           .get(apiUrl + `/artworks/by-artist?fiscalCode=${fiscalCode}`)
-          .then((response) => setOpere(response.data));
+          .then((response) => {setOpere(response.data);console.log(response.data)});
+
       } catch (error) {
         console.error("Errore durante il recupero delle opere:", error);
       }
@@ -1305,7 +1306,8 @@ export function AccountArtist() {
             spacing={3}
             justifyContent={"space-around"}
           >
-            {opere.map((op) => (
+            {opere.length>0 &&
+            opere.map((op) => (
               <Grid item key={op.id}>
                 <CardOpere
                   title={op.nome}

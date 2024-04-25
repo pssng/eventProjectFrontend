@@ -180,7 +180,7 @@ export default function ModalUploadArtwork({ onUploadArtwork }) {
               variant="contained"
               size="small"
               endIcon={<SendIcon />}
-              onClick={handleUploadArtwork(artworkData)}
+              onClick={()=>handleUploadArtwork(artworkData)}
             >
               Send
             </Button>
