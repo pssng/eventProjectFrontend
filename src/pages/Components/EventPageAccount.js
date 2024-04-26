@@ -32,7 +32,7 @@ export function EventPageAccount() {
 
   return (
     <Box style={{ textAlign: "left", padding: "1rem" }}>
-      <Link to={"/Account"}>
+      <Link to={"/auth/account"}>
         <Button startIcon={<KeyboardDoubleArrowLeftIcon />}> Back</Button>
       </Link>
 

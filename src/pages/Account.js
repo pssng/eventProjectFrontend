@@ -50,7 +50,7 @@ export function AccountClient() {
 
   const [tickets, setTickets] = useState([]);
   const [events, setEvents] = useState([]);
-
+  const [favorites, setFavorited] = useState([]);
   useEffect(() => {
     const apiUrl = "http://localhost:8080/";
 
@@ -66,7 +66,14 @@ export function AccountClient() {
       }
     };
     fetchEvents();
-
+    const fetchisfav = async () => {
+      await axios.get(apiUrl + `/viewAll/${generals.fiscalCode}`).then((resp) => {
+        setFavorited(
+          resp.data
+        );
+      });
+    };
+    fetchisfav();
     const fetchTickets = async () => {
       const token = localStorage.getItem("authKey");
       try {
@@ -177,22 +184,19 @@ export function AccountClient() {
             overflowX: "scroll",
           }}
         >
-          <Grid
+         <Grid
             container
             direction={"row"}
             spacing={3}
             justifyContent={"space-around"}
           >
-            {events.map((event) => (
+            {favorites.map((event) => (
               <Grid item>
                 {" "}
                 <CardLarge
-                  nome={event.eventName}
-                  organizzatore={event.promoterInfo}
-                  data={event.eventStartDate + " " + event.eventEndDate}
-                  prezzo={event.eventPrice}
+                  nome={event.eventTitle}
                   descrizione={event.eventDescription}
-                  img={event.eventPicPath}
+                  img={event.path}
                 />
               </Grid>
             ))}
@@ -418,6 +422,7 @@ export function AccountClient() {
 export function AccountPromoters() {
   const [currentSection, setCurrentSection] = useState("Profile");
 
+  const [favorites, setFavorited] = useState([]);
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
@@ -534,22 +539,19 @@ export function AccountPromoters() {
             overflowX: "scroll",
           }}
         >
-          <Grid
+           <Grid
             container
             direction={"row"}
             spacing={3}
             justifyContent={"space-around"}
           >
-            {events.map((event) => (
+            {favorites.map((event) => (
               <Grid item>
                 {" "}
                 <CardLarge
-                  nome={event.eventName}
-                  organizzatore={event.promoterInfo}
-                  data={event.eventStartDate + " " + event.eventEndDate}
-                  prezzo={event.eventPrice}
+                  nome={event.eventTitle}
                   descrizione={event.eventDescription}
-                  img={event.eventPicPath}
+                  img={event.path}
                 />
               </Grid>
             ))}
@@ -846,6 +848,7 @@ export function AccountArtist() {
   const [events, setEvents] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [opere, setOpere] = useState([]);
+  const [favorites, setFavorited] = useState([]);
 
   useEffect(() => {
     const apiUrl = "http://localhost:8080";
@@ -861,7 +864,16 @@ export function AccountArtist() {
         console.error("Errore durante il recupero degli eventi:", error);
       }
     };
+    
     fetchEvents();
+    const fetchisfav = async () => {
+      await axios.get(apiUrl + `/public/viewAll/${generals.fiscalCode}`).then((resp) => {
+        setFavorited(
+          resp.data
+        );
+      });
+    };
+    fetchisfav();
     const fetchTickets = async () => {
       const token = localStorage.getItem("authKey");
       try {
@@ -1066,16 +1078,13 @@ export function AccountArtist() {
             spacing={3}
             justifyContent={"space-around"}
           >
-            {events.map((event) => (
+            {favorites.map((event) => (
               <Grid item>
                 {" "}
                 <CardLarge
-                  nome={event.eventName}
-                  organizzatore={event.promoterInfo}
-                  data={event.eventStartDate + " " + event.eventEndDate}
-                  prezzo={event.eventPrice}
+                  nome={event.eventTitle}
                   descrizione={event.eventDescription}
-                  img={event.eventPicPath}
+                  img={event.path}
                 />
               </Grid>
             ))}
@@ -1440,10 +1449,17 @@ export function AccountAdmin() {
   const [currentSection, setCurrentSection] = useState("Profile");
 
   const [events, setEvents] = useState([]);
-
+ const [favorites,setFavorited] = useState([]);
   useEffect(() => {
     const apiUrl = "http://localhost:8080/public/events/get_all";
-
+    const fetchisfav = async () => {
+      await axios.get(apiUrl + `/public/viewAll/${generals.fiscalCode}`).then((resp) => {
+        setFavorited(
+          resp.data
+        );
+      });
+    };
+    fetchisfav();
     const fetchEvents = async () => {
       try {
         const response = await axios.get(apiUrl);

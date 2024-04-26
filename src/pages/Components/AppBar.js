@@ -169,12 +169,12 @@ function ResponsiveAppBar(props) {
             >
               <Button
                 onClick={() => {
-                  navigate("/Account");
+                  navigate("/auth/account");
                   window.location.reload();
                 }}
                 style={{
-                  background: pathName === "/Account" ? "#F2E9E4" : "#22223B",
-                  color: pathName === "/Account" ? "black" : "white",
+                  background: pathName === "/auth/account" ? "#F2E9E4" : "#22223B",
+                  color: pathName === "/auth/account" ? "black" : "white",
                   textDecoration: "none",
                   display: "block",
                 }}

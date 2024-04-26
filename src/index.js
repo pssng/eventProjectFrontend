@@ -92,8 +92,8 @@ export default function App() {
           mostrare una section diversa
           Passaggi: fai il login, identifica il ruolo dell'utente, metti il ruolo dell'utente nei parametri
           */}
-          {/* <Route path="/Account" element={renderSection("ROLE_ARTIST")} />  */}
-          <Route path="/Account" element={renderSection(userRole)} />
+          {/* <Route path="/auth/account" element={renderSection("ROLE_ARTIST")} />  */}
+          <Route path="/auth/account" element={renderSection(userRole)} />
           <Route path="*" element={<NoPage />} />
         </Route>
         <Route path="/PaymentCorrect" element={<PaymentCorrect />} />
