@@ -24,24 +24,42 @@ import axios from "axios";
 
 export function EventPage() {
   const locationR = useLocation();
-  const [isFavorited, setIsFavorited] = useState();
-  const [quantity, setQuantity] = useState(1);
   const generals = JSON.parse(localStorage.getItem("userGenerals"));
   const apiUrl = "http://localhost:8080/public";
+  const [isFavorited, setIsFavorited] = useState();
+  const [isFavoritedId, setIsFavoritedId] = useState();
+  const fiscalCode = generals.fiscalCode;
+  const eventId = locationR.state.id;
+
+    const fetchisfav = async () => {
+      await axios.get(apiUrl + `/viewAll/${fiscalCode}`).then((resp) => {
+        setIsFavorited(
+          resp.data.filter((el) => el.eventId !== eventId).length > 0
+        );
+        setIsFavoritedId(resp.data[0]?.id);
+      });
+    };
+    fetchisfav();
+  const [quantity, setQuantity] = useState(1);
+
+
 
   const handleFavoriteClick = async () => {
     try {
       // Verifica lo stato corrente del pulsante
+  
+    
       if (isFavorited) {
         // Se l'elemento è già nei preferiti, esegui la chiamata API per rimuoverlo dai preferiti
         await removeFromFavorites();
+        window.location.reload()
       } else {
         // Altrimenti, esegui la chiamata API per aggiungere l'elemento ai preferiti
         await addToFavorites();
+        window.location.reload()
       }
 
       // Aggiorna lo stato del pulsante dei preferiti
-      setIsFavorited(!isFavorited);
     } catch (error) {
       console.error("Errore durante il cambio di stato dei preferiti:", error);
       // Gestisci eventuali errori qui
@@ -74,7 +92,9 @@ export function EventPage() {
   const removeFromFavorites = async () => {
     try {
       const eventId = locationR.state.id;
-      const response = await axios.delete(apiUrl + `/removeFav/${eventId}`);
+      const response = await axios.delete(
+        apiUrl + `/removeFav/${isFavoritedId}`
+      );
       if (response.status === 200) {
         // Handle successful deletion
         console.log("Favorite deleted successfully");
