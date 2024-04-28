@@ -6,6 +6,7 @@ import { Button, Grid, IconButton, TextField } from "@mui/material";
 import Rating from "./Rating";
 import SendIcon from "@mui/icons-material/Send";
 import { useState } from "react";
+import axios from "axios";
 const style = {
   position: "absolute",
   top: "50%",
@@ -20,12 +21,14 @@ const style = {
   pb: 3,
 };
 
-export default function ModalReview({ onReviewSubmit }) {
+export default function ModalReview(reviewRating) {
   const [open, setOpen] = React.useState(false);
+  const apiUrl = "http://localhost:8080/auth/reviews";
+  const generals = JSON.parse(localStorage.getItem("userGenerals"));
   const [reviewData, setReviewData] = useState({
-    yourName: "",
-    reviewArtist: "",
-    ratingArtist: 0,
+    reviewTitle: "",
+    reviewText: "",
+    reviewRating: null,
   });
 
   const handleOpen = () => {
@@ -35,18 +38,63 @@ export default function ModalReview({ onReviewSubmit }) {
     setOpen(false);
   };
 
-  const handleReviewSubmit = () => {
-    // Chiamare la funzione di aggiornamento passata come prop
-    onReviewSubmit(reviewData);
-    // Resetta i dati della recensione nel modulo
-    setReviewData({
-      yourName: "",
-      reviewArtist: "",
-      ratingArtist: 0,
-    });
-    // Chiudi il modulo
-    handleClose();
+  const handleReviewSubmit = async () => {
+    // Validazione dei dati
+    if (
+      reviewData.reviewTitle.trim() === "" ||
+      reviewData.reviewText.trim() === ""
+    ) {
+      alert("Please fill out all fields.");
+      return;
+    }
+
+    const token = localStorage.getItem("authKey");
+    const actorFiscalCode = generals.fiscalCode;
+
+    try {
+      // Creazione dell'oggetto JSON con i dati della recensione
+      const reviewDto = {
+        reviewData: {
+          reviewTitle: reviewData.reviewTitle,
+          reviewText: reviewData.reviewText,
+          reviewRating: reviewData.reviewRating,
+        },
+        actorFiscalCode: actorFiscalCode,
+      };
+
+      console.log("Review data:", reviewDto);
+
+      // Invio della richiesta POST all'endpoint dell'API utilizzando axios
+      const response = await axios.post(apiUrl + "/to_artist", reviewDto, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("Response data:", response.data);
+
+      if (response.data && response.data.reviewRating) {
+        // Se la richiesta ha avuto successo, reimposta il modulo e chiudi il modal
+        setReviewData({
+          reviewTitle: "",
+          reviewText: "",
+          reviewRating: 0,
+        });
+        handleClose();
+
+        // Mostra un messaggio di successo
+        alert("Review submitted successfully!");
+      } else {
+        throw new Error("Failed to submit the review.");
+      }
+    } catch (error) {
+      console.error(error);
+      // Mostra un messaggio di errore
+      alert("Failed to submit the review. Please try again later.");
+    }
   };
+
   return (
     <div style={{ float: "right" }}>
       <IconButton
@@ -73,9 +121,9 @@ export default function ModalReview({ onReviewSubmit }) {
             variant="standard"
             required
             label="Your name"
-            value={reviewData.yourName}
+            value={reviewData.reviewTitle}
             onChange={(e) =>
-              setReviewData({ ...reviewData, yourName: e.target.value })
+              setReviewData({ ...reviewData, reviewTitle: e.target.value })
             }
             style={{ width: "100%" }}
           />{" "}
@@ -86,9 +134,9 @@ export default function ModalReview({ onReviewSubmit }) {
             required
             label="Talk about your experience"
             rows={5}
-            value={reviewData.reviewArtist}
+            value={reviewData.reviewText}
             onChange={(e) =>
-              setReviewData({ ...reviewData, reviewArtist: e.target.value })
+              setReviewData({ ...reviewData, reviewText: e.target.value })
             }
             style={{ width: "100%" }}
           />
@@ -103,9 +151,9 @@ export default function ModalReview({ onReviewSubmit }) {
             gap={"1rem"}
           >
             <Rating
-              value={reviewData.ratingArtist}
-              onChange={(event, newValue) =>
-                setReviewData({ ...reviewData, ratingArtist: newValue })
+              value={reviewData.reviewRating}
+              onChange={(newValue) =>
+                setReviewData({ ...reviewData, reviewRating: newValue })
               }
             />
 
