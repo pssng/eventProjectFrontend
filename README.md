@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+# Integrazione Api FrontEnd avanzamento:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Una volta avviato il BE accedere a questo link per avere la documentazione delle api, e possibile anche testarle da qui direttamente. ---> [Swagger UI](http://localhost:8080/swagger-ui/index.html#/)
 
-## Available Scripts
+### [payments-controller](http://localhost:8080/swagger-ui/index.html#/payments-controller) & ticket-controller
 
-In the project directory, you can run:
+da implementare, il pagamento del ticket e la conseguente generazione del ticket e la
+ticket section per tutti gli utenti in account (vi ho gia fatto tutta la struttura front end dovete solo fare in modo che si riempia la variabile dichiarata come const [tickets , setTickets] = useState([]))
 
-### `npm start`
+### [support-control](http://localhost:8080/swagger-ui/index.html#/support-control) da implementare (non ho capito dove va cosa fa)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### [event-request-controller](http://localhost:8080/swagger-ui/index.html#/event-request-controller) in corso, -Karma
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+[/auth/event_request/new](http://localhost:8080/swagger-ui/index.html#/event-request-controller/newEventRequest) NON SALVA I DATI NEL DATABASE NONOSTANTE DA FE LI PASSO CORRETTAMENTE -- CERCANDO DI RISOLVERE
 
-### `npm test`
+[/auth/event_request/accept_request](http://localhost:8080/swagger-ui/index.html#/event-request-controller/acceptRequest) DA IMPLEMENTARE IN ADMIN DEDUCO
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+[/auth/event_request/all_request](http://localhost:8080/swagger-ui/index.html#/event-request-controller/showAllRequest) NON HA PARAMETRI quindi e' per gli admin per vedere tutte le richieste dei promoter? se si si deve implementare in admin
 
-### `npm run build`
+### [f-ile-upload-controller](http://localhost:8080/swagger-ui/index.html#/f-ile-upload-controller) da implementare
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### [review-ap-is](http://localhost:8080/swagger-ui/index.html#/review-ap-is) in corso -Davide
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### [user-controller](http://localhost:8080/swagger-ui/index.html#/user-controller) implementato by karma
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### [favorite-controller](http://localhost:8080/swagger-ui/index.html#/favorite-controller) implementato by karma
 
-### `npm run eject`
+### [public-event-controller ](http://localhost:8080/swagger-ui/index.html#/public-event-controller) implementato by karma
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### [public-art-work-controller](http://localhost:8080/swagger-ui/index.html#/public-art-work-controller) implementato by karma
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### [artist-request-controller ](http://localhost:8080/swagger-ui/index.html#/artist-request-controller) implementato by karma
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### [private-event-controller](http://localhost:8080/swagger-ui/index.html#/private-event-controller) implementato by karma
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### [private-artwork-controller](http://localhost:8080/swagger-ui/index.html#/private-artwork-controller) implementato by karma
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+--- By Karma
