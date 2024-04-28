@@ -1,14 +1,6 @@
-import {
-  Alert,
-  Box,
-  Divider,
-  Grid,
-  Icon,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import * as React from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import img1 from "../Assets/ArtGalleryimg1.jpg";
 import Slider from "react-slick";
@@ -25,14 +17,10 @@ import "react-slideshow-image/dist/styles.css";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
 import IconButton from "@mui/material/IconButton";
 import ReactLogo from "../Assets/logo192.png";
 import MuiIcon from "../Assets/muiIcon.png";
 import SpringBootIcon from "../Assets/springboot.png";
-import Rating from "./Components/Rating";
 import { Snackbar } from "@mui/material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -66,22 +54,16 @@ const images = [
   },
 ];
 
-const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
-
 export const Home = () => {
   const stringDevs = [
     "Paolo Coletta | 0124002554",
     "Dawid Adrian Danila | 0124002590",
     "Maria Grazia Di Giorgio | 0124002701",
     "Carmela Pia Fiore | 0124002523",
-
   ];
 
-  const theme = useTheme();
-  const colorMode = React.useContext(ColorModeContext);
   const [isLoggedOut, setIsLoggedOut] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const navigate = useNavigate();
   const sliderSettings = {
     dots: false,
     infinite: true,
@@ -93,7 +75,6 @@ export const Home = () => {
     arrows: false,
     afterChange: (current) => setCurrentIndex(current),
   };
-  const [userType, setUserType] = useState("none");
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
@@ -120,7 +101,7 @@ export const Home = () => {
         >
           <Alert
             onClose={handleCloseSnackbar}
-            severity="success" 
+            severity="success"
             variant="filled"
           >
             Logged out successfully!
@@ -148,7 +129,13 @@ export const Home = () => {
         </Slide>
         {/* web */}
         <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <Grid container spacing={2} direction={"row"} className="row-img" style={{backgroundColor: "#4A4E69"}}>
+          <Grid
+            container
+            spacing={2}
+            direction={"row"}
+            className="row-img"
+            style={{ backgroundColor: "#4A4E69" }}
+          >
             <Grid item lg={4}>
               <img src={imgclient} alt="img" />
             </Grid>
@@ -198,7 +185,13 @@ export const Home = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid container spacing={2} direction={"row"} className="row-img" style={{backgroundColor: "#4A4E69"}}>
+          <Grid
+            container
+            spacing={2}
+            direction={"row"}
+            className="row-img"
+            style={{ backgroundColor: "#4A4E69" }}
+          >
             <Grid item container direction={"column"} lg={3}>
               <Grid item md={4}>
                 <span>
@@ -249,7 +242,13 @@ export const Home = () => {
             </Grid>
           </Grid>
           {/* Qua Inizia per artist */}
-          <Grid container spacing={2} direction={"row"} className="row-img" style={{backgroundColor: "#4A4E69"}}>
+          <Grid
+            container
+            spacing={2}
+            direction={"row"}
+            className="row-img"
+            style={{ backgroundColor: "#4A4E69" }}
+          >
             <Grid item lg={4}>
               <img src={img3} alt="img" />
             </Grid>
@@ -383,14 +382,6 @@ export const Home = () => {
             style={{ textAlign: "center" }}
             padding={1}
           >
-            <Stack direction={"column"} spacing={1}>
-              <Typography variant={"h5"} component={"i"}>
-                Give us a Feedback!
-              </Typography>
-              <div style={{ margin: "auto" }}>
-                <Rating />
-              </div>
-            </Stack>
             <Stack
               direction={"column"}
               style={{ maxWidth: "700px", margin: "auto" }}
