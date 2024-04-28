@@ -49,6 +49,9 @@ export async function retrieveGenerals() {
   }
 }
 
+
+
+
 export async function retriveRole() {
   const token = localStorage.getItem("authKey");
   if (token !== undefined && token !== null) {
