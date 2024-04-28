@@ -13,6 +13,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Grid, TextField, IconButton } from "@mui/material";
 import { EventCard } from "./Components/EventCard";
+import { RequestFormEventArtist }from "./Modules/Forms/RequestFormArtist";
 import event1 from "../Assets/event1.jpg";
 import event2 from "../Assets/event2.jpg";
 import event3 from "../Assets/event3.jpg";
@@ -954,7 +955,7 @@ export function AccountArtist() {
       case "Attended Events":
         return renderAttendedEventSection();
       case "Request Participation":
-        return <Request></Request>;
+        return <RequestFormEventArtist></RequestFormEventArtist>;
       case "Artist Review":
         return renderArtistReview();
       default:

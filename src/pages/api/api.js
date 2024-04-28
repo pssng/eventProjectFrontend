@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 export async function sendLoginRequest(CF, password) {
   const apiUrl = "http://127.0.0.1:8080/public/authenticate";
-
+console.log(CF,password)
   let jsonData = {
     fiscalCode: CF,
     password: password,

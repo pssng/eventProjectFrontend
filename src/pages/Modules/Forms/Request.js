@@ -15,6 +15,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs from "dayjs";
+import axios from "axios";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -61,7 +62,6 @@ const VisuallyHiddenInput = styled("input")({
 
 export const Request = () => {
   var data = new Date();
-  const [formData,setFormData] = useState(null);
   var gg, mm, aaaa;
   gg = data.getDate() + "-";
   mm = data.getMonth() + 1 + "-";
@@ -98,17 +98,63 @@ export const Request = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleSendTicket();
+    const token = localStorage.getItem("authKey");
+    var requestedBody = {
+      "eventRequestId": 0,
+      "documentationPath": permissionDocumentPath,
+      "promoterFiscalCode": promoterCf,
+      "eventRequestDate": eventRequestDate,
+      "locationAddress": locationAddress,
+      "maxCustomers": maxCustomers,
+      "locationName": locationName,
+      "locationDescription": locationDescribe,
+      "expectedEventStart": begin,
+      "expectedEventEnd": end,
+      "eventName": eventName,
+      "eventDescription": describe,
+      "eventRegion": eventRegion,
+      "eventPicPath": pic,
+      "eventPrice": eventPrice,
+      "eventCategory": ourThemes
+    }
+    if (token !== undefined && token !== null) {
+      console.table(requestedBody)
+      var resp = await axios
+        .post(
+          "http://127.0.0.1:8080/auth/event_request/new",
+          { requestedBody },
+          {
+            headers: {
+              "Content-Type": "application/json", // Esempio di header
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => alert("Request Successfully sended!"));
+    }
+    /*Body {
+  "eventRequestId": 0,
+  "documentationPath": "string",
+  "promoterFiscalCode": "string",
+  "eventRequestDate": "string",
+  "locationAddress": "string",
+  "maxCustomers": 0,
+  "locationName": "string",
+  "locationDescription": "string",
+  "expectedEventStart": "string",
+  "expectedEventEnd": "string",
+  "eventName": "string",
+  "eventDescription": "string",
+  "eventRegion": "string",
+  "eventPicPath": "string",
+  "eventPrice": "string",
+  "eventCategory": "string"
+}*/
   };
-  const handleSendTicket = () => {
-    alert("Sended! Check your email!");
-    setButtonDisabled(true);
-  };
-  function handleClick() {
-    setButtonText("Sended!");
-  }
+
+
 
   return (
     <>

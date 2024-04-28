@@ -27,7 +27,7 @@ export function Login() {
   const [password, setPassword] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
-
+console.log(CF + "  " +  password)
     sendLoginRequest(CF, password);
   };
   return (
