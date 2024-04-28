@@ -1,20 +1,34 @@
 import { Box, Stack, Link, Grid } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button, Checkbox, FormControlLabel, Typography } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Typography,
+  FormControl,
+} from "@mui/material";
 import im3 from "../../../Assets/background.jpg";
-import { sendLoginRequest } from "../../../pages/api/api"
+import { sendLoginRequest } from "../../../pages/api/api";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
 export function Login() {
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
   const [CF, setCF] = useState("");
   const [password, setPassword] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
 
     sendLoginRequest(CF, password);
-
-
-
-
   };
   return (
     <>
@@ -48,18 +62,35 @@ export function Login() {
                 required
                 id="email"
                 label="Fiscal Code"
-                variant="standard"
+                variant="outlined"
                 onChange={(e) => setCF(e.target.value)}
                 style={{ marginBottom: "10px" }}
               />
-              <TextField
-                required
-                id="password"
-                label="Password"
-                variant="standard"
+              <FormControl
+                variant="outlined"
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ marginBottom: "10px" }}
-              />
+              >
+                <InputLabel htmlFor="outlined-adornment-password">
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
+                />
+              </FormControl>
               <FormControlLabel control={<Checkbox />} label="Remember me" />
               <Button type="submit" variant="outlined">
                 Login
