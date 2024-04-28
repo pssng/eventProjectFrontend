@@ -15,6 +15,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs from "dayjs";
+import axios from "axios";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -93,21 +94,67 @@ export const Request = () => {
     } = event;
     setOurThemes(
       // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value,
+      typeof value === "string" ? value.split(",") : value
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleSendTicket();
+    const token = localStorage.getItem("authKey");
+    var requestedBody = {
+      "eventRequestId": 0,
+      "documentationPath": permissionDocumentPath,
+      "promoterFiscalCode": promoterCf,
+      "eventRequestDate": eventRequestDate,
+      "locationAddress": locationAddress,
+      "maxCustomers": maxCustomers,
+      "locationName": locationName,
+      "locationDescription": locationDescribe,
+      "expectedEventStart": begin,
+      "expectedEventEnd": end,
+      "eventName": eventName,
+      "eventDescription": describe,
+      "eventRegion": eventRegion,
+      "eventPicPath": pic,
+      "eventPrice": eventPrice,
+      "eventCategory": ourThemes
+    }
+    if (token !== undefined && token !== null) {
+      console.table(requestedBody)
+      var resp = await axios
+        .post(
+          "http://127.0.0.1:8080/auth/event_request/new",
+          { requestedBody },
+          {
+            headers: {
+              "Content-Type": "application/json", // Esempio di header
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => alert("Request Successfully sended!"));
+    }
+    /*Body {
+  "eventRequestId": 0,
+  "documentationPath": "string",
+  "promoterFiscalCode": "string",
+  "eventRequestDate": "string",
+  "locationAddress": "string",
+  "maxCustomers": 0,
+  "locationName": "string",
+  "locationDescription": "string",
+  "expectedEventStart": "string",
+  "expectedEventEnd": "string",
+  "eventName": "string",
+  "eventDescription": "string",
+  "eventRegion": "string",
+  "eventPicPath": "string",
+  "eventPrice": "string",
+  "eventCategory": "string"
+}*/
   };
-  const handleSendTicket = () => {
-    alert("Sended! Check your email!");
-    setButtonDisabled(true);
-  };
-  function handleClick() {
-    setButtonText("Sended!");
-  }
+
+
 
   return (
     <>
@@ -148,15 +195,6 @@ export const Request = () => {
                   id="outlined-required"
                   label="Event Name"
                   onChange={(e) => setEventName(e.target.value)}
-                  style={{ width: "90%" }}
-                />
-              </Grid>
-              <Grid item md="4">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Describe Event"
-                  onChange={(e) => setDescribe(e.target.value)}
                   style={{ width: "90%" }}
                 />
               </Grid>

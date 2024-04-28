@@ -12,16 +12,20 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import LoginIcon from "@mui/icons-material/Login";
 import { Link } from "react-router-dom/";
+import { useNavigate, useLocation } from "react-router-dom/";
 
-function ResponsiveAppBar() {
-  const [isAuth, setIsAuth] = React.useState(true);
-
-  
-  const pages = [{ name: "Home" }, { name: "Events" }, { name: "Contacts" }];
+function ResponsiveAppBar(props) {
+  const navigate = useNavigate();
+  const pages = [
+    { name: "Home" },
+    { name: "Events" },
+    { name: "Contacts" },
+    { name: "Artists" },
+  ];
 
   const logins = [
     { name: "Promoters", action: "/loginPromoters" },
-    { name: "Clients", action: "/loginClients" },
+    { name: "Customer", action: "/loginClients" },
     { name: "Artist", action: "/loginArtist" },
     { name: "Admin", action: "/loginAdmin" },
   ];
@@ -43,11 +47,13 @@ function ResponsiveAppBar() {
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
+  let location = useLocation();
 
+  const pathName = window.location.pathname;
   return (
     <AppBar
       position="static"
-      style={{ background: "black" }}
+      style={{ background: "#22223B" }}
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
     >
       <Container maxWidth="xl">
@@ -140,54 +146,50 @@ function ResponsiveAppBar() {
                 to={`/${page.name}`}
                 key={page.name}
               >
-                <Button sx={{ my: 2, color: "white", display: "block" }}>
+                <Button
+                  style={{
+                    background:
+                      pathName === `/${page.name}` ? "#F2E9E4" : "#22223B",
+                    color: pathName === `/${page.name}` ? "black" : "white",
+                    textDecoration: "none",
+                  }}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
                   {page.name}
                 </Button>
               </Link>
             ))}
           </Box>
 
-          {isAuth ? (
-           <Link
+          {props.isAuth ? (
+            <Link
               style={{ textDecoration: "none" }}
               to={`/Account`}
               key={"Account"}
             >
-              <Button sx={{ my: 2, color: "white", display: "block" }}>
+              <Button
+                onClick={() => {
+                  navigate("/auth/account");
+                  window.location.reload();
+                }}
+                style={{
+                  background: pathName === "/auth/account" ? "#F2E9E4" : "#22223B",
+                  color: pathName === "/auth/account" ? "black" : "white",
+                  textDecoration: "none",
+                  display: "block",
+                }}
+                sx={{ my: 2, display: "block" }}
+              >
                 {"Account"}
               </Button>
             </Link>
           ) : (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open login">
-                <IconButton onClick={handleOpenloginMenu} sx={{ p: 0 }}>
+                <IconButton onClick={() => navigate("/login")} sx={{ p: 0 }}>
                   <LoginIcon style={{ color: "white" }} alt="Your logins" />
                 </IconButton>
               </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorEllogin}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorEllogin)}
-                onClose={handleCloseloginMenu}
-              >
-                {logins.map((login) => (
-                  <MenuItem key={login.name}>
-                    <Link to={login.action} style={{ textDecoration: "none" }}>
-                      {login.name}
-                    </Link>
-                  </MenuItem>
-                ))}
-              </Menu>
             </Box>
           )}
         </Toolbar>

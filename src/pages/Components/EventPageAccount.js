@@ -20,125 +20,19 @@ import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrow
 import ModalRequestArtistForPromoter from "./ModalRequestArtistForPromoter";
 import { Link } from "react-router-dom";
 import ModalPayment from "./ModalPayment";
-import axios from "axios";
+import ModalReview from "./ModalReview";
 
-export function EventPage() {
+export function EventPageAccount() {
   const locationR = useLocation();
-  const generals = JSON.parse(localStorage.getItem("userGenerals"));
-  const apiUrl = "http://localhost:8080/public";
-  const [isFavorited, setIsFavorited] = useState();
-  const [isFavoritedId, setIsFavoritedId] = useState();
-  const fiscalCode = generals.fiscalCode;
-  const eventId = locationR.state.id;
+  const [isFavorited, setIsFavorited] = useState(false);
 
-    const fetchisfav = async () => {
-      await axios.get(apiUrl + `/viewAll/${fiscalCode}`).then((resp) => {
-        setIsFavorited(
-          resp.data.filter((el) => el.eventId !== eventId).length > 0
-        );
-        setIsFavoritedId(resp.data[0]?.id);
-      });
-    };
-    fetchisfav();
-  const [quantity, setQuantity] = useState(1);
-
-
-
-  const handleFavoriteClick = async () => {
-    try {
-      // Verifica lo stato corrente del pulsante
-  
-    
-      if (isFavorited) {
-        // Se l'elemento è già nei preferiti, esegui la chiamata API per rimuoverlo dai preferiti
-        await removeFromFavorites();
-        window.location.reload()
-      } else {
-        // Altrimenti, esegui la chiamata API per aggiungere l'elemento ai preferiti
-        await addToFavorites();
-        window.location.reload()
-      }
-
-      // Aggiorna lo stato del pulsante dei preferiti
-    } catch (error) {
-      console.error("Errore durante il cambio di stato dei preferiti:", error);
-      // Gestisci eventuali errori qui
-    }
-  };
-
-  const addToFavorites = async () => {
-    try {
-      const fiscalCode = generals.fiscalCode;
-      const eventId = locationR.state.id;
-      if (!fiscalCode) {
-        console.error("Codice fiscale utente non valido");
-        return;
-      }
-
-      const requestBody = {
-        fiscalCode: fiscalCode,
-        eventId: eventId,
-      };
-
-      await axios.post(apiUrl + "/addFav", requestBody);
-
-      // Handle successful addition to favorites
-      console.log("Added to favorites successfully");
-    } catch (error) {
-      console.error("Error adding to favorites:", error);
-    }
-  };
-
-  const removeFromFavorites = async () => {
-    try {
-      const eventId = locationR.state.id;
-      const response = await axios.delete(
-        apiUrl + `/removeFav/${isFavoritedId}`
-      );
-      if (response.status === 200) {
-        // Handle successful deletion
-        console.log("Favorite deleted successfully");
-        // Update the UI to reflect the deletion
-        // For example, remove the favorite from the list of favorites
-      } else {
-        // Handle error
-        console.error("Error deleting favorite:", response.data);
-      }
-    } catch (error) {
-      console.error("Error deleting favorite:", error);
-    }
-  };
-
-  console.log("ID: " + locationR.state.id);
-
-  const handleCollaborate = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(
-        `/auth/request/artist/${locationR.state.id}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to collaborate with promoter.");
-      }
-
-      // Handle successful collaboration
-      console.log("Collaboration request successful");
-    } catch (error) {
-      console.error("Error collaborating with promoter:", error.message);
-    }
+  const handleFavoriteClick = () => {
+    setIsFavorited(!isFavorited);
   };
 
   return (
     <Box style={{ textAlign: "left", padding: "1rem" }}>
-      <Link to={locationR.state.location}>
+      <Link to={"/auth/account"}>
         <Button startIcon={<KeyboardDoubleArrowLeftIcon />}> Back</Button>
       </Link>
 
@@ -165,7 +59,7 @@ export function EventPage() {
                   <PlaceIcon
                     style={{ fontSize: 30, verticalAlign: "middle" }}
                   />
-                  {locationR.state.luogo}
+                  {locationR.state.eventRegion}
                 </Typography>
 
                 <Typography variant="body1" component={"div"}>
@@ -203,45 +97,20 @@ export function EventPage() {
                 margin={"2rem 1rem 0 1rem "}
                 style={{ overflow: "auto", height: "10rem" }}
               >
-                {locationR.state.descrizione}
+                {locationR.state.eventDescription}
               </Typography>
             </CardContent>
             {/*TICKET ZONE */}
             <CardContent>
               <hr style={{ color: "lightgray" }} />
-              <Grid container justifyContent="space-between">
-                <Grid item>
-                  <Typography
-                    style={{
-                      textAlign: "left",
-                    }}
-                  >
-                    Are you an artist?
-                    <button
-                      style={{
-                        border: "none",
-                        background: "none",
-                        color: "blue",
-                        textDecoration: "underline",
-                        cursor: "pointer",
-                      }}
-                      onClick={handleCollaborate}
-                    >
-                      {" "}
-                      COLLABORATE{" "}
-                    </button>
+              <Grid container justifyContent="center">
+                <Grid item xs={12} style={{ textAlign: "center" }}>
+                  <Typography>
+                    Did you like the event? Let us know what do you think!
                   </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography
-                    variant="h6"
-                    color="text.primary"
-                    style={{
-                      textAlign: "right",
-                    }}
-                  >
-                    <b>Ticket Price: ${locationR.state.prezzo} </b>
-                  </Typography>
+                  <Link to="/GenericReview" style={{ margin: "auto" }}>
+                    <Button size="large">Leave a review</Button>
+                  </Link>
                 </Grid>
               </Grid>
             </CardContent>
@@ -252,7 +121,7 @@ export function EventPage() {
         <Grid item xs={12} md={4} xl={3}>
           <Box
             style={{
-              backgroundColor: `#22223B`,
+              backgroundColor: `black`,
               height: "80vh",
               display: "flex",
               flexDirection: "column",
@@ -329,7 +198,7 @@ export function EventPage() {
                       Category:
                     </Typography>
                     <Typography style={{ color: "gray" }}>
-                      {locationR.state.categoria}
+                      {locationR.state.eventCategory}
                     </Typography>
                   </li>
                 </ul>
@@ -369,7 +238,7 @@ export function EventPage() {
                       Promoter:
                     </Typography>
                     <Typography style={{ color: "gray" }}>
-                      {locationR.state.organizzatore}
+                      {locationR.state.eventPromoter}
                     </Typography>
                   </li>
 
@@ -417,23 +286,6 @@ export function EventPage() {
                     />
                   )}
                 </IconButton>
-              </Box>
-              <Box
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Typography component={"div"} variant="body1" color="white">
-                  Buy Now
-                </Typography>
-                <ModalPayment
-                  eventName={locationR.state.nome}
-                  quantity={quantity}
-                  setQuantity={setQuantity}
-                  id={locationR.state.id}
-                />
               </Box>
             </Box>
           </Box>

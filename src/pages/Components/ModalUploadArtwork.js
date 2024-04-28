@@ -9,6 +9,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import axios from "axios";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -35,17 +36,15 @@ const style = {
   pb: 3,
 };
 
-export default function ModalUploadArtwork({
-  title,
-  description,
-  onUploadArtwork,
-}) {
+export default function ModalUploadArtwork({ onUploadArtwork }) {
   const [open, setOpen] = React.useState(false);
   const [uploadImage, setUploadImage] = useState("");
   const [theme, setTheme] = useState("");
   const [artworkData, setArtworkData] = useState({
-    title,
-    description,
+    artworkId: 0,
+    artworkName: "",
+    artworkDescription: "",
+    artworkYear: "",
   });
 
   const handleOpen = () => {
@@ -55,31 +54,36 @@ export default function ModalUploadArtwork({
     setOpen(false);
   };
 
-  const handleUploadArtwork = () => {
-    // Verifica che title e description siano definiti in artworkData
-    if (
-      artworkData.title !== undefined &&
-      artworkData.description !== undefined
-    ) {
-      // Chiamare la funzione di aggiornamento passata come prop
-      onUploadArtwork({
-        title: artworkData.title,
-        description: artworkData.description,
-      });
+  const handleUploadArtwork = async (requestedBody) => {
+    const apiUrl = "http://localhost:8080/auth";
+    try {
+      const token = localStorage.getItem("authKey");
 
-      // Resetta i dati della recensione nel modulo
-      setArtworkData({
-        title: "",
-        description: "",
-        artworkImage: "",
-      });
-      console.log("Dati", artworkData);
-      // Chiudi il modulo
-      handleClose();
-    } else {
-      // Puoi gestire qui il caso in cui il titolo o la descrizione siano mancanti
-      console.error("Titolo o descrizione mancanti");
+      const response = await axios
+        .post(apiUrl + "/artworks/new", requestedBody, {
+          headers: {
+            "Content-Type": "application/json", // Esempio di header
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then(
+          (response) =>
+            "l'opera con id:" +
+            response.data.artWorkId +
+            "è stata salvata correttamente"
+        );
+    } catch (error) {
+      console.error("Errore durante il salvataggio dell'opera", error);
     }
+    // Resetta i dati della recensione nel modulo
+    setArtworkData({
+      artworkId: 0,
+      artworkName: "",
+      artworkDescription: "",
+      artworkYear: "",
+    });
+    // Chiudi il modulo
+    handleClose();
   };
 
   return (
@@ -99,21 +103,9 @@ export default function ModalUploadArtwork({
         aria-labelledby="parent-modal-title"
         aria-describedby="parent-modal-description"
       >
-        <Box sx={{ ...style, width: 400 }}>
+        <Box sx={{ ...style, width: 400, borderRadius: "30px" }}>
           <h2>Upload your artwork</h2>
-          <TextField
-            id="standard-multiline-flexible"
-            multiline
-            maxRows={4}
-            variant="standard"
-            required
-            label="Artwork's name"
-            value={artworkData.title}
-            onChange={(e) =>
-              setArtworkData({ ...artworkData, title: e.target.value })
-            }
-            style={{ width: "100%" }}
-          />{" "}
+
           <TextField
             id="standard-multiline-static"
             multiline
@@ -121,11 +113,11 @@ export default function ModalUploadArtwork({
             required
             label="Talk about your artwork"
             rows={5}
-            value={artworkData.description}
+            value={artworkData.artworkDescription}
             onChange={(e) =>
               setArtworkData({
                 ...artworkData,
-                description: e.target.value,
+                artworkDescription: e.target.value,
               })
             }
             style={{ width: "100%" }}
@@ -156,12 +148,28 @@ export default function ModalUploadArtwork({
                 />
               </Grid>
             </Grid>
-
-            <Grid item md="10">
-              <Typography fontStyle={"italic"}>Upload Your Images</Typography>
+            <Grid item md="6">
+              <TextField
+                id="standard-multiline-flexible"
+                multiline
+                maxRows={4}
+                variant="standard"
+                required
+                label="Artwork's name"
+                value={artworkData.artworkName}
+                onChange={(e) =>
+                  setArtworkData({
+                    ...artworkData,
+                    artworkName: e.target.value,
+                  })
+                }
+                style={{ width: "100%" }}
+              />{" "}
+            </Grid>
+            <Grid item md="4">
               <Button
                 component="label"
-                variant="contained"
+                variant="outlined"
                 startIcon={<CloudUploadIcon />}
               >
                 Upload Image
@@ -176,7 +184,7 @@ export default function ModalUploadArtwork({
               variant="contained"
               size="small"
               endIcon={<SendIcon />}
-              onClick={handleUploadArtwork}
+              onClick={() => {handleUploadArtwork(artworkData);alert("Upload Succes");window.location.reload()}}
             >
               Send
             </Button>

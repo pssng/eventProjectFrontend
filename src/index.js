@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
@@ -8,18 +8,15 @@ import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 import { NoPage } from "./pages/NoPages";
 import { ManagerEvent } from "./pages/ManagerEvent";
+import { useState } from "react";
 import { Client } from "./pages/Client";
 import { Artist } from "./pages/Artist";
-import { PayPage } from "./pages/PayPage";
+import { PaymentCorrect } from "./pages/PaymentCorrect";
+import { PaymentError } from "./pages/PaymentError";
 import { Contacts } from "./pages/Contacts";
 import { Catalog } from "./pages/Catalog";
 import { RequestFormEventArtist } from "./pages/Modules/Forms/RequestFormArtist";
-import {
-  LoginClients,
-  LoginPromoters,
-  LoginAdmin,
-  LoginArtist,
-} from "./pages/Modules/Forms/Login";
+import { Login } from "./pages/Modules/Forms/Login";
 import {
   SignUpClients,
   SignUpPromoters,
@@ -27,14 +24,30 @@ import {
 } from "./pages/Modules/Forms/Signup";
 import ForgotPassword from "./pages/Modules/Forms/ForgotPassword";
 import { EventPage } from "./pages/Components/EventPage";
+import { EventPageAccount } from "./pages/Components/EventPageAccount";
+import { ArtistPage } from "./pages/Components/ArtistPage";
 import {
   AccountAdmin,
   AccountClient,
   AccountPromoters,
   AccountArtist,
 } from "./pages/Account";
-
+import GenericReview from "./pages/Components/GenericReview";
+import GenericArtwork from "./pages/Components/GenericArtwork";
+import { retrieveGenerals, retriveRole } from "./pages/api/api";
 export default function App() {
+
+  const token = localStorage.getItem("authKey");
+ 
+  retrieveGenerals();
+  retriveRole();
+
+  const [isAuth, setIsAuth] = useState(token !== null && token !== undefined);
+  var userRole ;
+
+  if (isAuth) 
+     userRole = localStorage.getItem("userRole");
+ 
   const renderSection = (x) => {
     switch (x) {
       case "ROLE_CUSTOMER":
@@ -53,34 +66,38 @@ export default function App() {
     //Usare il Router per consentire la navigazione tra le pagine all'interno della piattaforma
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout isAuth={isAuth} />}>
           <Route index element={<Home />} />
           <Route path="/Client" element={<Client />} />
           <Route path="/ManagerEvent" element={<ManagerEvent />} />
-          <Route path="/Artist" element={<Artist />} />
-          <Route path="/PayPage" element={<PayPage />} />
+          <Route path="/Artists" element={<Artist />} />
           <Route path="/Contacts" element={<Contacts />} />
           <Route path="/Events" element={<Catalog />} />
           <Route path="/RequestArtist" element={<RequestFormEventArtist />} />
           <Route path="/Home" element={<Home />} />
-          <Route path="/Loginpromoters" element={<LoginPromoters />} />
+          <Route path="/Login" element={<Login />} />
           <Route path="/SignUppromoters" element={<SignUpPromoters />} />
-          <Route path="/Loginclients" element={<LoginClients />} />
+         
           <Route path="/SignUpclients" element={<SignUpClients />} />
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
           <Route path="/EventPage" element={<EventPage />} />
-          <Route path="LoginArtist" element={<LoginArtist />} />
-          <Route path="LoginAdmin" element={<LoginAdmin />} />
-          <Route path="SignUpArtist" element={<SignUpArtist />} />
+          <Route path="/EventPageAccount" element={<EventPageAccount />} />
+
+          <Route path="/SignUpArtist" element={<SignUpArtist />} />
+          <Route path="/ArtistPage" element={<ArtistPage />} />
+          <Route path="/GenericReview" element={<GenericReview />} />
+          <Route path="/GenericArtwork" element={<GenericArtwork />} />
           {/*Quando faccio il routing devo capire il ruolo dell utente e 
           reindirizzarlo all'apposito Account per ora standard ho il Client, inserire nei parametri il ruolo per 
           mostrare una section diversa
           Passaggi: fai il login, identifica il ruolo dell'utente, metti il ruolo dell'utente nei parametri
           */}
-          {/*<Route path="/Account" element={renderSection(localStorage.getItem("userRole"))} />*/}
-          <Route path="/Account" element={renderSection("ROLE_ARTIST")} />
+          {/* <Route path="/auth/account" element={renderSection("ROLE_ARTIST")} />  */}
+          <Route path="/auth/account" element={renderSection(userRole)} />
           <Route path="*" element={<NoPage />} />
         </Route>
+        <Route path="/PaymentCorrect" element={<PaymentCorrect />} />
+        <Route path="/PaymentError" element={<PaymentError />} />
       </Routes>
     </BrowserRouter>
   );

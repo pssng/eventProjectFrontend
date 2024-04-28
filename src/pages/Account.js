@@ -11,22 +11,16 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import {
-  Grid,
-  TextField,
-  Stack,
-  CardActions,
-  Button,
-  IconButton,
-} from "@mui/material";
+import { Grid, TextField, IconButton } from "@mui/material";
 import { EventCard } from "./Components/EventCard";
+import { RequestFormEventArtist } from "./Modules/Forms/RequestFormArtist";
 import event1 from "../Assets/event1.jpg";
 import event2 from "../Assets/event2.jpg";
 import event3 from "../Assets/event3.jpg";
 import CardLarge from "./Components/CardFavorites";
 import { Request } from "./Modules/Forms/Request";
 import { useTheme } from "@mui/material/styles";
-
+import LogoutIcon from "@mui/icons-material/Logout";
 import CardOpere from "./Components/CardOpere";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Link } from "react-router-dom";
@@ -45,124 +39,69 @@ import ReviewsIcon from "@mui/icons-material/Reviews";
 import Review from "./Components/Review";
 import ModalReview from "./Components/ModalReview";
 import ModalUploadArtwork from "./Components/ModalUploadArtwork";
+import { retrieveGenerals, retriveRole } from "./api/api";
 import axios from "axios";
-
+import { useEffect } from "react";
 const drawerWidth = 240;
-
-const opere = [
-  {
-    nome: "venere",
-    organizzatore: "Marck jset",
-    descrizione: "lorem impsWEEEjdhuceh",
-    img: event1,
-  },
-  {
-    nome: "Bacio",
-    organizzatore: "Marck jset",
-
-    descrizione: "lorem impsWEEEjdhuceh",
-    img: event2,
-  },
-  {
-    nome: "Infinito",
-    organizzatore: "Marck jset",
-
-    descrizione: "lorem impsWEEEjdhuceh",
-    img: event3,
-  },
-];
-const events = [
-  {
-    eventId: 4,
-    eventName: "Sarà davvero una torta?",
-    eventDescription:
-      "Se sei un appassionato di dolci e ami le sorprese, facciamo al caso tuo!",
-    maximumCapacity: 70,
-    startDate: "2024-05-20",
-    endDate: "2024-05-20",
-    eventCategory: "Cucina",
-    eventRegion: "Lazio",
-    eventPrice: "$ 23,54",
-    eventPromoter: "Mark Datels",
-    emailOrganizzatore: "Mark_Datels@exemple.xyz",
-    img: event3,
-  },
-  {
-    eventId: 4,
-    eventName: "Sarà davvero una torta?",
-    eventDescription:
-      "Se sei un appassionato di dolci e ami le sorprese, facciamo al caso tuo!",
-    maximumCapacity: 70,
-    startDate: "2024-05-20",
-    endDate: "2024-05-20",
-    eventCategory: "Cucina",
-    eventRegion: "Lazio",
-    eventPrice: "$ 23,54",
-    eventPromoter: "Mark Datels",
-    emailOrganizzatore: "Mark_Datels@exemple.xyz",
-    img: event3,
-  },
-  {
-    eventId: 4,
-    eventName: "Sarà davvero una torta?",
-    eventDescription:
-      "Se sei un appassionato di dolci e ami le sorprese, facciamo al caso tuo!",
-    maximumCapacity: 70,
-    startDate: "2024-05-20",
-    endDate: "2024-05-20",
-    eventCategory: "Cucina",
-    eventRegion: "Lazio",
-    eventPrice: "$ 23,54",
-    eventPromoter: "Mark Datels",
-    emailOrganizzatore: "Mark_Datels@exemple.xyz",
-    img: event3,
-  },
-  {
-    eventId: 4,
-    eventName: "Sarà davvero una torta?",
-    eventDescription:
-      "Se sei un appassionato di dolci e ami le sorprese, facciamo al caso tuo!",
-    maximumCapacity: 70,
-    startDate: "2024-05-20",
-    endDate: "2024-05-20",
-    eventCategory: "Cucina",
-    eventRegion: "Lazio",
-    eventPrice: "$ 23,54",
-    eventPromoter: "Mark Datels",
-    emailOrganizzatore: "Mark_Datels@exemple.xyz",
-    img: event3,
-  },
-  {
-    eventId: 4,
-    eventName: "Sarà davvero una torta?",
-    eventDescription:
-      "Se sei un appassionato di dolci e ami le sorprese, facciamo al caso tuo!",
-    maximumCapacity: 70,
-    startDate: "2024-05-20",
-    endDate: "2024-05-20",
-    eventCategory: "Cucina",
-    eventRegion: "Lazio",
-    eventPrice: "$ 23,54",
-    eventPromoter: "Mark Datels",
-    emailOrganizzatore: "Mark_Datels@exemple.xyz",
-    img: event3,
-  },
-];
+const generals = JSON.parse(localStorage.getItem("userGenerals"));
+const role = localStorage.getItem("userRole");
 
 export function AccountClient() {
   const [currentSection, setCurrentSection] = useState("Profile");
+
+  const [tickets, setTickets] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [favorites, setFavorited] = useState([]);
+  useEffect(() => {
+    const apiUrl = "http://localhost:8080/";
+
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(apiUrl + "public/events/get_all");
+        // Otteniamo i dati dall'API
+        const eventList = response.data;
+        // Impostiamo lo stato degli eventi con l'array ricevuto
+        setEvents(eventList);
+      } catch (error) {
+        console.error("Errore durante il recupero degli eventi:", error);
+      }
+    };
+    fetchEvents();
+    const fetchisfav = async () => {
+      await axios
+        .get(apiUrl + `/public/viewAll/${generals.fiscalCode}`)
+        .then((resp) => {
+          setFavorited(resp.data);
+        });
+    };
+    fetchisfav();
+    const fetchTickets = async () => {
+      const token = localStorage.getItem("authKey");
+      try {
+        const response = await axios
+          .get(apiUrl + "auth/tickets/bought", {
+            headers: {
+              "Content-Type": "application/json", // Esempio di header
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((resp) => setTickets(resp.data));
+      } catch (error) {
+        console.error("Errore durante il recupero degli eventi:", error);
+      }
+    };
+    fetchTickets();
+  }, []);
   const theme = useTheme();
 
   const renderSection = () => {
     switch (currentSection) {
       case "Profile":
-        return renderProfileSection();
+        return renderProfileSection(generals, role);
       case "Tickets":
         return renderTicketSection();
       case "Favorites":
         return renderFavoritesSection();
-      case "History of Events":
-        return renderhistoryEventsSection();
 
       default:
         return null;
@@ -199,64 +138,25 @@ export function AccountClient() {
             justifyContent={"space-around"}
             spacing={2}
           >
-            {events.map((event) => (
-              <Grid item>
+            {tickets.map((event) => (
+              <Grid item key={event.eventData.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.img}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Box>
-    );
-  };
-  const renderhistoryEventsSection = () => {
-    return (
-      <Box style={{ display: "block", width: "100%" }}>
-        <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
-          History Events <hr style={{ width: "70%", color: "lightgray" }} />
-        </Typography>
-
-        <Box
-          style={{
-            margin: "1rem",
-            border: "groove 1px gray",
-            borderRadius: "10px",
-            height: "70vh",
-            padding: "2rem",
-            textAlign: "left",
-            overflowX: "scroll",
-          }}
-        >
-          <Grid
-            container
-            direction={"row"}
-            justifyContent={"space-around"}
-            spacing={2}
-          >
-            {events.map((event) => (
-              <Grid item>
-                <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.img}
+                  emailOrganizzatore={event.eventData.promoterEmail}
+                  luogo={
+                    event.eventData.locationAddress +
+                    ", ( " +
+                    event.eventData.locationCity +
+                    " ) " +
+                    event.eventData.locationName
+                  }
+                  categoria={event.eventData.eventCategory}
+                  nome={event.eventData.eventName}
+                  organizzatore={event.eventData.promoterInfo}
+                  startDate={event.eventData.eventStartDate}
+                  endDate={event.eventData.eventEndDate}
+                  prezzo={event.eventData.eventPrice}
+                  descrizione={event.eventData.eventDescription}
+                  img={event.eventData.eventPicPath}
                 />
               </Grid>
             ))}
@@ -290,16 +190,13 @@ export function AccountClient() {
             spacing={3}
             justifyContent={"space-around"}
           >
-            {events.map((event) => (
+            {favorites.map((event) => (
               <Grid item>
                 {" "}
                 <CardLarge
-                  nome={event.nome}
-                  organizzatore={event.organizzatore}
-                  data={event.data}
-                  prezzo={event.prezzo}
-                  descrizione={event.descrizione}
-                  img={event.img}
+                  nome={event.eventTitle}
+                  descrizione={event.eventDescription}
+                  img={event.path}
                 />
               </Grid>
             ))}
@@ -308,7 +205,8 @@ export function AccountClient() {
       </Box>
     );
   };
-  const renderProfileSection = () => {
+  const renderProfileSection = (generals, role) => {
+    console.log(generals);
     return (
       <Box
         style={{
@@ -344,7 +242,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Name"
-                defaultValue="Hello World"
+                defaultValue={generals.name}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -354,7 +252,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Surname"
-                defaultValue="Hello World"
+                defaultValue={generals.surname}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -364,7 +262,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Date of Birth"
-                defaultValue="Hello World"
+                defaultValue={generals.birthDate}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -374,7 +272,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Email"
-                defaultValue="Hello World"
+                defaultValue={generals.email}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -384,7 +282,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="City"
-                defaultValue="Hello World"
+                defaultValue={generals.city}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -393,8 +291,8 @@ export function AccountClient() {
             <Grid item>
               <TextField
                 id="outlined-read-only-input"
-                label="Nation"
-                defaultValue="Hello World"
+                label="Address"
+                defaultValue={generals.address}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -404,7 +302,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Fiscal Code"
-                defaultValue="Hello World"
+                defaultValue={generals.fiscalCode}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -414,7 +312,7 @@ export function AccountClient() {
               <TextField
                 id="outlined-read-only-input"
                 label="Role"
-                defaultValue="Hello World"
+                defaultValue={role}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -438,13 +336,9 @@ export function AccountClient() {
       text: "Favorites",
       icon: <FavoriteIcon style={{ color: "white" }} />,
     },
-    {
-      text: "History of Events",
-      icon: <HistoryIcon style={{ color: "white" }} />,
-    },
   ];
 
-  const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 1200px)` });
   return (
     <Box sx={{ display: isMobile ? "block" : "flex" }}>
       <CssBaseline />
@@ -490,15 +384,25 @@ export function AccountClient() {
                 text: "Favorites",
                 icon: <FavoriteIcon style={{ color: "white" }} />,
               },
+
               {
-                text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
+                text: "Logout",
+                icon: <LogoutIcon style={{ color: "white" }} />,
+                action: () => {
+                  localStorage.clear();
+                  window.location.reload();
+                  window.location.assign("/login");
+                },
               },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-                onClick={() => setCurrentSection(item.text)}
+                onClick={() =>
+                  item.text === "Logout"
+                    ? item.action()
+                    : setCurrentSection(item.text)
+                }
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -516,6 +420,39 @@ export function AccountClient() {
 
 export function AccountPromoters() {
   const [currentSection, setCurrentSection] = useState("Profile");
+  const [myProposedEvents, setProposedEvents] = useState([]);
+  const [favorites, setFavorited] = useState([]);
+
+  const token = localStorage.getItem("authKey");
+  useEffect(() => {
+    const apiUrl = "http://localhost:8080";
+    const fetchisfav = async () => {
+      await axios
+        .get(apiUrl + `/public/viewAll/${generals.fiscalCode}`)
+        .then((resp) => {
+          setFavorited(resp.data);
+        });
+    };
+    fetchisfav();
+    
+    const fetchMyProposedEventsFunc = async () => {
+      if (token !== undefined && token !== null) {
+        var resp = await axios
+          .get("http://127.0.0.1:8080/auth/myevent/showAll", {
+            headers: {
+              "Content-Type": "application/json", // Esempio di header
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            setProposedEvents(response.data);
+            console.table("quiiii" + response.data);
+          }).catch(e=>console.log(e));
+      }
+    };
+    fetchMyProposedEventsFunc();
+    console.log(myProposedEvents)
+  }, []);
   const theme = useTheme();
 
   const renderSection = () => {
@@ -527,9 +464,7 @@ export function AccountPromoters() {
         return renderTicketSection();
       case "Favorites":
         return renderFavoritesSection();
-      case "History of Events":
-        return renderhistoryEventsSection();
-      case "Proposed Events":
+      case "My Events":
         return renderProposedEventsSection();
       case "Incoming Requests":
         return renderIncomingReqSection();
@@ -570,67 +505,7 @@ export function AccountPromoters() {
             justifyContent={"space-around"}
             spacing={2}
           >
-            {events.map((event) => (
-              <Grid item>
-                <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.img}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Box>
-    );
-  };
-  const renderhistoryEventsSection = () => {
-    return (
-      <Box style={{ display: "block", width: "100%" }}>
-        <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
-          History Events <hr style={{ width: "70%", color: "lightgray" }} />
-        </Typography>
-
-        <Box
-          style={{
-            margin: "1rem",
-            border: "groove 1px gray",
-            borderRadius: "10px",
-            height: "70vh",
-            padding: "2rem",
-            textAlign: "left",
-            overflowX: "scroll",
-          }}
-        >
-          <Grid
-            container
-            direction={"row"}
-            justifyContent={"space-around"}
-            spacing={2}
-          >
-            {events.map((event) => (
-              <Grid item>
-                <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.img}
-                />
-              </Grid>
-            ))}
+         
           </Grid>
         </Box>
       </Box>
@@ -661,16 +536,13 @@ export function AccountPromoters() {
             spacing={3}
             justifyContent={"space-around"}
           >
-            {events.map((event) => (
+            {favorites.map((event) => (
               <Grid item>
                 {" "}
                 <CardLarge
-                  nome={event.nome}
-                  organizzatore={event.organizzatore}
-                  data={event.data}
-                  prezzo={event.prezzo}
-                  descrizione={event.descrizione}
-                  img={event.img}
+                  nome={event.eventTitle}
+                  descrizione={event.eventDescription}
+                  img={event.path}
                 />
               </Grid>
             ))}
@@ -679,11 +551,12 @@ export function AccountPromoters() {
       </Box>
     );
   };
-  const renderProposedEventsSection = () => {
+  const renderProposedEventsSection =  () => {
+
     return (
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
-          Proposed Event <hr style={{ width: "70%", color: "lightgray" }} />
+          My Event <hr style={{ width: "70%", color: "lightgray" }} />
         </Typography>
 
         <Box
@@ -696,7 +569,36 @@ export function AccountPromoters() {
             textAlign: "left",
           }}
         >
-          No requests found
+          <Grid
+            container
+            direction={"row"}
+            justifyContent={"space-around"}
+            spacing={2}
+          >
+            {myProposedEvents.length > 0 ?
+              myProposedEvents.map((event) => (
+                <Grid item key={event.eventId}>
+                  <EventCard
+                    emailOrganizzatore={event.promoterEmail}
+                    luogo={
+                      event.locationAddress +
+                      ", ( " +
+                      event.locationCity +
+                      " ) " +
+                      event.locationName
+                    }
+                    categoria={event.eventCategory}
+                    nome={event.eventName}
+                    organizzatore={event.promoterInfo}
+                    startDate={event.eventStartDate}
+                    endDate={event.eventEndDate}
+                    prezzo={event.eventPrice}
+                    descrizione={event.eventDescription}
+                    img={event.eventPicPath}
+                  />
+                </Grid>
+              )) : "You don't have proposed events yet."}
+          </Grid>
         </Box>
       </Box>
     );
@@ -762,7 +664,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Name"
-                defaultValue="Hello World"
+                defaultValue={generals.name}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -772,7 +674,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Surname"
-                defaultValue="Hello World"
+                defaultValue={generals.surname}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -782,7 +684,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Date of Birth"
-                defaultValue="Hello World"
+                defaultValue={generals.birthDate}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -792,7 +694,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Email"
-                defaultValue="Hello World"
+                defaultValue={generals.email}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -802,7 +704,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="City"
-                defaultValue="Hello World"
+                defaultValue={generals.city}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -811,8 +713,8 @@ export function AccountPromoters() {
             <Grid item>
               <TextField
                 id="outlined-read-only-input"
-                label="Nation"
-                defaultValue="Hello World"
+                label="Address"
+                defaultValue={generals.address}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -822,7 +724,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Fiscal Code"
-                defaultValue="Hello World"
+                defaultValue={generals.fiscalCode}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -832,7 +734,7 @@ export function AccountPromoters() {
               <TextField
                 id="outlined-read-only-input"
                 label="Role"
-                defaultValue="Hello World"
+                defaultValue={role}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -856,12 +758,9 @@ export function AccountPromoters() {
       text: "Favorites",
       icon: <FavoriteIcon style={{ color: "white" }} />,
     },
+
     {
-      text: "History of Events",
-      icon: <HistoryIcon style={{ color: "white" }} />,
-    },
-    {
-      text: "Proposed Events",
+      text: "My Events",
       icon: <CalendarViewDayIcon style={{ color: "white" }} />,
     },
     {
@@ -873,7 +772,7 @@ export function AccountPromoters() {
       icon: <ForwardToInboxIcon style={{ color: "white" }} />,
     },
   ];
-  const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 1200px)` });
   return (
     <Box sx={{ display: isMobile ? "block" : "flex" }}>
       <CssBaseline />
@@ -920,12 +819,9 @@ export function AccountPromoters() {
                 text: "Favorites",
                 icon: <FavoriteIcon style={{ color: "white" }} />,
               },
+
               {
-                text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
-              },
-              {
-                text: "Proposed Events",
+                text: "My Events",
                 icon: <CalendarViewDayIcon style={{ color: "white" }} />,
               },
               {
@@ -936,11 +832,24 @@ export function AccountPromoters() {
                 text: "Send a Request",
                 icon: <ForwardToInboxIcon style={{ color: "white" }} />,
               },
+              {
+                text: "Logout",
+                icon: <LogoutIcon style={{ color: "white" }} />,
+                action: () => {
+                  localStorage.clear();
+                  window.location.reload();
+                  window.location.assign("/login");
+                },
+              },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-                onClick={() => setCurrentSection(item.text)}
+                onClick={() =>
+                  item.text === "Logout"
+                    ? item.action()
+                    : setCurrentSection(item.text)
+                }
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -957,34 +866,71 @@ export function AccountPromoters() {
 }
 //aggiunto le const e modificato la sezione artistic works
 export function AccountArtist() {
+  const [events, setEvents] = useState([]);
+  const [tickets, setTickets] = useState([]);
+  const [opere, setOpere] = useState([]);
+  const [favorites, setFavorited] = useState([]);
+
+  useEffect(() => {
+    const apiUrl = "http://localhost:8080";
+
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(apiUrl + "/public/events/get_all");
+        // Otteniamo i dati dall'API
+        const eventList = response.data;
+        // Impostiamo lo stato degli eventi con l'array ricevuto
+        setEvents(eventList);
+      } catch (error) {
+        console.error("Errore durante il recupero degli eventi:", error);
+      }
+    };
+
+    fetchEvents();
+    const fetchisfav = async () => {
+      await axios
+        .get(apiUrl + `/public/viewAll/${generals.fiscalCode}`)
+        .then((resp) => {
+          setFavorited(resp.data);
+        });
+    };
+    fetchisfav();
+    const fetchTickets = async () => {
+      const token = localStorage.getItem("authKey");
+      try {
+        const response = await axios
+          .get(apiUrl + "/auth/tickets/bought", {
+            headers: {
+              "Content-Type": "application/json", // Esempio di header
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((resp) => setTickets(resp.data));
+      } catch (error) {
+        console.error("Errore durante il recupero dei ticket:", error);
+      }
+    };
+    fetchTickets();
+    const fetchOpere = async () => {
+      try {
+        const fiscalCode = generals.fiscalCode;
+
+        const response = await axios
+          .get(apiUrl + `/public/artworks/by-artist?fiscalCode=${fiscalCode}`)
+          .then((response) => {
+            setOpere(response.data);
+            console.log(response.data);
+          });
+      } catch (error) {
+        console.error("Errore durante il recupero delle opere:", error);
+      }
+    };
+    fetchOpere();
+  }, []);
+
   //aggiunto qui opere
   const [currentSection, setCurrentSection] = useState("Profile");
   const theme = useTheme();
-  const [opere, setOpere] = useState([
-    {
-      nome: "venere",
-      organizzatore: "Marck jset",
-      descrizione: "lorem impsWEEEjdhuceh",
-      id: 1,
-      img: event1,
-    },
-    {
-      nome: "Bacio",
-      organizzatore: "Marck jset",
-
-      descrizione: "lorem impsWEEEjdhuceh",
-      id: 2,
-      img: event2,
-    },
-    {
-      nome: "Infinito",
-      organizzatore: "Marck jset",
-
-      descrizione: "lorem impsWEEEjdhuceh",
-      id: 3,
-      img: event3,
-    },
-  ]);
   const [recensioniArtisti, setRecensioniArtisti] = useState([
     {
       yourName: "Mario Rossi",
@@ -1002,8 +948,16 @@ export function AccountArtist() {
   const handleReviewSubmit = (newReview) => {
     setRecensioniArtisti([...recensioniArtisti, newReview]);
   };
-  const handleUploadArtwork = (newArtwork) => {
-    setOpere([...opere, newArtwork]);
+  const handleUploadArtwork = async (newArtwork) => {
+    const apiUrl = "http://localhost:8080/auth";
+    try {
+      const response = await axios.post(apiUrl + "/artworks/new");
+      // Otteniamo i dati dall'API
+      const opereList = response.data;
+      setOpere(opereList);
+    } catch (error) {
+      console.error("Errore durante il recupero delle opere:", error);
+    }
   };
 
   const renderSection = () => {
@@ -1015,14 +969,13 @@ export function AccountArtist() {
         return renderTicketSection();
       case "Favorites":
         return renderFavoritesSection();
-      case "History of Events":
-        return renderhistoryEventsSection();
+
       case "Artistic Works":
         return renderOpereSection();
       case "Attended Events":
         return renderAttendedEventSection();
       case "Request Participation":
-        return <Request></Request>;
+        return <RequestFormEventArtist></RequestFormEventArtist>;
       case "Artist Review":
         return renderArtistReview();
       default:
@@ -1059,19 +1012,25 @@ export function AccountArtist() {
             justifyContent={"space-around"}
             spacing={2}
           >
-            {events.map((event) => (
-              <Grid item>
+            {tickets.map((ticket) => (
+              <Grid item key={ticket.eventData.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.img}
+                  emailOrganizzatore={ticket.eventData.promoterEmail}
+                  luogo={
+                    ticket.eventData.locationAddress +
+                    ", ( " +
+                    ticket.eventData.locationCity +
+                    " ) " +
+                    ticket.eventData.locationName
+                  }
+                  categoria={ticket.eventData.eventCategory}
+                  nome={ticket.eventData.eventName}
+                  organizzatore={ticket.eventData.promoterInfo}
+                  startDate={ticket.eventData.eventStartDate}
+                  endDate={ticket.eventData.eventEndDate}
+                  prezzo={ticket.eventData.eventPrice}
+                  descrizione={ticket.eventData.eventDescription}
+                  img={ticket.eventData.eventPicPath}
                 />
               </Grid>
             ))}
@@ -1115,51 +1074,6 @@ export function AccountArtist() {
       </Box>
     );
   };
-  const renderhistoryEventsSection = () => {
-    return (
-      <Box style={{ display: "block", width: "100%" }}>
-        <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
-          History Events <hr style={{ width: "70%", color: "lightgray" }} />
-        </Typography>
-
-        <Box
-          style={{
-            margin: "1rem",
-            border: "groove 1px gray",
-            borderRadius: "10px",
-            height: "70vh",
-            padding: "2rem",
-            textAlign: "left",
-            overflowX: "scroll",
-          }}
-        >
-          <Grid
-            container
-            direction={"row"}
-            justifyContent={"space-around"}
-            spacing={2}
-          >
-            {events.map((event) => (
-              <Grid item>
-                <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.img}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Box>
-    );
-  };
 
   const renderFavoritesSection = () => {
     return (
@@ -1185,20 +1099,13 @@ export function AccountArtist() {
             spacing={3}
             justifyContent={"space-around"}
           >
-            {events.map((event) => (
+            {favorites.map((event) => (
               <Grid item>
                 {" "}
                 <CardLarge
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
-                  prezzo={event.eventPrice}
+                  nome={event.eventTitle}
                   descrizione={event.eventDescription}
-                  img={event.img}
+                  img={event.path}
                 />
               </Grid>
             ))}
@@ -1232,18 +1139,24 @@ export function AccountArtist() {
             spacing={2}
           >
             {events.map((event) => (
-              <Grid item>
+              <Grid item key={event.eventId}>
                 <EventCard
-                  emailOrganizzatore={event.emailOrganizzatore}
-                  luogo={event.eventRegion}
+                  emailOrganizzatore={event.promoterEmail}
+                  luogo={
+                    event.locationAddress +
+                    ", ( " +
+                    event.locationCity +
+                    " ) " +
+                    event.locationName
+                  }
                   categoria={event.eventCategory}
                   nome={event.eventName}
-                  organizzatore={event.eventPromoter}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
+                  organizzatore={event.promoterInfo}
+                  startDate={event.eventStartDate}
+                  endDate={event.eventEndDate}
                   prezzo={event.eventPrice}
                   descrizione={event.eventDescription}
-                  img={event.img}
+                  img={event.eventPicPath}
                 />
               </Grid>
             ))}
@@ -1254,67 +1167,24 @@ export function AccountArtist() {
   };
 
   const renderOpereSection = () => {
-    const handleUpdateOpere = (id, updatedTitle, updatedDescription) => {
-      // Implementa la logica per l'aggiornamento dell'opera con l'id specifico
-      const updatedOpere = opere.map((op) =>
-        op.id === id
-          ? { ...op, nome: updatedTitle, descrizione: updatedDescription }
-          : op
-      );
-
-      // Aggiorna lo stato delle opere con i nuovi dati
-      setOpere(updatedOpere);
-
-      onInsert(id, updatedTitle, updatedDescription);
+    // request body => {
+    //   "artworkId": 0,
+    //   "artworkName": "string",
+    //   "artworkDescription": "string",
+    //   "artworkYear": "string"
+    // }
+    const handleUpdateOpere = (id) => {
+      // Implementa la logica per l'aggiornare una opera tramite l'id
     };
-
     const handleDeleteOpere = (id) => {
       // Implementa la logica per l'eliminazione dell'opera con l'id specifico
-      const updatedOpere = opere.filter((op) => op.id !== id);
-
-      // Aggiorna lo stato delle opere rimuovendo l'opera eliminata
-      setOpere(updatedOpere);
-    };
-
-    // Aggiungi questa funzione che aggiunge title e description a un'opera specifica
-    const onInsert = (id, newTitle, newDescription) => {
-      // Trova l'opera con l'id specifico
-      const updatedOpere = opere.map((op) =>
-        op.id === id
-          ? {
-              ...op,
-              title: op.title + newTitle,
-              description: op.description + newDescription,
-            }
-          : op
-      );
-
-      // Aggiorna lo stato delle opere con i nuovi dati
-      setOpere(updatedOpere);
-    };
-
-    const handleInsertOpere = (id, newTitle, newDescription) => {
-      // Aggiungi la nuova opera allo stato delle opere
-      const newOpere = [
-        ...opere,
-        { id, nome: newTitle, descrizione: newDescription },
-      ];
-      setOpere(newOpere);
     };
 
     return (
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
           Artworks
-          <ModalUploadArtwork
-            onUploadArtwork={(newArtwork) =>
-              handleInsertOpere(
-                newArtwork.id,
-                newArtwork.title,
-                newArtwork.description
-              )
-            }
-          />
+          <ModalUploadArtwork />
         </Typography>
         <hr style={{ width: "70%", color: "lightgray" }} />
 
@@ -1335,19 +1205,16 @@ export function AccountArtist() {
             spacing={3}
             justifyContent={"space-around"}
           >
-            {opere.map((op) => (
-              <Grid item key={op.id}>
-                {/* Passa la prop onUpdate correttamente a CardOpere */}
-                <CardOpere
-                  title={op.nome}
-                  description={op.descrizione}
-                  id={op.id}
-                  onUpdate={handleUpdateOpere}
-                  onDelete={handleDeleteOpere}
-                  onInsert={onInsert}
-                />
-              </Grid>
-            ))}
+            {opere.length > 0 &&
+              opere.map((op) => (
+                <Grid item key={op.id}>
+                  <CardOpere
+                    title={op.artworkName}
+                    description={op.artworkDescription}
+                    id={op.artworkId}
+                  />
+                </Grid>
+              ))}
           </Grid>
         </Box>
       </Box>
@@ -1390,7 +1257,7 @@ export function AccountArtist() {
               <TextField
                 id="outlined-read-only-input"
                 label="Name"
-                defaultValue="Hello World"
+                defaultValue={generals.name}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1400,7 +1267,7 @@ export function AccountArtist() {
               <TextField
                 id="outlined-read-only-input"
                 label="Surname"
-                defaultValue="Hello World"
+                defaultValue={generals.surname}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1410,7 +1277,7 @@ export function AccountArtist() {
               <TextField
                 id="outlined-read-only-input"
                 label="Date of Birth"
-                defaultValue="Hello World"
+                defaultValue={generals.birthDate}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1420,7 +1287,7 @@ export function AccountArtist() {
               <TextField
                 id="outlined-read-only-input"
                 label="Email"
-                defaultValue="Hello World"
+                defaultValue={generals.email}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1430,7 +1297,7 @@ export function AccountArtist() {
               <TextField
                 id="outlined-read-only-input"
                 label="City"
-                defaultValue="Hello World"
+                defaultValue={generals.city}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1439,8 +1306,8 @@ export function AccountArtist() {
             <Grid item>
               <TextField
                 id="outlined-read-only-input"
-                label="Nation"
-                defaultValue="Hello World"
+                label="Address"
+                defaultValue={generals.address}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1450,7 +1317,7 @@ export function AccountArtist() {
               <TextField
                 id="outlined-read-only-input"
                 label="Fiscal Code"
-                defaultValue="Hello World"
+                defaultValue={generals.fiscalCode}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1460,7 +1327,7 @@ export function AccountArtist() {
               <TextField
                 id="outlined-read-only-input"
                 label="Role"
-                defaultValue="Hello World"
+                defaultValue={role}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1485,10 +1352,7 @@ export function AccountArtist() {
       text: "Favorites",
       icon: <FavoriteIcon style={{ color: "white" }} />,
     },
-    {
-      text: "History of Events",
-      icon: <HistoryIcon style={{ color: "white" }} />,
-    },
+
     {
       text: "Artistic Works",
       icon: <PaletteIcon style={{ color: "white" }} />,
@@ -1506,7 +1370,7 @@ export function AccountArtist() {
       icon: <ReviewsIcon style={{ color: "white" }} />,
     },
   ];
-  const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 1200px)` });
   return (
     <Box sx={{ display: isMobile ? "block" : "flex" }}>
       <CssBaseline />
@@ -1532,7 +1396,7 @@ export function AccountArtist() {
         >
           <Toolbar />
           <Divider />
-          <Typography variant="h5">My Account</Typography>
+          <Typography variant="h5">{"myprofile"}</Typography>
           <Typography variant="caption" style={{ marginTop: "0px" }}>
             {" "}
             For Artists{" "}
@@ -1552,10 +1416,7 @@ export function AccountArtist() {
                 text: "Favorites",
                 icon: <FavoriteIcon style={{ color: "white" }} />,
               },
-              {
-                text: "History of Events",
-                icon: <HistoryIcon style={{ color: "white" }} />,
-              },
+
               {
                 text: "Artistic Works",
                 icon: <PaletteIcon style={{ color: "white" }} />,
@@ -1572,11 +1433,24 @@ export function AccountArtist() {
                 text: "Artist Review",
                 icon: <ReviewsIcon style={{ color: "white" }} />,
               },
+              {
+                text: "Logout",
+                icon: <LogoutIcon style={{ color: "white" }} />,
+                action: () => {
+                  localStorage.clear();
+                  window.location.reload();
+                  window.location.assign("/login");
+                },
+              },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-                onClick={() => setCurrentSection(item.text)}
+                onClick={() =>
+                  item.text === "Logout"
+                    ? item.action()
+                    : setCurrentSection(item.text)
+                }
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -1594,6 +1468,10 @@ export function AccountArtist() {
 
 export function AccountAdmin() {
   const [currentSection, setCurrentSection] = useState("Profile");
+
+  useEffect(() => {
+    
+  }, []);
   const theme = useTheme();
 
   const renderSection = () => {
@@ -1694,7 +1572,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Name"
-                defaultValue="Hello World"
+                defaultValue={generals.name}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1704,7 +1582,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Surname"
-                defaultValue="Hello World"
+                defaultValue={generals.surname}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1714,7 +1592,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Date of Birth"
-                defaultValue="Hello World"
+                defaultValue={generals.birthDate}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1724,7 +1602,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Email"
-                defaultValue="Hello World"
+                defaultValue={generals.email}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1734,7 +1612,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="City"
-                defaultValue="Hello World"
+                defaultValue={generals.city}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1743,8 +1621,8 @@ export function AccountAdmin() {
             <Grid item>
               <TextField
                 id="outlined-read-only-input"
-                label="Nation"
-                defaultValue="Hello World"
+                label="Address"
+                defaultValue={generals.address}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1754,7 +1632,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Fiscal Code"
-                defaultValue="Hello World"
+                defaultValue={generals.fiscalCode}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1764,7 +1642,7 @@ export function AccountAdmin() {
               <TextField
                 id="outlined-read-only-input"
                 label="Role"
-                defaultValue="Hello World"
+                defaultValue={role}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -1790,7 +1668,7 @@ export function AccountAdmin() {
       icon: <HelpOutlineIcon style={{ color: "white" }} />,
     },
   ];
-  const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 1200px)` });
   return (
     <Box sx={{ display: isMobile ? "block" : "flex" }}>
       <CssBaseline />
@@ -1837,11 +1715,24 @@ export function AccountAdmin() {
                 text: "Support",
                 icon: <HelpOutlineIcon style={{ color: "white" }} />,
               },
+              {
+                text: "Logout",
+                icon: <LogoutIcon style={{ color: "white" }} />,
+                action: () => {
+                  localStorage.clear();
+                  window.location.reload();
+                  window.location.assign("/login");
+                },
+              },
             ].map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
-                onClick={() => setCurrentSection(item.text)}
+                onClick={() =>
+                  item.text === "Logout"
+                    ? item.action()
+                    : setCurrentSection(item.text)
+                }
               >
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>

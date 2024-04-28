@@ -1,3 +1,4 @@
+
 import { Box, Grid } from "@mui/material";
 import * as React from "react";
 import { useState } from "react";
@@ -10,19 +11,36 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import im3 from "../../../Assets/background.jpg";
 import { validCF } from "./reg";
-
+import { styled } from "@mui/material/styles";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import Alert from "@mui/material/Alert";
+import { sendRegistrationRequest } from "../../api/api";
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 export function SignUpClients() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [city, setCity] = useState("");
-  const [nation, setNation] = useState("");
   const [address, setAddress] = useState("");
-
+  const [imageProfile, setImageProfile] = useState("");
+  const [birthday, setBirthday] = React.useState(dayjs());
+  const [city, setCity] = useState("");
   const [err, setErr] = useState("");
-
   const [fiscalCode, setFiscalCode] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
@@ -31,15 +49,29 @@ export function SignUpClients() {
     event.preventDefault();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validCF.test(fiscalCode)) {
-      //QUi chiamata api
+      
+
+      let body = {
+        "fiscalCode": fiscalCode,
+        "password": password,
+        "name": name,
+        "surname": surname,
+        "city": city,
+        "address": address,
+        "birthDate": birthday.toString(),
+        "email": email,
+        "imgPath": imageProfile
+      }
+      sendRegistrationRequest("customer", body)
     } else {
-      setErr("Fiscal Code not valid");
+      setErr("Invalid Fiscal Code");
     }
   };
+
   return (
     <>
       <style>
@@ -64,7 +96,7 @@ export function SignUpClients() {
         className={"center"}
       >
         <div>
-          <h2>{"Sign Up as a Client"}</h2>
+          <h2>{"Sign Up as a Customer"}</h2>
           <form onSubmit={handleSubmit}>
             <Grid
               container
@@ -89,12 +121,16 @@ export function SignUpClients() {
                 />
               </Grid>
               <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Date of Birth"
-                  onChange={(e) => setBirthday(e.target.value)}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    required
+                    label="Birth Date"
+                    defaultValue={dayjs()}
+                    // con il backend usare = label="Controlled field"
+                    // con il backend usare = value={birthday}
+                    onChange={(newValue) => setBirthday(newValue)}
+                  />
+                </LocalizationProvider>
               </Grid>
               <Grid item md="5">
                 <TextField
@@ -118,14 +154,6 @@ export function SignUpClients() {
                   id="outlined-required"
                   label="City"
                   onChange={(e) => setCity(e.target.value)}
-                />
-              </Grid>
-              <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Nation"
-                  onChange={(e) => setNation(e.target.value)}
                 />
               </Grid>
 
@@ -164,13 +192,27 @@ export function SignUpClients() {
                   />
                 </FormControl>
               </Grid>
+              
+              <Grid item md="10">
+                <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Upload file
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={(e) => setImageProfile(e.target.value)}
+                  />
+                </Button>
+              </Grid>
               <Grid item md="10">
                 <Button
                   type="submit"
                   variant="outlined"
                   style={{ float: "right" }}
                 >
-                  Register
+                  Sign In
                 </Button>
                 {err}
               </Grid>
@@ -186,27 +228,42 @@ export function SignUpPromoters() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
-  const [nation, setNation] = useState("");
+  const [imageProfile, setImageProfile] = useState("");
+  const [birthday, setBirthday] = React.useState(dayjs());
+  const [city, setCity] = useState("");
+  const [err, setErr] = useState("");
   const [fiscalCode, setFiscalCode] = useState("");
 
-  const [err, setErr] = useState("");
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (validCF.test(fiscalCode)) {
-      //QUi chiamata api
+      
+
+      let body = {
+        "fiscalCode": fiscalCode,
+        "password": password,
+        "name": name,
+        "surname": surname,
+        "city": city,
+        "address": address,
+        "birthDate": birthday.toString(),
+        "email": email,
+        "imgPath": imageProfile
+      }
+      sendRegistrationRequest("promoter", body)
     } else {
-      setErr("Fiscal Code not valid");
+      setErr("Invalid Fiscal Code");
     }
   };
+
   return (
     <>
       <style>
@@ -256,12 +313,16 @@ export function SignUpPromoters() {
                 />
               </Grid>
               <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Date of Birth"
-                  onChange={(e) => setBirthday(e.target.value)}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    required
+                    label="Birth Date"
+                    defaultValue={dayjs()}
+                    // con il backend usare = label="Controlled field"
+                    // con il backend usare = value={birthday}
+                    onChange={(newValue) => setBirthday(newValue)}
+                  />
+                </LocalizationProvider>
               </Grid>
               <Grid item md="5">
                 <TextField
@@ -287,14 +348,7 @@ export function SignUpPromoters() {
                   onChange={(e) => setCity(e.target.value)}
                 />
               </Grid>
-              <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Nation"
-                  onChange={(e) => setNation(e.target.value)}
-                />
-              </Grid>
+
               <Grid item md="5">
                 <TextField
                   required
@@ -308,7 +362,7 @@ export function SignUpPromoters() {
                   variant="outlined"
                   onChange={(e) => setPassword(e.target.value)}
                 >
-                  <InputLabel required htmlFor="outlined-adornment-password">
+                  <InputLabel htmlFor="outlined-adornment-password">
                     Password
                   </InputLabel>
                   <OutlinedInput
@@ -330,13 +384,27 @@ export function SignUpPromoters() {
                   />
                 </FormControl>
               </Grid>
+              
+              <Grid item md="10">
+                <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Upload file
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={(e) => setImageProfile(e.target.value)}
+                  />
+                </Button>
+              </Grid>
               <Grid item md="10">
                 <Button
                   type="submit"
                   variant="outlined"
                   style={{ float: "right" }}
                 >
-                  Register
+                  Sign In
                 </Button>
                 {err}
               </Grid>
@@ -347,33 +415,47 @@ export function SignUpPromoters() {
     </>
   );
 }
-
 export function SignUpArtist() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
-  const [nation, setNation] = useState("");
+  const [imageProfile, setImageProfile] = useState("");
+  const [birthday, setBirthday] = React.useState(dayjs());
+  const [city, setCity] = useState("");
+  const [err, setErr] = useState("");
   const [fiscalCode, setFiscalCode] = useState("");
 
-  const [err, setErr] = useState("");
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (validCF.test(fiscalCode)) {
-      //QUi chiamata api
+      
+
+      let body = {
+        "fiscalCode": fiscalCode,
+        "password": password,
+        "name": name,
+        "surname": surname,
+        "city": city,
+        "address": address,
+        "birthDate": birthday.toString(),
+        "email": email,
+        "imgPath": imageProfile
+      }
+      sendRegistrationRequest("artist", body)
     } else {
-      setErr("Fiscal Code not valid");
+      setErr("Invalid Fiscal Code");
     }
   };
+
   return (
     <>
       <style>
@@ -423,12 +505,16 @@ export function SignUpArtist() {
                 />
               </Grid>
               <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Date of Birth"
-                  onChange={(e) => setBirthday(e.target.value)}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    required
+                    label="Birth Date"
+                    defaultValue={dayjs()}
+                    // con il backend usare = label="Controlled field"
+                    // con il backend usare = value={birthday}
+                    onChange={(newValue) => setBirthday(newValue)}
+                  />
+                </LocalizationProvider>
               </Grid>
               <Grid item md="5">
                 <TextField
@@ -454,14 +540,7 @@ export function SignUpArtist() {
                   onChange={(e) => setCity(e.target.value)}
                 />
               </Grid>
-              <Grid item md="5">
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Nation"
-                  onChange={(e) => setNation(e.target.value)}
-                />
-              </Grid>
+
               <Grid item md="5">
                 <TextField
                   required
@@ -475,7 +554,7 @@ export function SignUpArtist() {
                   variant="outlined"
                   onChange={(e) => setPassword(e.target.value)}
                 >
-                  <InputLabel required htmlFor="outlined-adornment-password">
+                  <InputLabel htmlFor="outlined-adornment-password">
                     Password
                   </InputLabel>
                   <OutlinedInput
@@ -497,13 +576,27 @@ export function SignUpArtist() {
                   />
                 </FormControl>
               </Grid>
+              
+              <Grid item md="10">
+                <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Upload file
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={(e) => setImageProfile(e.target.value)}
+                  />
+                </Button>
+              </Grid>
               <Grid item md="10">
                 <Button
                   type="submit"
                   variant="outlined"
                   style={{ float: "right" }}
                 >
-                  Register
+                  Sign In
                 </Button>
                 {err}
               </Grid>

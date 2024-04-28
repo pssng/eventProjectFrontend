@@ -1,6 +1,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PlaceIcon from "@mui/icons-material/Place";
+import bgTicket from "../../Assets/bgTicket.png"
 export function EventCard({
   nome,
   descrizione,
@@ -12,14 +13,18 @@ export function EventCard({
   luogo,
   categoria,
   emailOrganizzatore,
+  id,
 }) {
   const navigate = useNavigate();
   return (
+    <Box style={{ backgroundImage: `url(${bgTicket})`,backgroundRepeat: 'no-repeat',  width: "15rem", padding:"10px"  } } >  
     <Stack
-    margin={'1rem'}
+   bgcolor={"white"}
+    margin={"auto"}
       spacing={1}
       style={{
-        width: "15rem",
+        padding:"10px",
+       
         wordWrap: "breakWord",
         textAlign: "center",
       }}
@@ -30,7 +35,7 @@ export function EventCard({
           border: "1px solid #ddd",
           bordeRadius: "4px",
           padding: "5px",
-          width: "14rem",
+          width: "13rem",
           height: "7rem",
         }}
       ></img>
@@ -65,6 +70,7 @@ export function EventCard({
       }
       {prezzo && (
         <Button
+        variant="outlined"
           onClick={() => {
             navigate("/EventPage", {
               replace: true,
@@ -79,6 +85,7 @@ export function EventCard({
                 startDate,
                 endDate,
                 img,
+                id,
               },
             });
           }}
@@ -87,6 +94,7 @@ export function EventCard({
           Show More
         </Button>
       )}
-    </Stack>
+    </Stack></Box>
+  
   );
 }
