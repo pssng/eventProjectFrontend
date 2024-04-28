@@ -19,7 +19,9 @@ ticket section per tutti gli utenti in account (vi ho gia fatto tutta la struttu
 
 ### [f-ile-upload-controller](http://localhost:8080/swagger-ui/index.html#/f-ile-upload-controller) da implementare
 
-### [review-ap-is](http://localhost:8080/swagger-ui/index.html#/review-ap-is) in corso -Davide
+### [review-ap-is](http://localhost:8080/swagger-ui/index.html#/review-ap-is/to_promoter) in corso, lo dobbiamo fare?? -Davide
+### [review-ap-is](http://localhost:8080/swagger-ui/index.html#/review-ap-is/to_event) in corso -Davide
+### [review-ap-is](http://localhost:8080/swagger-ui/index.html#/review-ap-is/to_artist) Completato -Davide
 
 ### [user-controller](http://localhost:8080/swagger-ui/index.html#/user-controller) implementato by karma
 
