@@ -464,7 +464,7 @@ export function AccountPromoters() {
         return renderTicketSection();
       case "Favorites":
         return renderFavoritesSection();
-      case "Proposed Events":
+      case "My Events":
         return renderProposedEventsSection();
       case "Incoming Requests":
         return renderIncomingReqSection();
@@ -556,7 +556,7 @@ export function AccountPromoters() {
     return (
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
-          Proposed Event <hr style={{ width: "70%", color: "lightgray" }} />
+          My Event <hr style={{ width: "70%", color: "lightgray" }} />
         </Typography>
 
         <Box
@@ -760,7 +760,7 @@ export function AccountPromoters() {
     },
 
     {
-      text: "Proposed Events",
+      text: "My Events",
       icon: <CalendarViewDayIcon style={{ color: "white" }} />,
     },
     {
@@ -821,7 +821,7 @@ export function AccountPromoters() {
               },
 
               {
-                text: "Proposed Events",
+                text: "My Events",
                 icon: <CalendarViewDayIcon style={{ color: "white" }} />,
               },
               {
