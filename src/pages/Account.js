@@ -13,7 +13,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Grid, TextField, IconButton } from "@mui/material";
 import { EventCard } from "./Components/EventCard";
-import { RequestFormEventArtist }from "./Modules/Forms/RequestFormArtist";
+import { RequestFormEventArtist } from "./Modules/Forms/RequestFormArtist";
 import event1 from "../Assets/event1.jpg";
 import event2 from "../Assets/event2.jpg";
 import event3 from "../Assets/event3.jpg";
@@ -68,11 +68,11 @@ export function AccountClient() {
     };
     fetchEvents();
     const fetchisfav = async () => {
-      await axios.get(apiUrl + `/viewAll/${generals.fiscalCode}`).then((resp) => {
-        setFavorited(
-          resp.data
-        );
-      });
+      await axios
+        .get(apiUrl + `/public/viewAll/${generals.fiscalCode}`)
+        .then((resp) => {
+          setFavorited(resp.data);
+        });
     };
     fetchisfav();
     const fetchTickets = async () => {
@@ -102,7 +102,6 @@ export function AccountClient() {
         return renderTicketSection();
       case "Favorites":
         return renderFavoritesSection();
- 
 
       default:
         return null;
@@ -133,7 +132,7 @@ export function AccountClient() {
             overflowX: "scroll",
           }}
         >
-            <Grid
+          <Grid
             container
             direction={"row"}
             justifyContent={"space-around"}
@@ -166,7 +165,7 @@ export function AccountClient() {
       </Box>
     );
   };
-  
+
   const renderFavoritesSection = () => {
     return (
       <Box style={{ display: "block", width: "100%" }}>
@@ -185,7 +184,7 @@ export function AccountClient() {
             overflowX: "scroll",
           }}
         >
-         <Grid
+          <Grid
             container
             direction={"row"}
             spacing={3}
@@ -337,7 +336,6 @@ export function AccountClient() {
       text: "Favorites",
       icon: <FavoriteIcon style={{ color: "white" }} />,
     },
-
   ];
 
   const isMobile = useMediaQuery({ query: `(max-width: 1200px)` });
@@ -386,7 +384,7 @@ export function AccountClient() {
                 text: "Favorites",
                 icon: <FavoriteIcon style={{ color: "white" }} />,
               },
-         
+
               {
                 text: "Logout",
                 icon: <LogoutIcon style={{ color: "white" }} />,
@@ -422,25 +420,38 @@ export function AccountClient() {
 
 export function AccountPromoters() {
   const [currentSection, setCurrentSection] = useState("Profile");
-
+  const [myProposedEvents, setProposedEvents] = useState([]);
   const [favorites, setFavorited] = useState([]);
-  const [events, setEvents] = useState([]);
 
+  const token = localStorage.getItem("authKey");
   useEffect(() => {
-    const apiUrl = "http://localhost:8080/public/events/get_all";
-
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get(apiUrl);
-        // Otteniamo i dati dall'API
-        const eventList = response.data;
-        // Impostiamo lo stato degli eventi con l'array ricevuto
-        setEvents(eventList);
-      } catch (error) {
-        console.error("Errore durante il recupero degli eventi:", error);
+    const apiUrl = "http://localhost:8080";
+    const fetchisfav = async () => {
+      await axios
+        .get(apiUrl + `/public/viewAll/${generals.fiscalCode}`)
+        .then((resp) => {
+          setFavorited(resp.data);
+        });
+    };
+    fetchisfav();
+    
+    const fetchMyProposedEventsFunc = async () => {
+      if (token !== undefined && token !== null) {
+        var resp = await axios
+          .get("http://127.0.0.1:8080/auth/myevent/showAll", {
+            headers: {
+              "Content-Type": "application/json", // Esempio di header
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            setProposedEvents(response.data);
+            console.table("quiiii" + response.data);
+          }).catch(e=>console.log(e));
       }
     };
-    fetchEvents();
+    fetchMyProposedEventsFunc();
+    console.log(myProposedEvents)
   }, []);
   const theme = useTheme();
 
@@ -494,28 +505,7 @@ export function AccountPromoters() {
             justifyContent={"space-around"}
             spacing={2}
           >
-            {events.map((event) => (
-              <Grid item key={event.eventId}>
-                <EventCard
-                  emailOrganizzatore={event.promoterEmail}
-                  luogo={
-                    event.locationAddress +
-                    ", ( " +
-                    event.locationCity +
-                    " ) " +
-                    event.locationName
-                  }
-                  categoria={event.eventCategory}
-                  nome={event.eventName}
-                  organizzatore={event.promoterInfo}
-                  startDate={event.eventStartDate}
-                  endDate={event.eventEndDate}
-                  prezzo={event.eventPrice}
-                  descrizione={event.eventDescription}
-                  img={event.eventPicPath}
-                />
-              </Grid>
-            ))}
+         
           </Grid>
         </Box>
       </Box>
@@ -540,7 +530,7 @@ export function AccountPromoters() {
             overflowX: "scroll",
           }}
         >
-           <Grid
+          <Grid
             container
             direction={"row"}
             spacing={3}
@@ -561,7 +551,8 @@ export function AccountPromoters() {
       </Box>
     );
   };
-  const renderProposedEventsSection = () => {
+  const renderProposedEventsSection =  () => {
+
     return (
       <Box style={{ display: "block", width: "100%" }}>
         <Typography variant="h4" component={"div"} style={{ margin: "1rem" }}>
@@ -578,7 +569,36 @@ export function AccountPromoters() {
             textAlign: "left",
           }}
         >
-          No requests found
+          <Grid
+            container
+            direction={"row"}
+            justifyContent={"space-around"}
+            spacing={2}
+          >
+            {myProposedEvents.length > 0 ?
+              myProposedEvents.map((event) => (
+                <Grid item key={event.eventId}>
+                  <EventCard
+                    emailOrganizzatore={event.promoterEmail}
+                    luogo={
+                      event.locationAddress +
+                      ", ( " +
+                      event.locationCity +
+                      " ) " +
+                      event.locationName
+                    }
+                    categoria={event.eventCategory}
+                    nome={event.eventName}
+                    organizzatore={event.promoterInfo}
+                    startDate={event.eventStartDate}
+                    endDate={event.eventEndDate}
+                    prezzo={event.eventPrice}
+                    descrizione={event.eventDescription}
+                    img={event.eventPicPath}
+                  />
+                </Grid>
+              )) : "You don't have proposed events yet."}
+          </Grid>
         </Box>
       </Box>
     );
@@ -738,7 +758,7 @@ export function AccountPromoters() {
       text: "Favorites",
       icon: <FavoriteIcon style={{ color: "white" }} />,
     },
- 
+
     {
       text: "Proposed Events",
       icon: <CalendarViewDayIcon style={{ color: "white" }} />,
@@ -799,7 +819,7 @@ export function AccountPromoters() {
                 text: "Favorites",
                 icon: <FavoriteIcon style={{ color: "white" }} />,
               },
-       
+
               {
                 text: "Proposed Events",
                 icon: <CalendarViewDayIcon style={{ color: "white" }} />,
@@ -865,14 +885,14 @@ export function AccountArtist() {
         console.error("Errore durante il recupero degli eventi:", error);
       }
     };
-    
+
     fetchEvents();
     const fetchisfav = async () => {
-      await axios.get(apiUrl + `/public/viewAll/${generals.fiscalCode}`).then((resp) => {
-        setFavorited(
-          resp.data
-        );
-      });
+      await axios
+        .get(apiUrl + `/public/viewAll/${generals.fiscalCode}`)
+        .then((resp) => {
+          setFavorited(resp.data);
+        });
     };
     fetchisfav();
     const fetchTickets = async () => {
@@ -949,7 +969,7 @@ export function AccountArtist() {
         return renderTicketSection();
       case "Favorites":
         return renderFavoritesSection();
-      
+
       case "Artistic Works":
         return renderOpereSection();
       case "Attended Events":
@@ -1054,7 +1074,7 @@ export function AccountArtist() {
       </Box>
     );
   };
- 
+
   const renderFavoritesSection = () => {
     return (
       <Box style={{ display: "block", width: "100%" }}>
@@ -1332,7 +1352,7 @@ export function AccountArtist() {
       text: "Favorites",
       icon: <FavoriteIcon style={{ color: "white" }} />,
     },
-    
+
     {
       text: "Artistic Works",
       icon: <PaletteIcon style={{ color: "white" }} />,
@@ -1396,7 +1416,7 @@ export function AccountArtist() {
                 text: "Favorites",
                 icon: <FavoriteIcon style={{ color: "white" }} />,
               },
-      
+
               {
                 text: "Artistic Works",
                 icon: <PaletteIcon style={{ color: "white" }} />,
@@ -1449,30 +1469,8 @@ export function AccountArtist() {
 export function AccountAdmin() {
   const [currentSection, setCurrentSection] = useState("Profile");
 
-  const [events, setEvents] = useState([]);
- const [favorites,setFavorited] = useState([]);
   useEffect(() => {
-    const apiUrl = "http://localhost:8080/public/events/get_all";
-    const fetchisfav = async () => {
-      await axios.get(apiUrl + `/public/viewAll/${generals.fiscalCode}`).then((resp) => {
-        setFavorited(
-          resp.data
-        );
-      });
-    };
-    fetchisfav();
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get(apiUrl);
-        // Otteniamo i dati dall'API
-        const eventList = response.data;
-        // Impostiamo lo stato degli eventi con l'array ricevuto
-        setEvents(eventList);
-      } catch (error) {
-        console.error("Errore durante il recupero degli eventi:", error);
-      }
-    };
-    fetchEvents();
+    
   }, []);
   const theme = useTheme();
 
