@@ -8,6 +8,7 @@ import {
   Typography,
   IconButton,
   Button,
+  Rating,
 } from "@mui/material";
 import * as React from "react";
 import EventIcon from "@mui/icons-material/Event";
@@ -21,8 +22,9 @@ import ModalRequestArtistForPromoter from "./ModalRequestArtistForPromoter";
 import { Link } from "react-router-dom";
 import ModalPayment from "./ModalPayment";
 import axios from "axios";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 
-export function EventPage() {
+export function EventPage(props) {
   const locationR = useLocation();
   const generals = JSON.parse(localStorage.getItem("userGenerals"));
   const apiUrl = "http://localhost:8080/public";
@@ -30,33 +32,71 @@ export function EventPage() {
   const [isFavoritedId, setIsFavoritedId] = useState();
   const fiscalCode = generals.fiscalCode;
   const eventId = locationR.state.id;
+  const apiUrl1 = "http://localhost:8080/auth/reviews";
+  const [reviewData, setReviewData] = useState({
+    reviewTitle: "",
+    reviewText: "",
+    reviewRating: 0,
+  });
+  const handleReviewSubmit = async () => {
+    // Controlla se reviewRating è diverso da 0 prima di inviare la richiesta
+    if (reviewData.reviewRating === 0) {
+      return;
+    }
 
-    const fetchisfav = async () => {
-      await axios.get(apiUrl + `/viewAll/${fiscalCode}`).then((resp) => {
-        setIsFavorited(
-          resp.data.filter((el) => el.eventId !== eventId).length > 0
-        );
-        setIsFavoritedId(resp.data[0]?.id);
+    const token = localStorage.getItem("authKey");
+
+    try {
+      const reviewDto = {
+        reviewData: {
+          reviewTitle: "",
+          reviewText: "",
+          reviewRating: reviewData.reviewRating,
+        },
+        eventId: eventId,
+      };
+
+      const response = await axios.post(apiUrl1 + "/to_event", reviewDto, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
-    };
-    fetchisfav();
+
+      console.log("Response data:", response.data);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit the review. Please try again later.");
+    }
+  };
+
+  useEffect(() => {
+    handleReviewSubmit();
+  }, [reviewData.reviewRating]); // Chiamare handleReviewSubmit ogni volta che reviewData.reviewRating cambia
+
+  const fetchisfav = async () => {
+    await axios.get(apiUrl + `/viewAll/${fiscalCode}`).then((resp) => {
+      setIsFavorited(
+        resp.data.filter((el) => el.eventId !== eventId).length > 0
+      );
+      setIsFavoritedId(resp.data[0]?.id);
+    });
+  };
+  fetchisfav();
   const [quantity, setQuantity] = useState(1);
-
-
 
   const handleFavoriteClick = async () => {
     try {
       // Verifica lo stato corrente del pulsante
-  
-    
+
       if (isFavorited) {
         // Se l'elemento è già nei preferiti, esegui la chiamata API per rimuoverlo dai preferiti
         await removeFromFavorites();
-        window.location.reload()
+        window.location.reload();
       } else {
         // Altrimenti, esegui la chiamata API per aggiungere l'elemento ai preferiti
         await addToFavorites();
-        window.location.reload()
+        window.location.reload();
       }
 
       // Aggiorna lo stato del pulsante dei preferiti
@@ -433,6 +473,29 @@ export function EventPage() {
                   quantity={quantity}
                   setQuantity={setQuantity}
                   id={locationR.state.id}
+                />
+              </Box>
+              <Box
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white", // Coloriamo il testo di bianco
+                }}
+              >
+                <Typography component={"div"} variant="body1">
+                  Rate us
+                </Typography>
+                <Rating
+                  value={reviewData.reviewRating}
+                  onChange={(event, newValue) => {
+                    setReviewData((prevData) => ({
+                      ...prevData,
+                      reviewRating: newValue,
+                    }));
+                  }}
+                  emptyIcon={<StarBorderIcon style={{ color: "white" }} />}
                 />
               </Box>
             </Box>
