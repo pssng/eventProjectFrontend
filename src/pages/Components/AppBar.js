@@ -20,7 +20,7 @@ function ResponsiveAppBar() {
   const pages = [
     { name: "Home" },
     { name: "Events" },
-    { name: "Contacts" },
+    { name: "Support" },
     { name: "Artists" },
   ];
 

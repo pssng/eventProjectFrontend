@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Client } from "./pages/Client";
 import { Artist } from "./pages/Artist";
 import { PayPage } from "./pages/PayPage";
-import { Contacts } from "./pages/Contacts";
+import { Support } from "./pages/Support";
 import { Catalog } from "./pages/Catalog";
 import { RequestFormEventArtist } from "./pages/Modules/Forms/RequestFormArtist";
 import {
@@ -81,7 +81,7 @@ export default function App() {
           <Route path="/ManagerEvent" element={<ManagerEvent />} />
           <Route path="/Artists" element={<Artist />} />
           <Route path="/PayPage" element={<PayPage />} />
-          <Route path="/Contacts" element={<Contacts />} />
+          <Route path="/Support" element={<Support />} />
           <Route path="/Events" element={<Catalog />} />
           <Route path="/RequestArtist" element={<RequestFormEventArtist />} />
           <Route path="/Home" element={<Home />} />
@@ -104,7 +104,7 @@ export default function App() {
           mostrare una section diversa
           Passaggi: fai il login, identifica il ruolo dell'utente, metti il ruolo dell'utente nei parametri
           */}
-           <Route path="/Account" element={renderSection("ROLE_ARTIST")} /> 
+           <Route path="/Account" element={renderSection("ROLE_ADMIN")} /> 
           {/*<Route path="/Account" element={renderSection(localStorage.getItem("userRole"))}/>*/}
           <Route path="*" element={<NoPage />} />
         </Route>

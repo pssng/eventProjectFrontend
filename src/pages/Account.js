@@ -2127,7 +2127,9 @@ export function AccountAdmin(props) {
             overflowX: "scroll",
           }}
         >
-          no data found
+              <Typography variant={"subtitle"} component={"div"}>
+              <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" className="link">Chat di supporto</a>
+            </Typography>
         </Box>
       </Box>
     );
