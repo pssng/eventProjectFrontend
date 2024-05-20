@@ -35,6 +35,7 @@ import {
 import GenericReview from "./pages/Components/GenericReview";
 import GenericArtwork from "./pages/Components/GenericArtwork";
 import { retrieveGenerals, retriveRole } from "./pages/api/api";
+import Chat_me from "./pages/Components/Chat_me";
 export default function App() {
 
   const token = localStorage.getItem("authKey");
@@ -82,6 +83,7 @@ export default function App() {
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
           <Route path="/EventPage" element={<EventPage />} />
           <Route path="/EventPageAccount" element={<EventPageAccount />} />
+          <Route path="/Chat_me" element={<Chat_me />} />
 
           <Route path="/SignUpArtist" element={<SignUpArtist />} />
           <Route path="/ArtistPage" element={<ArtistPage />} />
