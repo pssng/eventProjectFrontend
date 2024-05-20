@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-
+import Gpt from "./pages/Components/Gpt";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
@@ -36,6 +36,7 @@ import GenericReview from "./pages/Components/GenericReview";
 import GenericArtwork from "./pages/Components/GenericArtwork";
 import { retrieveGenerals, retriveRole } from "./pages/api/api";
 import Chat_me from "./pages/Components/Chat_me";
+import { Support } from "./pages/Support";
 export default function App() {
 
   const token = localStorage.getItem("authKey");
@@ -83,8 +84,9 @@ export default function App() {
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
           <Route path="/EventPage" element={<EventPage />} />
           <Route path="/EventPageAccount" element={<EventPageAccount />} />
-          <Route path="/Chat_me" element={<Chat_me />} />
-
+          <Route path="/Support/Chat_me" element={<Chat_me />} />
+          <Route path="/Support/gpt" element={<Gpt />} />
+          <Route path="/Support" element={<Support />} />
           <Route path="/SignUpArtist" element={<SignUpArtist />} />
           <Route path="/ArtistPage" element={<ArtistPage />} />
           <Route path="/GenericReview" element={<GenericReview />} />

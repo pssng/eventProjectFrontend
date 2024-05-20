@@ -21,7 +21,7 @@ function ResponsiveAppBar(props) {
     { name: "Events" },
     { name: "Contacts" },
     { name: "Artists" },
-    { name: "Chat_me"}
+    { name: "Support"}
   ];
 
   const logins = [
